@@ -28,10 +28,11 @@ while ($row = mysqli_fetch_assoc($result)) {
 echo "</br>";
 
 /* query: select a person's awards in the database in the db */
+$id_person = $_GET["id"];
 $query = "SELECT name_person, name_award, date_award from Persons, Awards_Persons, Awards
    WHERE Persons.id_person = Awards_Persons.id_person
          and Awards_Persons.id_award = Awards.id_award
-         and Persons.id_person = 200 order by date_award";
+         and Persons.id_person = $id_person order by date_award";
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result))

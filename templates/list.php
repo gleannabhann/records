@@ -14,31 +14,23 @@ $cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
 or die ("message");
 
 // Build links to the list beginning with the appropriate initial, which is returned as $Initial
-$query = "select count(*) as ct, substring(name_person,1,1) as Initial from Persons group by Initial";
+
+$Initial = $_GET["initial"];
+echo "<p>Listing all people whose name begins with $Initial</p>";
+$query = "select id_person, name_person from Persons where upper(substring(name_person,1,1)) ='$Initial'";
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
+
 while ($row = mysqli_fetch_assoc($result)) {
 //    extract($row);
-    $Initial = $row['Initial'];
-    $link = "<a href='./list.php?initial=$Initial'>$Initial</a>&nbsp";
+    $Name = $row['name_person'];
+    $ID = $row['id_person'];
+    $link = "<li><a href='./person.php?id=$ID'>$Name</a></li>";
+//    $link = "<li> $Name </li>";
     echo $link;
 }
 
-
 echo "</br>";
-
-/* query: select a person's awards in the database in the db */
-$query = "SELECT name_person, name_award, date_award from Persons, Awards_Persons, Awards
-   WHERE Persons.id_person = Awards_Persons.id_person
-         and Awards_Persons.id_award = Awards.id_award
-         and Persons.id_person = 200 order by date_award";
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
-while ($row = mysqli_fetch_assoc($result))
-  {extract($row);
-  echo "<b>$name_person</b> was awarded <i>$name_award</i> on $date_award. <br/>";
-};
-
 
 mysqli_close ($cxn); /* close the db connection */
 ?>
