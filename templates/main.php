@@ -13,16 +13,7 @@
 $cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
 or die ("message");
 
-// Build links to the list beginning with the appropriate initial, which is returned as $Initial
-$query = "select count(*) as ct, substring(name_person,1,1) as Initial from Persons group by Initial";
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
-while ($row = mysqli_fetch_assoc($result)) {
-//    extract($row);
-    $Initial = $row['Initial'];
-    $link = "<a href='./list.php?initial=$Initial'>$Initial</a>&nbsp";
-    echo $link;
-}
+include "alpha.php";
 
 
 echo "</br>";
