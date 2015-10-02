@@ -13,7 +13,12 @@ or die ("message");
 // Build links to the list beginning with the appropriate initial, which is returned as $Initial
 
 $part_name = $_GET["name"];
-$k_id = $_GET["k_id"];
+if (ISSET($_GET["k_id"])) {
+   $k_id = $_GET["k_id"];
+} else {
+   $k_id = 13;
+//   $k_id = $HOST_KINGDOM_ID;
+}
 
 echo "<h2>People matching the search parameters</h2>";
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
