@@ -9,6 +9,8 @@ or die ("message");
 
 // Build links to the list beginning with the appropriate initial, which is returned as $Initial
 
+// This section wil list persons beginning with initial if initial is passed
+if (isset($_GET["initial"])) {
 $Initial = $_GET["initial"];
 echo "<div class='page-header'><h1>Names beginning with $Initial</h1></div>"; //Customize the page header
 echo "<div class='row'><div class='col-md-2'></div><div class='col-md-8'>";
@@ -29,6 +31,40 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 
 echo "</ul></div> <!-- ./col-md-8 --><div class='col-md-2'></div></div><!-- ./container-fluid -->"; //close out list and open divs
+}
 
+// This section will list persons with a given award if award is passed
+
+if (!isset($_GET["initial"]) && isset($_GET["award"])){
+$award = $_GET["award"];
+$query = "select name_award from Awards where id_award=$award";
+$result = mysqli_query ($cxn, $query)
+or die ("Couldn't execute query");
+
+$row = mysqli_fetch_assoc($result);
+$name_award = $row['name_award'];
+
+echo "<div class='page-header'><h1>Persons who hold the award $name_award</h1></div>"; //Customize the page header
+echo "<div class='row'><div class='col-md-2'></div><div class='col-md-8'>";
+include "alpha.php"; // includes the A-Z link list
+include "warning.php"; // includes the warning text about paper precedence
+echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
+
+$query = "select Persons.id_person as ip, name_person, date_award from Persons, Awards_Persons where Persons.id_person = Awards_Persons.id_person and Awards_Persons.id_award=$award";
+
+$result = mysqli_query ($cxn, $query)
+or die ("Couldn't execute query");
+
+while ($row = mysqli_fetch_assoc($result)) {
+    $Name = $row['name_person'];
+    $ID = $row['ip'];
+    $Date_award = $row['date_award'];
+    $link = "<li class='list-group-item text-left'><a href='./person.php?id=$ID'>$Name</a> - $Date_award</li>";
+    echo "$link";
+}
+
+
+echo "</ul></div> <!-- ./col-md-8 --><div class='col-md-2'></div></div><!-- ./container-fluid -->"; //close out list and open divs
+}
 mysqli_close ($cxn); /* close the db connection */
 ?>

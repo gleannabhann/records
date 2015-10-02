@@ -26,15 +26,17 @@ echo "<table class='table table-condensed table-bordered'>
 
 /* query: select a person's awards in the database in the db */
 $id_person = $_GET["id"];
-$query = "SELECT name_person, name_award, date_award from Persons, Awards_Persons, Awards
+$query = "SELECT name_person, name_award, date_award,name_kingdom from Persons, Awards_Persons, Awards, Kingdoms
    WHERE Persons.id_person = Awards_Persons.id_person
          and Awards_Persons.id_award = Awards.id_award
+         and Awards.id_kingdom = Kingdoms.id_kingdom
          and Persons.id_person = $id_person order by date_award";
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result))
   {extract($row);
-  echo "<tr><td class='text-left'>$name_award</td><td class='text-left'>$date_award.</tr></td>";
+// echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
+  echo "<tr><td class='text-left'>$name_award</td><td class='text-left'>$date_award</tr></td>";
 };
 echo "</table>";
 include "alpha.php"; // includes the A-Z link list
