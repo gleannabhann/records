@@ -93,9 +93,9 @@
       -->
 
           <ul class="nav navbar-nav navbar-right">
-            <form class="navbar-form navbar-right" role="search">
+            <form class="navbar-form navbar-right" role="search" action="search.php" method="get">
               <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search">
+                <input type="text" class="form-control" placeholder="Search for Name or Award" name="name">
               </div>
               <button type="submit" class="btn btn-default">Submit</button>
             </form>
