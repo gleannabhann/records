@@ -4,6 +4,6 @@
     require("../includes/config.php");
 
     // render portfolio
-    render("list.php", ["title" => ""]);
+    render("list.php", ["title" => "Names"]);
 
 ?>

@@ -1,11 +1,5 @@
-<div>
-  <div class="jumbotron">
-  <h1>Welcome <br/><small>to the Glean Abhann Kingdom Heraldry Database!</small> </h1>
-<!--
-  <p>Search or browse using the bar at the top of the page, or...</p>
-  <p><a class="btn btn-primary btn-lg" href="#" role="button">Click here to learn more</a></p>
--->
-</div>
+
+<div class="container">
 <?php
 /* connect to the database */
 //$cxn = mysqli_connect ("localhost", "oop", "ooppassword","oop")
@@ -13,19 +7,22 @@
 $cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
 or die ("message");
 
-// Build links to the list beginning with the appropriate initial, which is returned as $Initial
-$query = "select count(*) as ct, substring(name_person,1,1) as Initial from Persons group by Initial";
+/* query: select a person's name for the header */
+$id_person = $_GET["id"];
+$query = "SELECT name_person from Persons WHERE Persons.id_person = $id_person";
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
-while ($row = mysqli_fetch_assoc($result)) {
-//    extract($row);
-    $Initial = $row['Initial'];
-    $link = "<a href='./list.php?initial=$Initial'>$Initial</a>&nbsp";
-    echo $link;
-}
-
-
-echo "</br>";
+while ($row = mysqli_fetch_assoc($result))
+  {extract($row);
+  echo "<div class='page-header'><h1>$name_person</h1></div>";
+};
+echo "
+<div class='row'>
+  <div class='col-md-2'></div>
+  <div class='col-md-8'>";
+echo "<table class='table table-condensed table-bordered'>
+<thead><td class='text-left'><strong>Award</strong></td>
+<td class='text-left'><strong>Date</strong></td></thead>";
 
 /* query: select a person's awards in the database in the db */
 $id_person = $_GET["id"];
@@ -37,11 +34,17 @@ $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result))
   {extract($row);
-  echo "<b>$name_person</b> was awarded <i>$name_award</i> on $date_award. <br/>";
+  echo "<tr><td class='text-left'>$name_award</td><td class='text-left'>$date_award.</tr></td>";
 };
-
+echo "</table>";
+include "alpha.php"; // includes the A-Z link list
+include "warning.php"; // includes the warning text about paper precedence
+echo "
+  </div><!-- ./col-md-8 -->
+  <div class='col-md-2'></div>
+</div><!-- ./row -->"; //close out list and open divs
 
 mysqli_close ($cxn); /* close the db connection */
 ?>
-
+<!-- end of php -->
 </div>
