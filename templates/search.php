@@ -1,3 +1,4 @@
+<div class="container">
 <?php
 /* This page assumes that it is called with two parameters:
    - name - partial name that we will search on
@@ -6,7 +7,7 @@
 /* connect to the database */
 //$cxn = mysqli_connect ("localhost", "oop", "ooppassword","oop")
 //or die ("message");
-include "warning.php"; // includes the warning text about paper precedence
+
 $cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
 or die ("message");
 
@@ -22,11 +23,19 @@ if (ISSET($_GET["k_id"])) {
 //   $k_id = $HOST_KINGDOM_ID;
 }
 
+echo "<div class='page-header'><h1>Search results for <i>$part_name</i></h1><small>";
+include "warning.php"; // includes the warning text about paper precedence
+echo "</small></div>"; //Customize the page header
+
+echo "<div class='container'>";
+echo "(<small><a href='#awards'>Skip to awards</a></small>)";
+echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 
 
 
-echo "<h2>People matching the search parameters</h2>";
+echo "<h2>People matching <i>$part_name</i></h2>";
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
+
 
 if ($k_id == -1){
   $query = "SELECT id_person, name_person, name_group FROM Persons, Groups
@@ -41,6 +50,8 @@ else {
       };
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
+$matches = $result->num_rows;
+echo "$matches people matches";
 
 while ($row = mysqli_fetch_assoc($result)) {
 //    extract($row);
@@ -52,13 +63,15 @@ while ($row = mysqli_fetch_assoc($result)) {
     echo "$link";
 
 }
-echo "</ul></div> <!-- ./col-md-8 --><div class='col-md-2'></div></div><!-- ./container-fluid -->"; //close out list and open divs
 
-echo "</br>";
+echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
 
-echo "<h2>Awards matching the search parameters</h2>";
+echo "<a name='awards'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
+
+echo "<h2>Awards matching <i>$part_name</i></h2>";
 
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
+
 if ($k_id == -1)
 {
   $query = "SELECT id_award, name_award FROM Awards
@@ -71,7 +84,8 @@ $query = "SELECT id_award, name_award FROM Awards
       };
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
-
+$matches = $result->num_rows;
+echo "$matches award matches";
 while ($row = mysqli_fetch_assoc($result)) {
 //    extract($row);
     $Name = $row['name_award'];
@@ -79,9 +93,12 @@ while ($row = mysqli_fetch_assoc($result)) {
     $link = "<li class='list-group-item text-left'><a href='./list.php?award=$ID'>$Name</a></li>";
 //    $link = "<li> $Name </li>";
     echo "$link";
+
 }
 
-echo "</ul></div> <!-- ./col-md-8 --><div class='col-md-2'></div></div><!-- ./container-fluid -->"; //close out list and open divs
+
+echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
 
 mysqli_close ($cxn); /* close the db connection */
 ?>
+</div>

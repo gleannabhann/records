@@ -14,12 +14,14 @@ $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result))
   {extract($row);
-  echo "<div class='page-header'><h1>$name_person</h1></div>";
+  echo "<div class='page-header'><h1>$name_person</h1><small>";
+  include "warning.php"; // includes the warning text about paper precedence
+  echo "</small></div>";
 };
 echo "
 <div class='row'>
-  <div class='col-md-2'></div>
-  <div class='col-md-8'>";
+
+  <div class='col-md-8 col-md-offset-2'>";
 echo "<table class='table table-condensed table-bordered'>
 <thead><td class='text-left'><strong>Award</strong></td>
 <td class='text-left'><strong>Date</strong></td></thead>";
@@ -39,13 +41,9 @@ while ($row = mysqli_fetch_assoc($result))
   echo "<tr><td class='text-left'>$name_award</td><td class='text-left'>$date_award</tr></td>";
 };
 echo "</table>";
+echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
+echo "<hr><p>Browse by Name:</p><p>";
 include "alpha.php"; // includes the A-Z link list
-include "warning.php"; // includes the warning text about paper precedence
-echo "
-  </div><!-- ./col-md-8 -->
-  <div class='col-md-2'></div>
-</div><!-- ./row -->"; //close out list and open divs
-
 mysqli_close ($cxn); /* close the db connection */
 ?>
 <!-- end of php -->

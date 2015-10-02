@@ -12,10 +12,12 @@ or die ("message");
 // This section wil list persons beginning with initial if initial is passed
 if (isset($_GET["initial"])) {
 $Initial = $_GET["initial"];
-echo "<div class='page-header'><h1>Names beginning with $Initial</h1></div>"; //Customize the page header
-echo "<div class='row'><div class='col-md-2'></div><div class='col-md-8'>";
-include "alpha.php"; // includes the A-Z link list
+echo "<div class='page-header'><h1>Names beginning with $Initial</h1><small>";
 include "warning.php"; // includes the warning text about paper precedence
+echo "</small></div>"; //Customize the page header
+echo "<div class='row'><div class='col-md-8 offset-md-2'>";
+include "alpha.php"; // includes the A-Z link list
+
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 $query = "select id_person, name_person from Persons where upper(substring(name_person,1,1)) ='$Initial'";
 $result = mysqli_query ($cxn, $query)
@@ -30,7 +32,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     echo "$link";
 }
 
-echo "</ul></div> <!-- ./col-md-8 --><div class='col-md-2'></div></div><!-- ./container-fluid -->"; //close out list and open divs
+echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 }
 
 // This section will list persons with a given award if award is passed
@@ -45,7 +47,7 @@ $row = mysqli_fetch_assoc($result);
 $name_award = $row['name_award'];
 
 echo "<div class='page-header'><h1>Persons who hold the award $name_award</h1></div>"; //Customize the page header
-echo "<div class='row'><div class='col-md-2'></div><div class='col-md-8'>";
+echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 include "alpha.php"; // includes the A-Z link list
 include "warning.php"; // includes the warning text about paper precedence
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
@@ -64,7 +66,8 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 
 
-echo "</ul></div> <!-- ./col-md-8 --><div class='col-md-2'></div></div><!-- ./container-fluid -->"; //close out list and open divs
+echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./container-fluid -->"; //close out list and open divs
 }
 mysqli_close ($cxn); /* close the db connection */
 ?>
+</div>
