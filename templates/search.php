@@ -28,11 +28,11 @@ include "warning.php"; // includes the warning text about paper precedence
 echo "</small></div>"; //Customize the page header
 
 echo "<div class='container'>";
-echo "(<small><a href='#awards'>Skip to awards</a></small>)";
+echo "(<small><a href='#awards'>Skip to awards</a></small>)</br>";
+echo "(<small><a href='#groups'>Skip to groups</a></small>)";
 echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 
-
-
+/*#######################################################################################*/
 echo "<h2>People matching <i>$part_name</i></h2>";
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 
@@ -66,6 +66,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
 
+/*#######################################################################################*/
 echo "<a name='awards'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
 
 echo "<h2>Awards matching <i>$part_name</i></h2>";
@@ -95,10 +96,43 @@ while ($row = mysqli_fetch_assoc($result)) {
     echo "$link";
 
 }
+echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
+/*#######################################################################################*/
+echo "<a name='groups'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
 
+echo "<h2>Groups matching <i>$part_name</i></h2>";
 
+echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
+
+if ($k_id == -1)
+{
+  $query = "SELECT id_group, name_group, name_kingdom FROM Groups, Kingdoms
+            WHERE name_group like '%$part_name%'
+            AND Groups.id_kingdom = Kingdoms.id_kingdom";
+}
+else {
+  $query = "SELECT id_group, name_group, name_kingdom FROM Groups, Kingdoms
+            WHERE name_group like '%$part_name%'
+            AND Groups.id_kingdom = Kingdoms.id_kingdom
+            AND Groups.id_kingdom = $k_id";
+      };
+$result = mysqli_query ($cxn, $query)
+or die ("Couldn't execute query");
+$matches = $result->num_rows;
+echo "$matches award matches";
+while ($row = mysqli_fetch_assoc($result)) {
+//    extract($row);
+    $Name = $row['name_group'];
+    $ID = $row['id_group'];
+    $KName = $row['name_kingdom'];
+    $link = "<li class='list-group-item text-left'><a href='./list.php?group=$ID'>$Name - $KName</a></li>";
+//    $link = "<li> $Name </li>";
+    echo "$link";
+
+}
 echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
 
+/*#######################################################################################*/
 mysqli_close ($cxn); /* close the db connection */
 ?>
 </div>

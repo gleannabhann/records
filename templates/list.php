@@ -7,8 +7,8 @@
 $cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
 or die ("message");
 
-// Build links to the list beginning with the appropriate initial, which is returned as $Initial
 
+/*#######################################################################################*/
 // This section wil list persons beginning with initial if initial is passed
 if (isset($_GET["initial"])) {
 $Initial = $_GET["initial"];
@@ -35,6 +35,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 }
 
+/*#######################################################################################*/
 // This section will list persons with a given award if award is passed
 
 if (!isset($_GET["initial"]) && isset($_GET["award"])){
@@ -68,6 +69,44 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./container-fluid -->"; //close out list and open divs
 }
+
+/*#######################################################################################*/
+// This section will list persons in a given group if group is passed
+
+if (!isset($_GET["initial"]) && !isset($_GET["award"]) && isset($_GET["group"])){
+$group = $_GET["group"];
+$query = "select name_group from Groups where id_group=$group";
+$result = mysqli_query ($cxn, $query)
+or die ("Couldn't execute query");
+
+$row = mysqli_fetch_assoc($result);
+$name_group = $row['name_group'];
+
+echo "<div class='page-header'><h1>Persons who belong to $name_group</h1></div>"; //Customize the page header
+echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
+include "alpha.php"; // includes the A-Z link list
+include "warning.php"; // includes the warning text about paper precedence
+echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
+
+$query = "SELECT Persons.id_person as ip, name_person, id_group FROM Persons
+          WHERE  Persons.id_group = $group";
+
+$result = mysqli_query ($cxn, $query)
+or die ("Couldn't execute query");
+
+while ($row = mysqli_fetch_assoc($result)) {
+    $Name = $row['name_person'];
+    $ID = $row['ip'];
+    $link = "<li class='list-group-item text-left'><a href='./person.php?id=$ID'>$Name</a> </li>";
+    echo "$link";
+}
+
+
+echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./container-fluid -->"; //close out list and open divs
+}
+
+/*#######################################################################################*/
+
 mysqli_close ($cxn); /* close the db connection */
 ?>
 </div>
