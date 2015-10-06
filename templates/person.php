@@ -45,6 +45,83 @@ echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open 
 echo "<hr><p>Browse by Name:</p><p>";
 include "alpha.php"; // includes the A-Z link list
 mysqli_close ($cxn); /* close the db connection */
+
+if (isset($POST["msgSubmit"])) {
+  $name = $_POST['name'];
+  $email = $_POST['email'];
+  $msgBody = $_POST['msgBody'];
+  $from = 'forms@oopgleannabhann.net';
+  $to = 'obsidian@gleannabhann.net' . ', ';
+  $to .= 'webminister@gleannabhann.net';
+  $subject = $_POST['subject'];
+  $body = "From: $name\n Email: $email\n Message:\n $msgBody";
+
+  // check for name
+  if (!$_POST['name']) {
+    $errName = "Please enter your name";
+  } else {$errName = "NULL";}
+  if (!$_POST['email']) {
+    $errEmail = "Please enter your email address";
+  } else {$errEmail = "NULL";}
+  if (!$_POST['message']) {
+    $errMessage = "Please enter information about the discrepancy or error";
+  } else {$errMessage = "NULL";}
+if (!$errName && !$errEmail && !$errMessage) {
+  if (mail ($to, $subject, $body, $from)) {
+    $result = '<div class="alert alert-success">Thank you! We appreciate your feedback.</div>';
+  }
+  else {
+    $result ='<div class="alert alert-danger">I was unable to send your message. Please try again.</div>';
+  }
+}
+}
+
+
 ?>
 <!-- end of php -->
+
+<div class="row">
+  <h2>Report a problem with this record:</h2>
+  <form class="form-horizontal" role="form" method="post" action="person.php">
+    <div class="form-group">
+      <label for="name" class="col-sm-2 col-md-3 control-label">Name:</label>
+      <div class="col-sm-10 col-md-6">
+        <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['name']);} ?>">
+        <?php if (isset($errName)) {echo "<p class='text-danger'>$errName</p>";}?>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="email" class="col-sm-2 col-md-3 control-label">Email:</label>
+      <div class="col-sm-10 col-md-6">
+        <input type="text" class="form-control" id="email" name="email" placeholder="example@domain.com" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['email']);} ?>">
+        <?php if (isset($errEmail)) {echo "<p class='text-danger'>$errEmail</p>";}?>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="subject" class="col-sm-2 col-md-3 control-label">Subject:</label>
+      <div class="col-sm-10 col-md-6">
+        <?php echo "Record Correction Request for $name_person (ID $id_person)"; ?>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="msgBody" class="col-sm-2 col-md-3 control-label">Message:</label>
+      <div class="col-sm-10 col-md-6">
+        <textarea class="form-control" rows="4" name="msgBody" value="<?php if (isset($_POST[msgSubmit])) {echo htmlspecialchars($_POST['msgBody']);} ?>">
+        <?php if (isset($errMessage)) {echo "<p class='text-danger'>$errMessage</p>";}?>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <input id="msgSubmit" name="msgSubmit" type="submit" value="Send" class="btn btn-primary">
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <?php echo $result; ?>
+      </div>
+    </div>
+  </form>
+
+
 </div>

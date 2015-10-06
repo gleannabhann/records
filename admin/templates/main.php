@@ -1,11 +1,15 @@
 <div>
   <div class="jumbotron">
-  <h1>Welcome <br/><small>to the Gleann Abhann Kingdom Heraldry Database!</small> </h1>
-<!--
-  <p>Search or browse using the bar at the top of the page, or...</p>
-  <p><a class="btn btn-primary btn-lg" href="#" role="button">Click here to learn more</a></p>
--->
-</div>
+  <h1>Search</h1>
+  <p>Search the database here, or choose a letter below</p>
+  <p><form class="form" role="search" action="search.php" method="post">
+    <div class="form-group">
+      <input type="text" class="form-control" placeholder="Search for Name or Award" name="name">
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+  </form></p>
+
+
 
 Click on an initial to see all persons whose name begin with that letter.
 
@@ -22,5 +26,5 @@ include "alpha.php";
 echo "</br>";
 mysqli_close ($cxn); /* close the db connection */
 ?>
-
+</div>
 </div>
