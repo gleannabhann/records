@@ -45,6 +45,7 @@ echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open 
 echo "<hr><p>Browse by Name:</p><p>";
 include "alpha.php"; // includes the A-Z link list
 mysqli_close ($cxn); /* close the db connection */
+echo "<hr/>";
 
 if (isset($POST["msgSubmit"])) {
   $name = $_POST['name'];
@@ -85,39 +86,39 @@ if (!$errName && !$errEmail && !$errMessage) {
   <form class="form-horizontal" role="form" method="post" action="person.php">
     <div class="form-group">
       <label for="name" class="col-sm-2 col-md-3 control-label">Name:</label>
-      <div class="input-group  input-group-lg col-sm-10 col-md-6">
-        <span style="display: block; width: 100%"><input type="text" width="100%" class="form-control" id="name" name="name" placeholder="Your Name" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['name']);} ?>"></span>
+      <div class="input-group col-sm-10 col-md-6">
+        <span style="display: block; width: 100%"><input size="60" type="text" width="100%" class="form-control" id="name" name="name" placeholder="Your Name" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['name']);} ?>"></span>
       </div>
     </div>
     <div class="form-group">
       <label for="email" class="col-sm-2 col-md-3 control-label">Email:</label>
-      <div class="input-group  input-group-lg col-sm-10 col-md-6">
-  <input type="text" width="100%" class="form-control" id="email" name="email" placeholder="example@domain.com" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['email']);} ?>">
+      <div class="input-group col-sm-10 col-md-6">
+  <input size="60" type="text" width="100%" class="form-control" id="email" name="email" placeholder="example@domain.com" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['email']);} ?>">
 
       </div>
     </div>
     <div class="form-group">
       <label for="subject" class="col-sm-2 col-md-3 control-label">Subject:</label>
-      <div class="input-group input-group-lg col-sm-10 col-md-6 pull-left">
-        <input type="text" class="form-control" id="subject" name="subject" value='<?php echo "Record Correction Request for $name_person (ID $id_person)"; ?>'>
+      <div class="input-group col-sm-10 col-md-6">
+        <input size="60" type="text" class="form-control" id="subject" name="subject" value='<?php echo "Record Correction Request for $name_person (ID $id_person)"; ?>'>
       </div>
     </div>
     <div class="form-group">
-      <label for="msgBody" class="col-sm-2 col-md-3 control-label">Message:</label>
-      <div class="input-group input-group-lg col-sm-10 col-md-6">
-          <textarea class="form form-control" rows="4" name="msgBody" placeholder="Type your message here" id="msgBody" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['msgBody']);} ?>">
+      <label for="msgBody" class="col-sm-2 col-md-3 control-label">Details:</label>
+      <div class="input-group col-sm-10 col-md-6">
+          <textarea cols="62" class="form form-control" rows="4" name="msgBody" placeholder="Tell us what's incorrect about this record." id="msgBody" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['msgBody']);} ?>">
         </textarea>
 
       </div>
     </div>
 
     <div class="form-group">
-      <div class="input-group input-group-lg col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
+      <div class="input-group col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
         <input id="msgSubmit" name="msgSubmit" type="submit" value="Send" class="btn btn-primary">
       </div>
     </div>
     <div class="form-group">
-      <div class="input-group input-group-lg col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
+      <div class="input-group col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
         <?php if(isset($emailresult)) {echo $emailresult;} ?>
       </div>
     </div>
