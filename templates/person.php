@@ -26,7 +26,59 @@ echo "<table class='table table-condensed table-bordered'>
 <thead><td class='text-left'><strong>Award</strong></td>
 <td class='text-left'><strong>Date</strong></td></thead>";
 
-/* query: select a person's awards in the database in the db */
+/* query: select a person's authorizations in the database */
+$id_person = $_GET["id"];
+$query = "SELECT name_combat, name_auth, expire_auth 
+          FROM Persons_Authorizations, Authorizations, Combat
+          WHERE Persons_Authorizations.id_auth = Authorizations.id_auth
+          AND Authorizations.id_combat = Combat.id_combat 
+          AND id_person = $id_person
+          ORDER by name_combat, Authorizations.id_auth";
+$result = mysqli_query ($cxn, $query)
+or die ("Couldn't execute query");
+$matches = $result->num_rows;
+if ($matches > 0) {
+   $ocombat = "";
+   echo "<b> Authorizations on file:</b>";
+   while ($row = mysqli_fetch_assoc($result))
+     {extract($row);
+     if ($ocombat != $name_combat) {
+        echo "<br><b>$name_combat ($expire_auth)</b> ";
+     };
+     $ocombat = $name_combat;
+     echo ",&nbsp $name_auth";
+   }
+   echo "<br>";
+}
+
+
+/* query: select a person's marshal warrants in the database */
+$id_person = $_GET["id"];
+$query = "SELECT name_combat, name_marshal, expire_marshal 
+          FROM Persons_Marshals, Marshals, Combat
+          WHERE Persons_Marshals.id_marshal = Marshals.id_marshal
+          AND Marshals.id_combat = Combat.id_combat 
+          AND id_person = $id_person
+          ORDER by name_combat, Marshals.id_marshal";
+$result = mysqli_query ($cxn, $query)
+or die ("Couldn't execute query");
+$matches = $result->num_rows;
+if ($matches > 0) {
+   $ocombat = "";
+   echo "<b> Marshal's Warrants on file:</b>";
+   while ($row = mysqli_fetch_assoc($result))
+     {extract($row);
+     if ($ocombat != $name_combat) {
+        echo "<br><b>$name_combat ($expire_marshal)</b> ";
+     };
+     $ocombat = $name_combat;
+     echo ",&nbsp $name_marshal";
+   }
+   echo "<br>";
+}
+
+
+/* query: select a person's awards in the database  */
 $id_person = $_GET["id"];
 $query = "SELECT name_person, name_award, date_award,name_kingdom from Persons, Awards_Persons, Awards, Kingdoms
    WHERE Persons.id_person = Awards_Persons.id_person
