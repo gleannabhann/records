@@ -1,6 +1,6 @@
 <div>
   <div class="jumbotron">
-  <h1>Welcome <br/><small>to the Gleann Abhann Kingdom Heraldry Database!</small> </h1>
+  <h1>Welcome <br/><small>to the Gleann Abhann Kingdom Hall of Records!</small> </h1>
 <!--
   <p>Search or browse using the bar at the top of the page, or...</p>
   <p><a class="btn btn-primary btn-lg" href="#" role="button">Click here to learn more</a></p>
@@ -23,4 +23,9 @@ echo "</br>";
 mysqli_close ($cxn); /* close the db connection */
 ?>
 
-</div>
+Type a partial name in the box to search:
+<form role="search" action="search.php" method="get">
+                <input type="text" class="form-control" placeholder="Search for Name or Award" name="name">
+              <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+

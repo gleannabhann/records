@@ -43,14 +43,15 @@ if ($matches > 0) {
    while ($row = mysqli_fetch_assoc($result))
      {extract($row);
      if ($ocombat != $name_combat) {
-        echo "<br><b>$name_combat ($expire_auth)</b> ";
+        echo "<br><b>$name_combat (expires $expire_auth)</b>: $name_auth";
+     } else {
+     	echo ",&nbsp $name_auth";
      };
      $ocombat = $name_combat;
-     echo ",&nbsp $name_auth";
    }
    echo "<br>";
 }
-
+echo "<br>";
 
 /* query: select a person's marshal warrants in the database */
 $id_person = $_GET["id"];
@@ -69,14 +70,15 @@ if ($matches > 0) {
    while ($row = mysqli_fetch_assoc($result))
      {extract($row);
      if ($ocombat != $name_combat) {
-        echo "<br><b>$name_combat ($expire_marshal)</b> ";
+        echo "<br><b>$name_combat (expires $expire_marshal)</b>: $name_marshal";
+     } else {
+        echo ",&nbsp $name_marshal";
      };
      $ocombat = $name_combat;
-     echo ",&nbsp $name_marshal";
    }
    echo "<br>";
 }
-
+echo "<br>";
 
 /* query: select a person's awards in the database  */
 $id_person = $_GET["id"];
