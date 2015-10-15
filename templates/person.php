@@ -15,7 +15,7 @@ or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result))
   {extract($row);
   echo "<div class='page-header'><h1>$name_person</h1><small>";
-  include "warning.php"; // includes the warning text about paper precedence
+  include "../templates/warning.php"; // includes the warning text about paper precedence
   echo "</small></div>";
 };
 echo "
@@ -28,10 +28,10 @@ echo "<table class='table table-condensed table-bordered'>
 
 /* query: select a person's authorizations in the database */
 $id_person = $_GET["id"];
-$query = "SELECT name_combat, name_auth, expire_auth 
+$query = "SELECT name_combat, name_auth, expire_auth
           FROM Persons_Authorizations, Authorizations, Combat
           WHERE Persons_Authorizations.id_auth = Authorizations.id_auth
-          AND Authorizations.id_combat = Combat.id_combat 
+          AND Authorizations.id_combat = Combat.id_combat
           AND id_person = $id_person
           ORDER by name_combat, Authorizations.id_auth";
 $result = mysqli_query ($cxn, $query)
@@ -55,10 +55,10 @@ echo "<br>";
 
 /* query: select a person's marshal warrants in the database */
 $id_person = $_GET["id"];
-$query = "SELECT name_combat, name_marshal, expire_marshal 
+$query = "SELECT name_combat, name_marshal, expire_marshal
           FROM Persons_Marshals, Marshals, Combat
           WHERE Persons_Marshals.id_marshal = Marshals.id_marshal
-          AND Marshals.id_combat = Combat.id_combat 
+          AND Marshals.id_combat = Combat.id_combat
           AND id_person = $id_person
           ORDER by name_combat, Marshals.id_marshal";
 $result = mysqli_query ($cxn, $query)

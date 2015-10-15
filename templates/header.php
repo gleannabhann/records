@@ -12,9 +12,9 @@
             <!-- Bootstrap Overrides -->
 
            <!-- Bootstrap Stylesheet -->
-            <link href="./css/bootstrap.min.css" rel="stylesheet">
-            <link href="./css/bootstrap-theme.min.css" rel="stylesheet"/>
-            <link href="./css/styles.css" rel="stylesheet"/>
+            <link href="/css/bootstrap.min.css" rel="stylesheet">
+            <link href="/css/bootstrap-theme.min.css" rel="stylesheet"/>
+            <link href="/css/styles.css" rel="stylesheet"/>
             <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
             <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
             <!--[if lt IE 9]>
@@ -57,9 +57,9 @@
                 <title>Gleann Abhann Heraldry Database</title>
             <?php endif ?>
 
-            <script src="./js/jquery-1.10.2.min.js"></script>
-            <script src="./js/bootstrap.min.js"></script>
-            <script src="./js/scripts.js"></script>
+            <script src="/js/jquery-1.10.2.min.js"></script>
+            <script src="/js/bootstrap.min.js"></script>
+            <script src="/js/scripts.js"></script>
 
         <!-- END OF BOOTSTRAP SECTION -->
 
@@ -70,7 +70,7 @@
 <div class="container-fluid">
   <!-- begin page -->
   <header class="header">
-<img class="banner" src="../public/img/banner.png" alt="Banner for Kingdom of Gleann Abhann" width="100%">
+<img class="banner" src="/img/banner.png" alt="Banner for Kingdom of Gleann Abhann" width="100%">
     <div id="top" role="navigation">
       <nav class="navbar navbar-default">
         <div class="container-fluid">
