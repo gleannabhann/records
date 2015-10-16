@@ -50,6 +50,56 @@
     }
 
     /**
+     * Returns a stock by symbol (case-insensitively) else false if not found.
+     */
+    function lookup($symbol)
+    {
+        // reject symbols that start with ^
+        if (preg_match("/^\^/", $symbol))
+        {
+            return false;
+        }
+
+        // reject symbols that contain commas
+        if (preg_match("/,/", $symbol))
+        {
+            return false;
+        }
+
+        // open connection to Yahoo
+        $handle = @fopen("http://download.finance.yahoo.com/d/quotes.csv?f=snl1&s=$symbol", "r");
+        if ($handle === false)
+        {
+            // trigger (big, orange) error
+            trigger_error("Could not connect to Yahoo!", E_USER_ERROR);
+            exit;
+        }
+
+        // download first line of CSV file
+        $data = fgetcsv($handle);
+        if ($data === false || count($data) == 1)
+        {
+            return false;
+        }
+
+        // close connection to Yahoo
+        fclose($handle);
+
+        // ensure symbol was found
+        if ($data[2] === "0.00")
+        {
+            return false;
+        }
+
+        // return stock as an associative array
+        return [
+            "symbol" => $data[0],
+            "name" => $data[1],
+            "price" => $data[2],
+        ];
+    }
+
+    /**
      * Executes SQL statement, possibly with parameters, returning
      * an array of all rows in result set or false on (non-fatal) error.
      */
@@ -71,7 +121,7 @@
                 $handle = new PDO("mysql:dbname=" . DATABASE . ";host=" . SERVER, USERNAME, PASSWORD);
 
                 // ensure that PDO::prepare returns false when passed invalid SQL
-                $handle->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+                $handle->setAttribute(PDO::ATTR_EMULATE_PREPARES, false); 
             }
             catch (Exception $e)
             {
@@ -146,8 +196,7 @@
      */
     function render($template, $values = [])
     {
-
-            // if template exists, render it
+        // if template exists, render it
         if (file_exists("../templates/$template"))
         {
             // extract variables into local scope
@@ -161,20 +210,6 @@
 
             // render footer
             require("../templates/footer.php");
-        }
-        elseif ($template=="main.php")
-        {
-            // extract variables into local scope
-            extract($values);
-
-            // render header
-            require("./templates/header.php");
-
-            // render template
-            require("./templates/$template");
-
-            // render footer
-            require("./templates/footer.php");
         }
 
         // else err
