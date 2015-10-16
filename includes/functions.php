@@ -121,7 +121,7 @@
                 $handle = new PDO("mysql:dbname=" . DATABASE . ";host=" . SERVER, USERNAME, PASSWORD);
 
                 // ensure that PDO::prepare returns false when passed invalid SQL
-                $handle->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+                $handle->setAttribute(PDO::ATTR_EMULATE_PREPARES, false); 
             }
             catch (Exception $e)
             {
@@ -196,8 +196,7 @@
      */
     function render($template, $values = [])
     {
-
-            // if template exists, render it
+        // if template exists, render it
         if (file_exists("../templates/$template"))
         {
             // extract variables into local scope
