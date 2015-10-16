@@ -14,8 +14,8 @@
     error_reporting(E_ALL);
 
     // requirements
-    require("admin_constants.php");
-    require("admin_functions.php");
+    require("constants.php");
+    require("functions.php");
 
     // enable sessions
     session_start();

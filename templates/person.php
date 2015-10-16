@@ -82,7 +82,7 @@ echo "<br>";
 
 /* query: select a person's awards in the database  */
 $id_person = $_GET["id"];
-$query = "SELECT  name_award, date_award,name_kingdom from Persons, Awards_Persons, Awards, Kingdoms
+$query = "SELECT name_person, name_award, date_award,name_kingdom from Persons, Awards_Persons, Awards, Kingdoms
    WHERE Persons.id_person = Awards_Persons.id_person
          and Awards_Persons.id_award = Awards.id_award
          and Awards.id_kingdom = Kingdoms.id_kingdom
@@ -106,8 +106,8 @@ if (isset($POST["msgSubmit"])) {
   $email = $_POST['email'];
   $msgBody = $_POST['msgBody'];
   $from = 'forms@oopgleannabhann.net';
-  $to = 'webminister@gleannabhann.net' . ', ';
-//  $to .= 'obsidian@gleannabhann.net';
+  $to = 'obsidian@gleannabhann.net' . ', ';
+  $to .= 'webminister@gleannabhann.net';
   $subject = $_POST['subject'];
   $body = "From: $name\n Email: $email\n Message:\n $msgBody";
 
@@ -154,10 +154,7 @@ if (!$errName && !$errEmail && !$errMessage) {
     <div class="form-group">
       <label for="subject" class="col-sm-2 col-md-3 control-label">Subject:</label>
       <div class="input-group col-sm-10 col-md-6">
-        <input size="60" type="text" class="form-control" id="subject" name="subject" 
-             value="<?php 
-                         echo "Record correction for $name_person (ID $id_person)"; 
-                    ?>">
+        <input size="60" type="text" class="form-control" id="subject" name="subject" value='<?php echo "Record Correction Request for $name_person (ID $id_person)"; ?>'>
       </div>
     </div>
     <div class="form-group">

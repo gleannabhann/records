@@ -7,7 +7,7 @@ or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result)) {
 //    extract($row);
     $init = $row['Initial'];
-    $link = "<a href='public/list.php?initial=$init'>$init</a>&nbsp";
+    $link = "<a href='./list.php?initial=$init'>$init</a>&nbsp";
     echo $link;
 }
 ?>

@@ -162,20 +162,6 @@
             // render footer
             require("../templates/footer.php");
         }
-        elseif ($template=="main.php")
-        {
-            // extract variables into local scope
-            extract($values);
-
-            // render header
-            require("./templates/header.php");
-
-            // render template
-            require("./templates/$template");
-
-            // render footer
-            require("./templates/footer.php");
-        }
 
         // else err
         else
