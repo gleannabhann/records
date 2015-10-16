@@ -106,7 +106,8 @@ if (isset($POST["msgSubmit"])) {
   $email = $_POST['email'];
   $msgBody = $_POST['msgBody'];
   $from = 'forms@oopgleannabhann.net';
-  $to = 'webminister@gleannabhann.net' . ', ';
+  $to = 'webminister@gleannabhann.net';
+//  $to = 'webminister@gleannabhann.net' . ', ';
 //  $to .= 'obsidian@gleannabhann.net';
   $subject = $_POST['subject'];
   $body = "From: $name\n Email: $email\n Message:\n $msgBody";
