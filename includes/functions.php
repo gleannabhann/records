@@ -234,5 +234,14 @@
             trigger_error("Invalid template: $template", E_USER_ERROR);
         }
     }
-
-?>
+    
+    /* Test to see if user is logged in.  Until login is functional, assume true.
+     * 
+     */
+    function is_logged_in() {
+        return true;
+        if ($_SESSION != NULL) {
+            return true; 
+        }
+        else return false;
+    }
