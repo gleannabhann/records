@@ -21,20 +21,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         apologize("Your password and confirmation don't match!");
         exit;
     }
+    // Temporarily disabled since we don't have the email running yet
+    /*
     else if ($_POST["key"] != crypt($_POST["email"]))
     {
         apologize("You entered an invalid registration key!");
         exit;
     }
+     */
     else
     {
       // connect to the db
-      $cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
+      $cxn = mysqli_connect (SERVER,DB_USER,DB_PWD,DATABASE)
       or die ("message");
       $hash = crypt($_POST["password"] . SALT);
       // TODO the query below doesn't pass muster per PHP
-      // $query = "INSERT INTO `WebUsers`(`name_webuser`, `password_webuser`, `name_mundane_webuser`, `email_webuser`, `id_person`)
-      // VALUES ($_POST['username'], $hash, $_POST['mundaneName'], $_POST['email'], $_POST['personId'])";
+      // PARTIAL SOLUTION: Need to use the _herald account; the _browse account 
+      //                   doesn't have insertion privileges.
+      // $query = "INSERT INTO `WebUsers`
+      // VALUES ('',$_POST['username'], $hash, $_POST['mundaneName'], $_POST['email'], $_POST['personId'])";
       $result = mysqli_query ($cxn, $query)
       or die ("Couldn't execute query");
 
@@ -44,6 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         }
         else
         {
+            echo "<h1>Got past query</h1>"
             $query ="SELECT LAST_INSERT_ID() AS id";
             $result = mysqli_query ($cxn, $query)
             or die ("Couldn't execute query");
