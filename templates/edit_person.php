@@ -1,31 +1,39 @@
-
-<div class="container">
 <?php
-// ASSUME: id_person is passed as parameter as ?id=X
-// PURPOSE: This script will display the person's information in editable boxes.
-//          Upon pressing the submit button the data will be updated in
-//             edit_person_update.php
-/* connect to the database */
-//$cxn = mysqli_connect ("localhost", "oop", "ooppassword","oop")
-//or die ("message");
-$cxn = mysqli_connect (SERVER,DB_USER,DB_PWD,DATABASE)
-or die ("message");
+// Purpose: to display all data for person we're about to edit, 
+// including edit, delete, and add more links for awards
+// 
+// Structure will consist of form (and form processing) for 
+// personal information, above a list of awards etc.  Each award 
+// will have edit/delete links, and there will be an add award at
+//  the top of the list.
+//
+// Eventually the same structure will be added for authorization/warrants.
+// ASSUMED: This page will only be reached by somebody who has the relevant
+//          access privileges
+// TODO: Check the page can only be accessed by people with proper privs.
 
-// If person is not logged in they should see a simple No Access message
-if (is_logged_in()){
-   $id_person = $_GET["id"];
-   if ($id_person != "") {
-      // Process person
-      // 1: Get Data from db, set variables
-      // 2: Close php briefly, build form, back to php.
-      //    Note: actually updating the infor will be done in edit_person_update.php
-   } else {
-       // TODO: Error; no person chosen
-   }
+
+if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
+    // We got here through the edit link on person.php
+    echo "Arrived from person.php";
+    $id_person = $_GET["id"];
+} elseif ((isset($_POST['id'])) && (is_numeric($_POST['id']))) {
+    // We got here from form submission
+    echo "Arrived as form submission";
+    $id_person = $_POST['id'];
 } else {
-    //TODO: Blank out page, explain no access is available.
+    echo '<p class="error"> This page has been accessed in error.</p>';
+    require("../templates/footer.php");
+    exit();
 }
-    
 
+$cxn = open_db_browse();
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+// Process form by updating the database
+    
+}
+// Display form with all person's info.
+
+// Display person's awards with edit & delete link for each award
 ?>
-<!-- end of php -->

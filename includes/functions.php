@@ -58,15 +58,6 @@
         return $connection;
     }
     
-    /*
-     * Creates a database connection using the edit/update account
-     */
-    function open_db_update(){
-        $connection =  mysqli_connect (SERVER,DB_USER,DB_PWD,DATABASE)
-                       or die ("message");
-        return $connection;
-    }
-    
     /**
      * Redirects user to destination, which can be
      * a URL or a relative path on the local host.
@@ -152,8 +143,9 @@
      */
     function is_logged_in() {
         return true;
-        if ($_SESSION != NULL) {
+/*        if ($_SESSION != NULL) {
             return true; 
         }
         else return false;
+*/
     }

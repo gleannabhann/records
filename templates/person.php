@@ -13,7 +13,11 @@ while ($row = mysqli_fetch_assoc($result))
   {extract($row);
   echo "<div class='page-header'><h1>$name_person</h1><small>";
   include "../templates/warning.php"; // includes the warning text about paper precedence
-  echo "</small></div>";
+  echo "</small>";
+  if (is_logged_in()) {
+      echo "<br><a href='./edit_person.php?id=$id_person'>Edit</a>";
+  }
+  echo "</div>";
 };
 echo "
 <div class='row'>
