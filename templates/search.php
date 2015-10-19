@@ -5,10 +5,7 @@
    - k_id - restricts the kingdom to be searched (k_id=-1 means search all entries)
 */
 /* connect to the database */
-//$cxn = mysqli_connect ("localhost", "oop", "ooppassword","oop")
-//or die ("message");
-$cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
-or die ("message");
+$cxn = open_db_browse();
 // Build links to the list beginning with the appropriate initial, which is returned as $Initial
 $part_name = $_GET["name"];
 if (ISSET($_GET["k_id"])) {

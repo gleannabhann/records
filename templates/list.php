@@ -1,10 +1,7 @@
 <div class="container">
 <?php
 /* connect to the database */
-//$cxn = mysqli_connect ("localhost", "oop", "ooppassword","oop")
-//or die ("message");
-$cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
-or die ("message");
+$cxn = open_db_browse();
 /*#######################################################################################*/
 // This section wil list persons beginning with initial if initial is passed
 if (isset($_GET["initial"])) {

@@ -13,10 +13,7 @@
 
 <?php
 /* connect to the database */
-//$cxn = mysqli_connect ("localhost", "oop", "ooppassword","oop")
-//or die ("message");
-$cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
-or die ("message");
+$cxn = open_db_browse();
 
 include "alpha.php";
 
