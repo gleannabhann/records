@@ -57,7 +57,7 @@
                        or die ("message");
         return $connection;
     }
-    
+
     /**
      * Redirects user to destination, which can be
      * a URL or a relative path on the local host.
@@ -137,15 +137,17 @@
             trigger_error("Invalid template: $template", E_USER_ERROR);
         }
     }
-    
+
     /* Test to see if user is logged in.  Until login is functional, assume true.
-     * 
+     *
      */
     function is_logged_in() {
         return true;
 /*        if ($_SESSION != NULL) {
-            return true; 
+            return true;
         }
         else return false;
 */
     }
+
+    // TODO: new function, sanitize
