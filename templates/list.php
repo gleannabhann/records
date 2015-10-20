@@ -39,7 +39,7 @@ echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 include "alpha.php"; // includes the A-Z link list
 include "warning.php"; // includes the warning text about paper precedence
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
-$query = "select Persons.id_person as ip, name_person, date_award from Persons, Awards_Persons where Persons.id_person = Awards_Persons.id_person and Awards_Persons.id_award=$award";
+$query = "select Persons.id_person as ip, name_person, date_award from Persons, Persons_Awards where Persons.id_person = Persons_Awards.id_person and Persons_Awards.id_award=$award";
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result)) {

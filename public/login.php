@@ -35,7 +35,7 @@
             $row = $rows[0];
 
             // compare hash of user's input against hash that's in database
-            if (crypt($_POST["password"] . SALT) == $row["password"])
+            if (crypt($_POST["password"] . SALT) == $row["password_webuser"])
             {
 
               // regenerate the session_id because we are changing the level of
@@ -47,7 +47,7 @@
               }
 
                 // remember that user is now logged in by storing user's ID in session
-                $_SESSION["id"] = $row["id"];
+                $_SESSION["id"] = $row["id_webuser"];
 
                 // generate a key based on user_agent, user ID,
 

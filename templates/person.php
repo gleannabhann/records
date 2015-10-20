@@ -15,6 +15,7 @@ while ($row = mysqli_fetch_assoc($result))
   include "../templates/warning.php"; // includes the warning text about paper precedence
   echo "</small>";
   if (is_logged_in()) {
+      // TODO: Make this link more visible?
       echo "<br><a href='./edit_person.php?id=$id_person'>Edit</a>";
   }
   echo "</div>";
@@ -83,9 +84,9 @@ echo "<br>";
 
 /* query: select a person's awards in the database  */
 $id_person = $_GET["id"];
-$query = "SELECT  name_award, date_award,name_kingdom from Persons, Awards_Persons, Awards, Kingdoms
-   WHERE Persons.id_person = Awards_Persons.id_person
-         and Awards_Persons.id_award = Awards.id_award
+$query = "SELECT  name_award, date_award,name_kingdom from Persons, Persons_Awards, Awards, Kingdoms
+   WHERE Persons.id_person = Persons_Awards.id_person
+         and Persons_Awards.id_award = Awards.id_award
          and Awards.id_kingdom = Kingdoms.id_kingdom
          and Persons.id_person = $id_person order by date_award";
 $result = mysqli_query ($cxn, $query)
