@@ -12,7 +12,7 @@ or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result))
   {extract($row);
   echo "<div class='page-header'><h1>$name_person</h1><small>";
-  include "../templates/warning.php"; // includes the warning text about paper precedence
+  include(ROOTDIR."/templates/warning.php"); // includes the warning text about paper precedence
   echo "</small>";
   if (is_logged_in()) {
       // TODO: Make this link more visible?

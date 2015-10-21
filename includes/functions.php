@@ -26,7 +26,7 @@
      */
     function dump($variable)
     {
-        require("../templates/dump.php");
+        require(ROOTDIR."/templates/dump.php");
         exit;
     }
 
@@ -102,19 +102,19 @@
     {
 
             // if template exists, render it
-        if (file_exists("../templates/$template"))
+        if (file_exists(ROOTDIR."/templates/$template"))
         {
             // extract variables into local scope
             extract($values);
 
             // render header
-            require("../templates/header.php");
+            require(ROOTDIR."/templates/header.php");
 
             // render template
-            require("../templates/$template");
+            require(ROOTDIR."/templates/$template");
 
             // render footer
-            require("../templates/footer.php");
+            require(ROOTDIR."/templates/footer.php");
         }
         elseif ($template=="main.php")
         {
@@ -122,13 +122,13 @@
             extract($values);
 
             // render header
-            require("./templates/header.php");
+            require(ROOTDIR."/templates/header.php");
 
             // render template
-            require("./templates/$template");
+            require(ROOTDIR."/templates/$template");
 
             // render footer
-            require("./templates/footer.php");
+            require(ROOTDIR."/templates/footer.php");
         }
 
         // else err
@@ -186,6 +186,6 @@
      * Allows for more graceful exits.
      */
     function exit_with_footer(){
-        require("../templates/footer.php");
+        require(ROOTDIR."/templates/footer.php");
         exit();
     }
