@@ -30,6 +30,9 @@ $cxn = open_db_browse();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 // Process form by updating the database
+// TODO: Should only update if actual changes have been made.  
+//       How to test for that?
+    // TODO: We need to filter these variables much more carefully
     $sca_name=$_POST["SCA_name"];
     $mundane_name=$_POST["mundane_name"];
     $email = $_POST["email"];
@@ -73,6 +76,7 @@ $groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 // Display form with all person's info.
 echo '<form action="edit_person.php" method="post">';
 echo "<h2>Editing Personal Information</h2>";
+echo '<a href="person.php?id='.$id_person.'">Exit Edit Page</a>';
 echo '<input type="hidden" name="id" value="'.$person["id_person"].'">';
 echo "<table class='table table-condensed table-bordered'>";
 //<thead><td class='text-right'>Column</td><td class='text-left'>Value</td></thead>";
@@ -156,9 +160,10 @@ while ($row = mysqli_fetch_assoc($awards))
 // echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
   echo "<tr><td class='text-left'>$name_award</td><td class='text-left'>$date_award</td>";
   echo "<td><a href='./edit_person_award.php?idpa=$id_person_award'>Edit</a></td>";
-  echo "<td><a href='./delete_person_award.php?idpa=$id_person_award'>Delete</a></td>";
+  echo "<td><a href='./delete_person_award.php?id=$id_person&idpa=$id_person_award'>Delete</a></td>";
   echo "</tr>";
 };
 echo "</table>";
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
+mysqli_close ($cxn); /* close the db connection */
 ?>
