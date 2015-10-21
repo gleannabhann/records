@@ -149,5 +149,43 @@
         else return false;
 */
     }
+    
+    /*
+     * Returns the id of the webuser who is making the current change.
+     * TODO: expand to also return role, and then need to modify update_query() 
+     */
+    function get_webuser() {
+        return (1);
+        //TODO: Return the id_webuser of the person/account making the change
+    }
+    
+    /*
+     * Runs the update $query using database connection $cxn, and then logs 
+     * a copy of the update query to the transaction log.
+     * TODO: query cleaning?
+     */
+    function update_query($cxn,$query){
+        if  (mysqli_query($cxn, $query)) {
+            //echo "Record updated successfully";
+            $log = "INSERT INTO Transaction_Log VALUES ('',NOW(),"
+                    . get_webuser()
+                    . ",0,'"
+                    . addslashes($query) . "')";
+            // echo "<p>Updating the transaction log with: " . $log;
+            $result = mysqli_query($cxn, $log);
+        } else {
+            return mysqli_error($cxn);
+        }   
+        return 1;
+    }
 
     // TODO: new function, sanitize
+    
+    /*
+     * Exits the script, but only after displaying the footer.  
+     * Allows for more graceful exits.
+     */
+    function exit_with_footer(){
+        require("../templates/footer.php");
+        exit();
+    }
