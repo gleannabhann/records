@@ -11,8 +11,9 @@ $part_name = $_GET["name"];
 if (ISSET($_GET["k_id"])) {
    $k_id = $_GET["k_id"];
 } else {
-   $k_id = 13;
-//   $k_id = $HOST_KINGDOM_ID;
+//   $k_id = 13;
+//   $k_id = HOST_KINGDOM_ID;
+   $k_id=-1; 
 }
 echo "<div class='page-header'><h1>Search results for <i>$part_name</i></h1><small>";
 include "warning.php"; // includes the warning text about paper precedence
@@ -44,7 +45,11 @@ while ($row = mysqli_fetch_assoc($result)) {
     $Name = $row['name_person'];
     $ID = $row['id_person'];
     $Group = $row['name_group'];
-    $link = "<li class='list-group-item text-left'><a href='./person.php?id=$ID'>$Name</a>&nbsp-&nbsp$Group</li>";
+    if (is_logged_in()){
+        $link = "<li class='list-group-item text-left'><a href='./edit_person.php?id=$ID'>$Name</a>&nbsp-&nbsp$Group</li>";
+    } else {
+        $link = "<li class='list-group-item text-left'><a href='./person.php?id=$ID'>$Name</a>&nbsp-&nbsp$Group</li>";
+    }
 //    $link = "<li> $Name </li>";
     echo "$link";
 }

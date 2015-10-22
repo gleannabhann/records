@@ -5,7 +5,19 @@
 $cxn = open_db_browse();
 
 /* query: select a person's name for the header */
-$id_person = $_GET["id"];
+if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
+    // We got here through a search link or directly link on person.php
+    // echo "Arrived from person.php";
+    $id_person = $_GET["id"];
+} elseif ((isset($_POST['id'])) && (is_numeric($_POST['id']))) {
+    // We got here from form submission after person reported correction
+    // echo "Arrived as form submission";
+    $id_person = $_POST['id'];
+} else {
+    echo '<p class="error"> This page has been accessed in error.</p>';
+    exit_with_footer();
+}
+
 $query = "SELECT name_person from Persons WHERE Persons.id_person = $id_person";
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
@@ -29,7 +41,6 @@ echo "<table class='table table-condensed table-bordered'>
 <td class='text-left'><strong>Date</strong></td></thead>";
 
 /* query: select a person's authorizations in the database */
-$id_person = $_GET["id"];
 $query = "SELECT name_combat, name_auth, expire_auth
           FROM Persons_Authorizations, Authorizations, Combat
           WHERE Persons_Authorizations.id_auth = Authorizations.id_auth
@@ -56,7 +67,6 @@ if ($matches > 0) {
 echo "<br>";
 
 /* query: select a person's marshal warrants in the database */
-$id_person = $_GET["id"];
 $query = "SELECT name_combat, name_marshal, expire_marshal
           FROM Persons_Marshals, Marshals, Combat
           WHERE Persons_Marshals.id_marshal = Marshals.id_marshal
@@ -83,7 +93,6 @@ if ($matches > 0) {
 echo "<br>";
 
 /* query: select a person's awards in the database  */
-$id_person = $_GET["id"];
 $query = "SELECT  name_award, date_award,name_kingdom from Persons, Persons_Awards, Awards, Kingdoms
    WHERE Persons.id_person = Persons_Awards.id_person
          and Persons_Awards.id_award = Awards.id_award
@@ -175,7 +184,11 @@ if (!$errName && !$errEmail && !$errMessage) {
     <div class="form-group">
       <div class="input-group col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
         <input id="msgSubmit" name="msgSubmit" type="submit" value="Send" class="btn btn-primary">
-      </div>
+        <input type="hidden" name="id" 
+             value="<?php 
+                         echo "$id_person"; 
+                    ?>">
+         </div>
     </div>
     <div class="form-group">
       <div class="input-group col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">

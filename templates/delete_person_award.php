@@ -53,7 +53,7 @@ if (!$is_deleted) { // Haven't pressed delete button yet
    echo '</form></td>';
    echo '<td><form action="edit_person.php" method="get">';
    echo '<input type="hidden" name="id" value="'.$id_person.'">';
-   echo '<input type="submit" value="Cancel class="btn btn-primary"">';
+   echo '<input type="submit" value="Cancel Deletion" class="btn btn-primary"">';
    echo '</form></td>';
 } else { // Have pressed delete button so will be deleting award
     $delete = "DELETE FROM Persons_Awards WHERE id_person_award=$id_person_award";

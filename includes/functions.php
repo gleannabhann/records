@@ -101,8 +101,21 @@
     function render($template, $values = [])
     {
 
-            // if template exists, render it
-        if (file_exists(ROOTDIR."/templates/$template"))
+        if ($template=="main.php")
+        {
+            // extract variables into local scope
+            extract($values);
+
+            // render header
+            require(ROOTDIR."/templates/header_main.php");
+
+            // render template
+            require(ROOTDIR."/templates/$template");
+
+            // render footer
+            require(ROOTDIR."/templates/footer.php");
+        }    // if template exists, render it
+        elseif (file_exists(ROOTDIR."/templates/$template"))
         {
             // extract variables into local scope
             extract($values);
@@ -116,21 +129,6 @@
             // render footer
             require(ROOTDIR."/templates/footer.php");
         }
-        elseif ($template=="main.php")
-        {
-            // extract variables into local scope
-            extract($values);
-
-            // render header
-            require(ROOTDIR."/templates/header.php");
-
-            // render template
-            require(ROOTDIR."/templates/$template");
-
-            // render footer
-            require(ROOTDIR."/templates/footer.php");
-        }
-
         // else err
         else
         {
@@ -143,6 +141,7 @@
      */
     function is_logged_in() {
         return true;
+        //return false;
 /*        if ($_SESSION != NULL) {
             return true;
         }
