@@ -112,10 +112,12 @@ include "alpha.php"; // includes the A-Z link list
 mysqli_close ($cxn); /* close the db connection */
 echo "<hr/>";
 
-if (isset($POST["msgSubmit"])) {
+// If the submit button was pressed, handle the email.
+if (isset($_POST["msgSubmit"])) {
+    //TODO: Need to filter these fields carefully.
   $name = $_POST['name'];
   $email = $_POST['email'];
-  $msgBody = $_POST['msgBody'];
+  $msgBody = wordwrap($_POST['msgBody']);
   $from = 'forms@oopgleannabhann.net';
   $to = 'webminister@gleannabhann.net';
 //  $to = 'webminister@gleannabhann.net' . ', ';
@@ -126,21 +128,22 @@ if (isset($POST["msgSubmit"])) {
   // check for name
   if (!$_POST['name']) {
     $errName = "Please enter your name";
-  } else {$errName = "NULL";}
+  } else {$errName = false;}
   if (!$_POST['email']) {
     $errEmail = "Please enter your email address";
-  } else {$errEmail = "NULL";}
-  if (!$_POST['message']) {
+  } else {$errEmail = false;}
+  if (!$_POST['msgBody']) {
     $errMessage = "Please enter information about the discrepancy or error";
-  } else {$errMessage = "NULL";}
-if (!$errName && !$errEmail && !$errMessage) {
-  if (mail ($to, $subject, $body, $from)) {
-    $emailresult = '<div class="alert alert-success">Thank you! We appreciate your feedback.</div>';
-  }
-  else {
-    $emailresult ='<div class="alert alert-danger">I was unable to send your message. Please try again.</div>';
-  }
-}
+  } else {$errMessage = false;}
+  if (!$errName && !$errEmail && !$errMessage) {
+     if (mail ($to, $subject, $body, $from)) {
+       $emailresult = '<div class="alert alert-success">Thank you! We appreciate your feedback.</div>';
+     } else {
+       $emailresult ='<div class="alert alert-danger">I was unable to send your message. Please try again.</div>';
+     } 
+   } else {
+       echo "Error with setting up email.";
+   }
 }
 
 
