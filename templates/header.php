@@ -115,13 +115,14 @@
             </form>
 
 
-          <li class="disabled"><a href="#" class="navbar-brand">About This Site</a></li>
+          <!--<li class="disabled">
+             <a href="#" class="navbar-brand">About This Site</a></li>-->
           <li class="dropdown">
             <a href="#" class="dropdown-toggle navbar-brand" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
             <ul class="dropdown-menu">
               <li><a href="http://gleannabhann.net/award-recommendation-form/" rel="external">Award Recommendation Form</a></li>
-              <li class="disabled"><a href="legal.php">Disclaimers</a></li>
-
+              <!--<li class="disabled">
+                 <a href="legal.php">Disclaimers</a></li>-->
               <li><a href="http://docs.gleannabhann.net/ws-ga-library/College%20of%20Heralds/Amethyst%20Herald" rel="external">Award Definitions</a></li>
               <li role="separator" class="divider"></li>
               <li><a href="http://gleannabhann.net" rel="external">GleannAbhann.net</a></li>
