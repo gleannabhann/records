@@ -1,8 +1,7 @@
 <?php
 
     // configuration
-    require(BOOTDIR . "/includes/config.php");
-
+    require("../includes/config.php");
     // if form was submitted
     if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
@@ -19,29 +18,29 @@
         $username = $_POST["username"];
         $password = crypt($_POST["password"], SALT);
 
-        echo "Salted input password: " . $password . "<br/>";
+        // echo "Salted input password: " . $password . "<br/>";
         // connect to the db
         $cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
         or die ("message");
 
         // pre-build the query
-        $query = "select * from webusers where name_webuser = '$username'";
+        $query = "select * from WebUsers where name_webuser = '$username'";
 
         // query database for user
         $rows = mysqli_query ($cxn, $query)
-        or die ("Couldn't execute query");
+        or die ("Couldn't execute query" . $query);
 
 
         // if we found user, check password
         if (count($rows) == 1)
         {
             // first (and only) row
-            $row = mysqli_fetch_row($rows);
+            $row = mysqli_fetch_assoc($rows);
 
-            echo $row[2];
+            //echo $row["password_webuser"];
 
             // compare hash of user's input against hash that's in database
-            if ($password == $row[2])
+            if ($password == $row["password_webuser"])
             {
 
             // regenerate the session_id because we are changing the level of
@@ -53,7 +52,7 @@
             }
 
               // remember that user is now logged in by storing user's ID in session
-              $_SESSION["id"] = $row[1];
+              $_SESSION["id"] = $row["id_webuser"];
 
               // generate a key based on user_agent, user ID,
 
@@ -63,40 +62,21 @@
               // with users browsing via TOR or via an IP pool/load balancer
               // in the mean time, a random number will do.
 
-
-              // TODO: insert additional $_SESSION variables for determining
-              // what permissions the user has
-              // ie $_SESSION["herald"] = $row["herald"] (stores a TRUE/FALSE value)
-              // $_SESSION["marshal_rapier"] = $row["marshal_rapier"] (stores a TRUE/FALSE value)
-              // etc, etc, so we can test against these variables to determine if a user
-              // should be able to modify the data.
-              /* I began writing this section, however I need to do some more
-                studying on how to obtain both the list of role types and the
-                list of webuser roles for a specific webuser. I may be overthinking this.
-
-              $cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
-              or die ("message");
-
-              $query = "SELECT * FROM webusers_roles, roles WHERE (`webusers_roles`.* id_webuser == ?)", $_SESSION["id"]);
-
-              // query database for user
-              $rows = mysqli_query ($cxn, $query)
-              or die ("Couldn't execute query");
-
-              // test the results for current matches
-              foreach ($rows as $row) {
-                $expire = (strtotime($row["role_expire"]) - time()); // calc diff btwn role_expire and now
-                if ($expire >= 0)                                    // non-expired == positive diff
-                {
-                  foreach($rows as $role) //We're looking for results in id_role and id_roletype columns
-                  {
-                    if $row[] //brain has gone to mush and I stopped here and commented the entire section
-                  }
+              $query = "SELECT RoleTypes.id_roletype, name_roletype, expire_role, perm_role "
+                      . "FROM Webusers_Roles, Roles, RoleTypes "
+                      . "WHERE Webusers_Roles.id_role = Roles.id_role "
+                      . "AND Roles.id_roletype = RoleTypes.id_roletype "
+                      . "AND expire_role > CURDATE() "
+                      . "AND id_webuser = ".$_SESSION["id"];
+              // Set permissions in $_SESSION: indexed by name of role, value is level of permission
+              // Note that only permissions that haven't expired yet are included.
+              // In query, the expire_role and id_roletype were included for debugging only.
+              $result = mysqli_query($cxn, $query) or die ("Couldn't execute query");
+                while ($row = mysqli_fetch_assoc($result)) {
+                    extract($row);
+                    //echo "Adding $perm_role to variable $name_roletype";
+                    $_SESSION[$name_roletype] = $perm_role;
                 }
-
-              }
-
-              */
 
               // TODO: set expirations. Need: destroy on browser close; expire after
               // 14 days, if (using a public computer) {expire after 4 hours}

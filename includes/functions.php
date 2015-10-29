@@ -140,7 +140,7 @@
      *
      */
     function is_logged_in() {
-        return true;
+        return isset($_SESSION["id"]);
         //return false;
 /*        if ($_SESSION != NULL) {
             return true;
@@ -154,7 +154,7 @@
      * TODO: expand to also return role, and then need to modify update_query() 
      */
     function get_webuser() {
-        return (1);
+        return $_SESSION["id"];
         //TODO: Return the id_webuser of the person/account making the change
     }
     

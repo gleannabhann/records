@@ -49,8 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         }
         else
         {
-            echo "<h1>Got past query</h1>"
-            $query ="SELECT LAST_INSERT_ID() AS id";
+            echo "<h1>Got past query</h1>"; 
+           $query ="SELECT LAST_INSERT_ID() AS id";
             $result = mysqli_query ($cxn, $query)
             or die ("Couldn't execute query");
             $id = $result[0]["id"];

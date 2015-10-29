@@ -119,7 +119,7 @@
             <?php
             if (isset($_SESSION["id"]))
             {
-              echo '<li><a href="logout.php" class="navbar-brand">Logout</a></li>';
+              echo '<li><a href="public/logout.php" class="navbar-brand">Logout</a></li>';
             }
             ?>
 

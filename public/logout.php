@@ -1,7 +1,7 @@
 <?php
 
     // configuration
-    require(BOOTDIR . "/includes/config.php"); 
+    require("../includes/config.php"); 
 
     // log out current user, if any
     logout();
