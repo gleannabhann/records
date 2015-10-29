@@ -1,27 +1,30 @@
 <?php
-// Purpose: to display all data for person we're about to edit, 
+// Purpose: to display all data for person we're about to edit,
 // including edit, delete, and add more links for awards
-// 
-// Structure will consist of form (and form processing) for 
-// personal information, above a list of awards etc.  Each award 
+//
+// Structure will consist of form (and form processing) for
+// personal information, above a list of awards etc.  Each award
 // will have edit/delete links, and there will be an add award at
 //  the top of the list.
 //
 // Eventually the same structure will be added for authorization/warrants.
 // ASSUMED: This page will only be reached by somebody who has the relevant
 //          access privileges
-// TODO: Check the page can only be accessed by people with proper privs.
 
 
-if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
+// Checks for privs is conducted by code in config.php.
+
+
+
+if ((isset($_GET['id'])) && (is_numeric($_GET['id'])) && (isset($_SESSION['id']))) {
     // We got here through the edit link on person.php
     // echo "Arrived from person.php";
     $id_person = $_GET["id"];
-} elseif ((isset($_POST['id'])) && (is_numeric($_POST['id']))) {
+} elseif ((isset($_POST['id'])) && (is_numeric($_POST['id'])) && (isset($_SESSION['id']))) {
     // We got here from form submission
     // echo "Arrived as form submission";
     $id_person = $_POST['id'];
-} else {
+} else  {
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();
 }
@@ -30,7 +33,7 @@ $cxn = open_db_browse();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 // Process form by updating the database
-// TODO: Should only update if actual changes have been made.  
+// TODO: Should only update if actual changes have been made.
 //       How to test for that?
     // TODO: We need to filter these variables much more carefully
     $sca_name=$_POST["SCA_name"];
@@ -39,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     $mem_num = $_POST["mem_num"];
     $mem_exp = $_POST["mem_exp"];
     $id_group = $_POST["id_group"];
-  // TODO: Need to worry about expiry date: for browsers not using 
+  // TODO: Need to worry about expiry date: for browsers not using
   // the date type in the form, dates have to be entered as yyyy-mm-dd
     $update = "UPDATE Persons SET ";
     if (!empty($sca_name)){ $update=$update . "name_person='" . $sca_name . "'" ;}

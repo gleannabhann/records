@@ -1,7 +1,7 @@
 <?php
 
     // configuration
-    require("../includes/config.php");
+    require(BOOTDIR . "/includes/config.php");
 
     // if form was submitted
     if ($_SERVER["REQUEST_METHOD"] == "POST")
@@ -17,12 +17,15 @@
         }
 
         $username = $_POST["username"];
+        $password = crypt($_POST["password"], SALT);
+
+        echo "Salted input password: " . $password . "<br/>";
         // connect to the db
         $cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
         or die ("message");
 
-        $query = "SELECT * FROM webusers WHERE name_webuser = $username";
-
+        // pre-build the query
+        $query = "select * from webusers where name_webuser = '$username'";
 
         // query database for user
         $rows = mysqli_query ($cxn, $query)
@@ -33,10 +36,12 @@
         if (count($rows) == 1)
         {
             // first (and only) row
-            $row = $rows[0];
+            $row = mysqli_fetch_row($rows);
+
+            echo $row[2];
 
             // compare hash of user's input against hash that's in database
-            if (crypt($_POST["password"] . SALT) == $row["password_webuser"])
+            if ($password == $row[2])
             {
 
             // regenerate the session_id because we are changing the level of
@@ -48,11 +53,11 @@
             }
 
               // remember that user is now logged in by storing user's ID in session
-              $_SESSION["id"] = $row["id_webuser"];
+              $_SESSION["id"] = $row[1];
 
               // generate a key based on user_agent, user ID,
 
-              $_SESSION["key"] = random_int(0, 999999); // we need to come up with a unique session key
+              $_SESSION["key"] = rand(0, 999999); // we need to come up with a unique session key
               // built from various bits relevant to the session, such as HTTP_USER_AGENT
               // and potentially also the IP address, though this can cause problems
               // with users browsing via TOR or via an IP pool/load balancer

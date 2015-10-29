@@ -24,11 +24,11 @@ or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result))
   {extract($row);
   echo "<div class='page-header'><h1>$name_person</h1><small>";
-  include(ROOTDIR."/templates/warning.php"); // includes the warning text about paper precedence
+  include("../templates/warning.php"); // includes the warning text about paper precedence
   echo "</small>";
-  if (is_logged_in()) {
+  if (isset($_SESSION['id'])) {
       // TODO: Make this link more visible?
-      echo "<br><a href='./edit_person.php?id=$id_person'>Edit</a>";
+echo "<br><a href='./edit_person.php?id=$id_person'>Edit this record</a>";
   }
   echo "</div>";
 };
@@ -140,7 +140,7 @@ if (isset($_POST["msgSubmit"])) {
        $emailresult = '<div class="alert alert-success">Thank you! We appreciate your feedback.</div>';
      } else {
        $emailresult ='<div class="alert alert-danger">I was unable to send your message. Please try again.</div>';
-     } 
+     }
    } else {
        echo "Error with setting up email.";
    }
@@ -169,9 +169,9 @@ if (isset($_POST["msgSubmit"])) {
     <div class="form-group">
       <label for="subject" class="col-sm-2 col-md-3 control-label">Subject:</label>
       <div class="input-group col-sm-10 col-md-6">
-        <input size="60" type="text" class="form-control" id="subject" name="subject" 
-             value="<?php 
-                         echo "Record correction for $name_person (ID $id_person)"; 
+        <input size="60" type="text" class="form-control" id="subject" name="subject"
+             value="<?php
+                         echo "Record correction for $name_person (ID $id_person)";
                     ?>">
       </div>
     </div>
@@ -187,9 +187,9 @@ if (isset($_POST["msgSubmit"])) {
     <div class="form-group">
       <div class="input-group col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
         <input id="msgSubmit" name="msgSubmit" type="submit" value="Send" class="btn btn-primary">
-        <input type="hidden" name="id" 
-             value="<?php 
-                         echo "$id_person"; 
+        <input type="hidden" name="id"
+             value="<?php
+                         echo "$id_person";
                     ?>">
          </div>
     </div>

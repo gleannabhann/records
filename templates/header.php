@@ -115,8 +115,12 @@
             </form>
 
 
-          <!--<li class="disabled">
-             <a href="#" class="navbar-brand">About This Site</a></li>-->
+          <?php
+          if (isset($_SESSION["id"]))
+          {
+            echo '<li><a href="logout.php" class="navbar-brand">Logout</a></li>';
+          }
+          ?>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle navbar-brand" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
             <ul class="dropdown-menu">

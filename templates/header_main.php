@@ -85,6 +85,7 @@
             <a class="navbar-brand" href="../">Home</a>
           </div>
 
+
       <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <!-- (Disabled until needed)  <ul class="nav navbar-nav">
@@ -114,6 +115,13 @@
               <button type="submit" class="btn btn-default">Submit</button>
             </form>
 
+            <!-- display logout button if user is logged in -->
+            <?php
+            if (isset($_SESSION["id"]))
+            {
+              echo '<li><a href="logout.php" class="navbar-brand">Logout</a></li>';
+            }
+            ?>
 
           <!-- <li class="disabled">
              <a href="#" class="navbar-brand">About This Site</a></li>-->
