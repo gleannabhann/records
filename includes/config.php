@@ -21,11 +21,11 @@
     session_start();
 
    // require authentication for most pages
-    if (!preg_match("{(?:login|logout|register|person|list|search|index)\.php$}", $_SERVER["PHP_SELF"]))
+    if (preg_match("{^(edit|add|delete)}", $_SERVER["PHP_SELF"]))
     {
         if (empty($_SESSION["id"]))
         {
-            redirect("index.php");
+            redirect("/index.php");
         }
     }
     

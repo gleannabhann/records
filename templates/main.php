@@ -33,3 +33,5 @@ Type a partial name in the box to search:
           </div> <!-- ./col-md-8 -->
 </div> <!-- ./row -->
 <br/>
+
+<a href="public/list_site.php">List currently known sites</a>
