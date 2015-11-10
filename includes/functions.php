@@ -135,7 +135,26 @@
             trigger_error("Invalid template: $template", E_USER_ERROR);
         }
     }
+    
+    /* Returns permissions level for $role 
+     * 0 means you can read the public data only
+     * 1 means you can read the records data 
+     * 2 means you can read and add to the records
+     * 3 means you can read, add, and update the records 
+     * 4 means you can read, add, and update records, as well as read userdata. 
+     * 5 means you can invite new users in addition to everything 4 can do. 
+     * 6 means you can do everything 5 can do and you can edit userdata
+     */
 
+    function permissions($role) {
+        if (isset($_SESSION["Admin"])) $perm=$_SESSION["Admin"];
+        if (is_logged_in()) {
+            if (isset($_SESSION[$role])) {
+                return max($_SESSION[$role]$perm);
+            }
+        };
+        return 0;
+    }
     /* Test to see if user is logged in.  Until login is functional, assume true.
      *
      */

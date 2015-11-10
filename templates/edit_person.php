@@ -31,7 +31,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id'])) && (isset($_SESSION['id'])
 
 $cxn = open_db_browse();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
 // Process form by updating the database
 // TODO: Should only update if actual changes have been made.
 //       How to test for that?
@@ -144,6 +144,7 @@ echo '</form>';
 
 echo "<p>";
 
+if (permissions("Herald")>= 3){
 echo "<h2>Editing awards</h2>";
 echo "<a href='./add_person_award.php?id=$id_person'>Add a new award</a>";
 echo "<table class='table table-condensed table-bordered'>
@@ -168,5 +169,6 @@ while ($row = mysqli_fetch_assoc($awards))
 };
 echo "</table>";
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
+}
 mysqli_close ($cxn); /* close the db connection */
 ?>

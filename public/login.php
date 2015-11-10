@@ -71,12 +71,15 @@
               // Set permissions in $_SESSION: indexed by name of role, value is level of permission
               // Note that only permissions that haven't expired yet are included.
               // In query, the expire_role and id_roletype were included for debugging only.
+              $max_perm=0;
               $result = mysqli_query($cxn, $query) or die ("Couldn't execute query");
                 while ($row = mysqli_fetch_assoc($result)) {
                     extract($row);
                     //echo "Adding $perm_role to variable $name_roletype";
                     $_SESSION[$name_roletype] = $perm_role;
+                    $max_perm=max($max_perm, $perm_role);
                 }
+                $_SESSION["Any"]=$max_perm;
 
               // TODO: set expirations. Need: destroy on browser close; expire after
               // 14 days, if (using a public computer) {expire after 4 hours}

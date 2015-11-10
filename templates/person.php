@@ -26,7 +26,7 @@ while ($row = mysqli_fetch_assoc($result))
   echo "<div class='page-header'><h1>$name_person</h1><small>";
   include("../templates/warning.php"); // includes the warning text about paper precedence
   echo "</small>";
-  if (isset($_SESSION['id'])) {
+  if (permissions("Herald")>= 3) {
       // TODO: Make this link more visible?
 echo "<br><a href='./edit_person.php?id=$id_person'>Edit this record</a>";
   }

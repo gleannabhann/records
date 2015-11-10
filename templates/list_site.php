@@ -8,6 +8,9 @@ $cxn = open_db_browse();
 echo "<div class='page-header'><h1>Sites Sorted by State</h1><small>";
 echo "</small></div>"; //Customize the page header
 
+//echo "is_logged_in() returns ". is_logged_in()."<br>";
+//echo "permissions(Sites) returns " . permissions("Sites")."<br>";
+
 $query = "select @rn:=@rn+1 as row_number, s.* from Sites s, (SELECT @rn:=0) r;";
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
@@ -25,7 +28,7 @@ echo "<table class='table table-condensed table-bordered'>
 <td class='text-left' style=\"width:20%\"><strong>Area</strong></td>
 <td class='text-left' style=\"width:10%\"><strong>Contact</strong></td>";
 // TODO: replace is_logged_in() with is_site_admin() permissions check
-if (is_logged_in()){
+if (permissions("Sites") >= 3){
     "<td class='text-left' style=\"width:5%\"><strong></strong></td>";
 };
 echo " </thead>";
@@ -40,9 +43,9 @@ while ($row = mysqli_fetch_assoc($result)) {
     <td class='text-left' style=\"width:15%\">$rates_site</td>
     <td class='text-left' style=\"width:20%\">$area_site</td>
     <td class='text-left' style=\"width:10%\">$contact_site</td>";
-    if (is_logged_in()){
+    if (permissions("Sites") >= 3){
         echo "<td class='text-left' style=\"width:5%\">
-        <a href=\"\">Edit</a> &nbsp <a href=\"\">Delete</a>
+        <a href=\"./edit_site.php?id=$id_site\">Edit</a> &nbsp <a href=\"\">Delete</a>
         </td>";
     };
     echo "</tr>";
