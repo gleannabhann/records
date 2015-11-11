@@ -147,12 +147,13 @@
      */
 
     function permissions($role) {
-        if (isset($_SESSION["Admin"])) $perm=$_SESSION["Admin"];
+        $perm =0;
+        if (isset($_SESSION["Admin"])) {$perm=$_SESSION["Admin"];}
         if (is_logged_in()) {
-            if (isset($_SESSION[$role])) {
-                return max($_SESSION[$role]$perm);
+            if (isset($_SESSION[$role])  && (is_numeric($_SESSION[$role]))) {
+                return max($_SESSION[$role],$perm);
             }
-        };
+        }
         return 0;
     }
     /* Test to see if user is logged in.  Until login is functional, assume true.

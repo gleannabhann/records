@@ -11,7 +11,7 @@ echo "</small></div>"; //Customize the page header
 //echo "is_logged_in() returns ". is_logged_in()."<br>";
 //echo "permissions(Sites) returns " . permissions("Sites")."<br>";
 
-$query = "select @rn:=@rn+1 as row_number, s.* from Sites s, (SELECT @rn:=0) r;";
+$query = "select @rn:=@rn+1 as row_number, s.* from Sites s, (SELECT @rn:=0) r order by active_site desc;";
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 echo "
@@ -35,20 +35,29 @@ echo " </thead>";
 
 while ($row = mysqli_fetch_assoc($result)) {
     extract($row);
-    echo "<tr>
-    <td class='text-left' style=\"width:5%\"> $row_number</td>
-    <td class='text-left' style=\"width:15%\">$name_site</td>
-    <td class='text-left' style=\"width:25%\">$facilities_site</td>
-    <td class='text-left' style=\"width:5%\"> $capacity_site</td>
-    <td class='text-left' style=\"width:15%\">$rates_site</td>
-    <td class='text-left' style=\"width:20%\">$area_site</td>
-    <td class='text-left' style=\"width:10%\">$contact_site</td>";
-    if (permissions("Sites") >= 3){
-        echo "<td class='text-left' style=\"width:5%\">
-        <a href=\"./edit_site.php?id=$id_site\">Edit</a> &nbsp <a href=\"\">Delete</a>
-        </td>";
-    };
-    echo "</tr>";
+    if (($active_site > 0) || (permissions("Sites") >= 3)) {
+        //TODO: Indicate if site is inactive
+        echo "<tr>";
+        echo "<td class='text-left' style=\"width:5%\"> $row_number</td>";
+        if ($active_site) {
+                echo "<td class='text-left' style=\"width:15%\">$name_site";}
+            else {
+                echo "<td class='text-left' style=\"width:15%\">$name_site (INACTIVE)";
+            }   
+        if ($url_site !="") echo "<a href=\"$url_site\">Link</a>";
+        echo "</td>";
+        echo "<td class='text-left' style=\"width:25%\">$facilities_site</td>";
+        echo "<td class='text-left' style=\"width:5%\"> $capacity_site</td>";
+        echo "<td class='text-left' style=\"width:15%\">$rates_site</td>";
+        echo "<td class='text-left' style=\"width:20%\">$area_site</td>";
+        echo "<td class='text-left' style=\"width:10%\">$contact_site</td>";
+        if (permissions("Sites") >= 3){
+            echo "<td class='text-left' style=\"width:5%\">
+            <a href=\"./edit_site.php?id=$id_site\">Edit</a> &nbsp <a href=\"\">Delete</a>
+            </td>";
+        };
+        echo "</tr>";
+    }
 }
 
 echo "</table>";
