@@ -175,10 +175,12 @@ echo '<tr><td class="text-right">Zip<br>(abbreviated):</td><td><input type="text
      . $zip_site.'"></td></tr>';
 /*****************************************************************************/
 $varname="active_site";
-if (isset($_POST[$varname])) {
-    if ($_POST[$varname]=="Yes") { $active_site=1;}
-    else {$active_site=0;}
-    //$active_site=$_POST[$varname];
+if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+    if (isset($_POST[$varname])) {
+        $active_site=1;
+    } else {
+        $active_site=0;
+    }
 } else {
     $active_site=$site[$varname];
 }
@@ -250,10 +252,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     if ($active_site!= $site["active_site"]) 
         {$update=$update . ", active_site=$active_site ";}
     $update=$update. ", verified_site=curdate() WHERE id_site=" .$id_site;
-    echo "<p>Query is " . $update . "<p>";
-    echo "Value of $active_site is ".$active_site
-            ." and from post is ".$_POST["active_site"]
-            ." and from query is ".$site["active_site"]."<p>";
+//    echo "<p>Query is " . $update . "<p>";
+//    echo "Value of $active_site is ".$active_site
+//            ." and from query is ".$site["active_site"]."<p>";
     $result=update_query($cxn, $update);
     if ($result !== 1) {echo "Error updating record: " . mysqli_error($cxn);}
 }
