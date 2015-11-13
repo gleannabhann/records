@@ -148,10 +148,12 @@
 
     function permissions($role) {
         $perm =0;
-        if (isset($_SESSION["Admin"])) {$perm=$_SESSION["Admin"];}
         if (is_logged_in()) {
+            if (isset($_SESSION["Admin"])) {$perm=$_SESSION["Admin"];}
             if (isset($_SESSION[$role])  && (is_numeric($_SESSION[$role]))) {
                 return max($_SESSION[$role],$perm);
+            } else {
+                return $perm;
             }
         }
         return 0;
