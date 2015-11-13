@@ -20,37 +20,7 @@ if (permissions("Sites")>= 3) {
 
 $cxn = open_db_browse();
 
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-// Process form by updating the database
-// TODO: Should only update if actual changes have been made.
-//       How to test for that?
-    // TODO: We need to filter these variables much more carefully
-/*    $sca_name=$_POST["SCA_name"];
-    $mundane_name=$_POST["mundane_name"];
-    $email = $_POST["email"];
-    $mem_num = $_POST["mem_num"];
-    $mem_exp = $_POST["mem_exp"];
-    $id_group = $_POST["id_group"];
-  // TODO: Need to worry about expiry date: for browsers not using
-  // the date type in the form, dates have to be entered as yyyy-mm-dd
-    $update = "UPDATE Persons SET ";
-    if (!empty($sca_name)){ $update=$update . "name_person='" . $sca_name . "'" ;}
-if (!empty($mundane_name)) {$update=$update . ", name_mundane_person='" . $mundane_name ."' ";}
-    if (!empty($email)) {$update=$update . ", email_person='" . $email."' ";}
-    if (!empty($mem_num)) {$update=$update . ", membership_person=" . $mem_num." ";}
-    if (!empty($mem_exp)) {$update=$update . ", membership_expire_person='" . $mem_exp."' ";}
-    if (!empty($id_group)) {$update=$update . ", id_group = " . $id_group;}
-    $update=$update. " WHERE id_person=" .$id_person;
-    // echo "<p>Query is " . $update . "<p>";
-    $result=update_query($cxn, $update);
-    if ($result !== 1) {echo "Error updating record: " . mysqli_error($cxn);}
-*/
-}
-
-echo "
-<div class='row'>
-  <div class='col-md-8 col-md-offset-2'>";
+echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 
 $query = "SELECT * from Sites where id_site = $id_site;";
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
@@ -59,12 +29,12 @@ if (mysqli_num_rows($result)==1) {
 } else {
     exit_with_footer();
 }
-
+// NOTE: By building the site first, we've populated all the variables.
 // Display form with all person's info.
 echo '<form action="edit_site.php" method="post">';
 echo "<h2>Editing Event Site Information</h2>";
 //echo '<a href="list_site.php">Exit Edit Page</a>';
-echo '<input type="hidden" name="id" value="'.$site["id_site"].'">';
+echo '<input type="hidden" name="id" value="'.$id_site.'">';
 echo "<table class='table table-condensed table-bordered'>";
 //<thead><td class='text-right'>Column</td><td class='text-left'>Value</td></thead>";
 
@@ -77,7 +47,7 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 }
 echo '<tr><td class="text-right">Name of Site:</td><td><input type="text" '
      . 'name="'.$varname.'" size="50" maxlength="256" value="'
-     . $name_site.'"></td></tr>';
+     . $name_site.'" required></td></tr>';
 /*****************************************************************************/
 $varname="url_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -85,149 +55,208 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $url_site=$site[$varname];
 }
-echo '<tr><td class="text-right">URL of Site:</td><td><input type="text" '
+echo '<tr><td class="text-right">URL of Site:</td><td><input type="url" '
      . 'name="'.$varname.'" size="50" maxlength="256" value="'
-     . $url_site.'"></td></tr>';
+     .$url_site.'"></td></tr>';
 /*****************************************************************************/
 $varname="facilities_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-   $facilities_site=$_POST[$varname];
+    $facilities_site=$_POST[$varname];
 } else {
-   $facilities_site=$site[$varname];
+    $facilities_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Facilities/Amenities:</td>
-<td><textarea '.' name="'.$varname.'" cols="50" rows="4">'.$facilities_site.'</textarea>
-</td></tr>';
-
+echo '<tr><td class="text-right">Facilities:</td>"'
+     . '<td><textarea '
+     . 'name="'.$varname.'" rows="3" cols="50">'
+     . $facilities_site.'</textarea></td></tr>';
 /*****************************************************************************/
 $varname="capacity_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-   $capacity_site=$_POST[$varname];
+    $capacity_site=$_POST[$varname];
 } else {
-   $capacity_site=$site[$varname];
+    $capacity_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Capacity of Site:</td><td><input type="text" '
-    . 'name="'.$varname.'" size="50" maxlength="256" value="'
-    . $capacity_site.'"></td></tr>';
-
+echo '<tr><td class="text-right">Capacity:</td><td><input type="number" '
+     . 'name="'.$varname.'" value="'
+     . $capacity_site.'"></td></tr>';
 /*****************************************************************************/
 $varname="rates_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-   $rates_site=$_POST[$varname];
+    $rates_site=$_POST[$varname];
 } else {
-   $rates_site=$site[$varname];
+    $rates_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Rental Rates:</td><td><textarea '
-    . 'name="'.$varname.'" cols="50" rows="4">'
-    . $rates_site.'</textarea></td></tr>';
+echo '<tr><td class="text-right">Rates:</td>'
+     . '<td><textarea '
+     . 'name="'.$varname.'" rows="3" cols="50">'
+     . $rates_site.'</textarea></td></tr>';
 /*****************************************************************************/
 $varname="area_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-   $area_site=$_POST[$varname];
+    $area_site=$_POST[$varname];
 } else {
-   $area_site=$site[$varname];
+    $area_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Location Description:</td><td><input type="text" '
-    . 'name="'.$varname.'" size="50" maxlength="256" value="'
-    . $area_site.'"></td></tr>';
-
+echo '<tr><td class="text-right">Area<br> (Deprecated by address):</td>'
+     . '<td><textarea '
+     . 'name="'.$varname.'" rows="2" cols="50">'
+     . $area_site.'</textarea></td></tr>';
 /*****************************************************************************/
 $varname="contact_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-   $contact_site=$_POST[$varname];
+    $contact_site=$_POST[$varname];
 } else {
-   $contact_site=$site[$varname];
+    $contact_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Telephone:</td><td><input type="text" '
-    . 'name="'.$varname.'" size="50" maxlength="256" value="'
-    . $contact_site.'"></td></tr>';
-
+echo '<tr><td class="text-right">Contact Info:</td>'
+     . '<td><textarea '
+     . 'name="'.$varname.'" rows="2" cols="50">'
+     . $contact_site.'</textarea></td></tr>';
 /*****************************************************************************/
 $varname="lat_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-   $lat_site=$_POST[$varname];
+    $lat_site=$_POST[$varname];
 } else {
-   $lat_site=$site[$varname];
+    $lat_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Latitude (Ex. 29.239823973):</td><td><input type="text" '
-    . 'name="'.$varname.'" size="50" maxlength="256" value="'
-    . $lat_site.'"></td></tr>';
-
+echo '<tr><td class="text-right">Latitude:</td><td><input type="number" step="any" '
+     . 'name="'.$varname.'" value="'
+     . $lat_site.'"></td></tr>';
 /*****************************************************************************/
 $varname="long_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-   $long_site=$_POST[$varname];
+    $long_site=$_POST[$varname];
 } else {
-   $long_site=$site[$varname];
+    $long_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Longitude (Ex. -090.2393470983):</td><td><input type="text" '
-    . 'name="'.$varname.'" size="50" maxlength="256" value="'
-    . $long_site.'"></td></tr>';
-
+echo '<tr><td class="text-right">Longitude:</td><td><input type="number" step="any" '
+     . 'name="'.$varname.'"  value="'
+     . $long_site.'"></td></tr>';
 /*****************************************************************************/
 $varname="street_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-   $street_site=$_POST[$varname];
+    $street_site=$_POST[$varname];
 } else {
-   $street_site=$site[$varname];
+    $street_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Street Address:</td><td><input type="text" '
-    . 'name="'.$varname.'" size="50" maxlength="256" value="'
-    . $street_site.'"></td></tr>';
-
+echo '<tr><td class="text-right">Street:</td><td><input type="text" '
+     . 'name="'.$varname.'" size="50" maxlength="256" value="'
+     . $street_site.'"></td></tr>';
 /*****************************************************************************/
 $varname="city_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-   $city_site=$_POST[$varname];
+    $city_site=$_POST[$varname];
 } else {
-   $city_site=$site[$varname];
+    $city_site=$site[$varname];
 }
 echo '<tr><td class="text-right">City:</td><td><input type="text" '
-    . 'name="'.$varname.'" size="50" maxlength="256" value="'
-    . $city_site.'"></td></tr>';
+     . 'name="'.$varname.'" size="50" maxlength="256" value="'
+     . $city_site.'"></td></tr>';
 
 /*****************************************************************************/
 $varname="state_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-   $state_site=$_POST[$varname];
+    $state_site=$_POST[$varname];
 } else {
-   $state_site=$site[$varname];
+    $state_site=$site[$varname];
 }
-echo '<tr><td class="text-right">State:</td><td><input type="text" '
-    . 'name="'.$varname.'" size="50" maxlength="256" value="'
-    . $state_site.'"></td></tr>';
-
+echo '<tr><td class="text-right">State<br>(abbreviated):</td><td><input type="text" '
+     . 'name="'.$varname.'" size="2" maxlength="2" value="'
+     . $state_site.'"></td></tr>';
 /*****************************************************************************/
 $varname="zip_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-   $zip_site=$_POST[$varname];
+    $zip_site=$_POST[$varname];
 } else {
-   $zip_site=$site[$varname];
+    $zip_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Zip Code:</td><td><input type="text" '
-    . 'name="'.$varname.'" size="50" maxlength="256" value="'
-    . $zip_site.'"></td></tr>';
-
-/*****************************************************************************/
-$varname="verified_site";
-
-echo '<tr><td class="text-right">Last Updated:</td><td>' .$varname.'</td></tr>';
-
+echo '<tr><td class="text-right">Zip<br>(abbreviated):</td><td><input type="text" '
+     . 'name="'.$varname.'" size="5" maxlength="5" value="'
+     . $zip_site.'"></td></tr>';
 /*****************************************************************************/
 $varname="active_site";
-if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-   $active_site=$_POST[$varname];
+if (isset($_POST[$varname])) {
+    if ($_POST[$varname]=="Yes") { $active_site=1;}
+    else {$active_site=0;}
+    //$active_site=$_POST[$varname];
 } else {
-   $active_site=$site[$varname];
+    $active_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Active? (1 = yes / 0 = no)</td><td><input type="text" '
-    . 'name="'.$varname.'" size="50" maxlength="256" value="'
-    . $active_site.'"></td></tr>';
+echo '<tr><td class="text-right">Active<br>(abbreviated):</td><td><input type="checkbox" '
+     . 'name="'.$varname.'" value="Yes"';
+if ($active_site>0) { echo ' checked="checked" ';}
+echo '></td></tr>';
 
 echo "</table>";
 echo '<input type="submit" value="Update Event Site Information">';
+//echo '<button type="reset" value="Reset">Reset</button>';
 echo '</form>';
+/*****************************************************************************/
+/*****************************************************************************/
+
+// Add Links back to the main list, and to the next site needing to be verified.
+echo "<a href=\"./list_site.php\">Return to List of Sites</a><p>";
+
+$query="SELECT id_site, verified_site from Sites order by verified_site desc, id_site;";
+$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
+if (mysqli_num_rows($result)>=1) {
+   $next_site= mysqli_fetch_assoc($result);
+    echo "<a href=\"./edit_site.php?id=".$next_site["id_site"]."\">Next Site Needed to Verify</a><p>";
+}
 
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
+
+// Now that the variables are all populated, 
+// let's go ahead and update the database if the Update button was pressed.
+if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+// Process form by updating the database
+
+    $update = "UPDATE Sites SET ";
+    if (!empty($name_site))
+        { $update=$update . "name_site='" . mysqli_real_escape_string($cxn,$name_site) . "'" ;}
+    if ($url_site != $site["url_site"] ) 
+        {$update=$update . ", url_site='" . mysqli_real_escape_string($cxn,$url_site) ."' ";}
+    if ($facilities_site!= $site["facilities_site"]) 
+        {$update=$update . ", facilities_site='" . mysqli_real_escape_string($cxn,$facilities_site) ."' ";}
+    if ($capacity_site !=$site["capacity_site"]) 
+        {if ($capacity_site > 0) 
+            {$update=$update . ", capacity_site=" . $capacity_site ." ";}
+            else {$update=$update . ", capacity_site=NULL ";}
+        }
+    if ($rates_site != $site["rates_site"]) 
+        {$update=$update . ", rates_site='" . mysqli_real_escape_string($cxn,$rates_site) ."' ";}
+    if ($area_site != $site["area_site"]) 
+        {$update=$update . ", area_site='" . mysqli_real_escape_string($cxn,$area_site) ."' ";}
+    if ($contact_site != $site["contact_site"]) 
+        {$update=$update . ", contact_site='" . mysqli_real_escape_string($cxn,$contact_site) ."' ";}
+    if ($lat_site !=$site["lat_site"]) 
+        {if (!empty($lat_site)) 
+            {$update=$update . ", lat_site=" . $lat_site ." ";}
+            else {$update=$update . ", lat_site=NULL ";}
+        }
+    if ($long_site !=$site["long_site"]) 
+        {if (!empty($long_site)) 
+            {$update=$update . ", long_site=" . $long_site ." ";}
+            else {$update=$update . ", long_site=NULL ";}
+        }
+    if ($street_site!= $site["street_site"]) 
+        {$update=$update . ", street_site='" . mysqli_real_escape_string($cxn,$street_site) ."' ";}
+    if ($city_site != $site["city_site"]) 
+        {$update=$update . ", city_site='" . mysqli_real_escape_string($cxn,$city_site) ."' ";}
+    if ($state_site != $site["state_site"]) 
+        {$update=$update . ", state_site='" . mysqli_real_escape_string($cxn,$state_site) ."' ";}
+    if ($zip_site!= $site["zip_site"]) 
+        {$update=$update . ", zip_site='" . mysqli_real_escape_string($cxn,$zip_site) ."' ";}
+    if ($active_site!= $site["active_site"]) 
+        {$update=$update . ", active_site=$active_site ";}
+    $update=$update. ", verified_site=curdate() WHERE id_site=" .$id_site;
+    echo "<p>Query is " . $update . "<p>";
+    echo "Value of $active_site is ".$active_site
+            ." and from post is ".$_POST["active_site"]
+            ." and from query is ".$site["active_site"]."<p>";
+    $result=update_query($cxn, $update);
+    if ($result !== 1) {echo "Error updating record: " . mysqli_error($cxn);}
+}
+
 mysqli_close ($cxn); /* close the db connection */
 ?>
