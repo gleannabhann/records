@@ -201,7 +201,15 @@
     }
 
     // TODO: new function, sanitize
-    
+    /* Sanitizes a string to insert into mysql.
+     *  - trims extra spaces
+     *  - escapes special characters
+     */
+    function sanitize_mysql($str){
+       $str = trim($str);
+       $str = addslashes($str);
+       return $str;
+   }
     /*
      * Exits the script, but only after displaying the footer.  
      * Allows for more graceful exits.
@@ -210,3 +218,5 @@
         require(ROOTDIR."/templates/footer.php");
         exit();
     }
+    
+    
