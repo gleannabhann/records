@@ -123,10 +123,10 @@ if (permissions("Sites")>=  3) {
        $query_head=$query_head.",active_site) ";
        if (isset($_POST["active_site"])) {
            $query_tail=$query_tail.",1);";
-           echo "Active site checkbox was checked<br>";
+//           echo "Active site checkbox was checked<br>";
        } else {
            $query_tail=$query_tail.",0);";
-           echo "Active site checkbox was not checked<br>";
+//           echo "Active site checkbox was not checked<br>";
        }
        
        $query = $query_head.$query_tail;
