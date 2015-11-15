@@ -135,14 +135,14 @@
             trigger_error("Invalid template: $template", E_USER_ERROR);
         }
     }
-    
-    /* Returns permissions level for $role 
+
+    /* Returns permissions level for $role
      * 0 means you can read the public data only
-     * 1 means you can read the records data 
+     * 1 means you can read the records data
      * 2 means you can read and add to the records
-     * 3 means you can read, add, and update the records 
-     * 4 means you can read, add, and update records, as well as read userdata. 
-     * 5 means you can invite new users in addition to everything 4 can do. 
+     * 3 means you can read, add, and update the records
+     * 4 means you can read, add, and update records, as well as read userdata.
+     * 5 means you can invite new users in addition to everything 4 can do.
      * 6 means you can do everything 5 can do and you can edit userdata
      */
 
@@ -170,18 +170,18 @@
         else return false;
 */
     }
-    
+
     /*
      * Returns the id of the webuser who is making the current change.
-     * TODO: expand to also return role, and then need to modify update_query() 
+     * TODO: expand to also return role, and then need to modify update_query()
      */
     function get_webuser() {
         return $_SESSION["id"];
         //TODO: Return the id_webuser of the person/account making the change
     }
-    
+
     /*
-     * Runs the update $query using database connection $cxn, and then logs 
+     * Runs the update $query using database connection $cxn, and then logs
      * a copy of the update query to the transaction log.
      * TODO: query cleaning?
      */
@@ -196,7 +196,7 @@
             $result = mysqli_query($cxn, $log);
         } else {
             return mysqli_error($cxn);
-        }   
+        }
         return 1;
     }
 
@@ -210,13 +210,28 @@
        $str = addslashes($str);
        return $str;
    }
+
+   /* takes a Street Address and returns a corresponding
+    * latitude and Longitude
+    * TODO: finish writing this function
+    */
+   function geocode($address)
+   {
+     //begin JS session
+     //pass the contents of $address to JS using json_encode()
+     //make the geocode request:
+     //http://maps.googleapis.com/maps/api/geocode/json?$address
+     //extract the lat and lng from the results and store into a simple array
+     //pass the resulting array back to php using json_decode()
+     //return the results to the page making the request
+     return 0;
+   }
+
     /*
-     * Exits the script, but only after displaying the footer.  
+     * Exits the script, but only after displaying the footer.
      * Allows for more graceful exits.
      */
     function exit_with_footer(){
         require(ROOTDIR."/templates/footer.php");
         exit();
     }
-    
-    

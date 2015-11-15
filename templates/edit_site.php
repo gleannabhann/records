@@ -170,6 +170,7 @@ echo '<tr><td class="text-right">Longitude:</td><td><input type="number" step="a
 // TODO: Create button to update the lat/lng fields based on Google Maps API
 // geocoding of the street address.
 /*****************************************************************************/
+
 $varname="street_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
     $street_site=$_POST[$varname];
@@ -243,6 +244,29 @@ echo "<div class=\"btn-group\" role=\"group\" aria-label=\"navigation\">";
 if ($previous_item >= 1) {echo "<button type=\"button\" class=\"btn btn-default\"><a href=\"./edit_site.php?id=".$previous_item."\">Previous Site</a></button>";}
 //next page
 if ($next_item < $max_item) {echo "<button type=\"button\" class=\"btn btn-default\"><a href=\"./edit_site.php?id=".$next_item."\">Next Site</a></button>";}
+
+
+/* if either the lat or long variables are null, make a geocode request via the
+   geocode() function.
+
+//check to see if either lat or lng is NULL
+if ($lat_site == NULL OR $long_site == NULL)
+  {
+    //combine the address fields into a standard USPS address
+    $address = $street_site.", ".$city_site.", ".$state_site." ".$zip_site;
+
+    //pass $address to geocode()
+    $result = geocode($address);
+
+    //store the results in the appropriate variables
+    //you give one variable and it returns an array containing two items: a lat
+    //value and a long value.
+    $lat_site = $result["lat"];
+    $long_site = $result["long"];
+  }
+
+
+*/
 
 //TODO: should this query only select rows where verified_site == NULL to exclude any site that has a date stamp?
 $query="SELECT id_site, verified_site from Sites order by verified_site desc, id_site;";
