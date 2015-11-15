@@ -28,13 +28,15 @@ echo "<div class='list-group'><ul type='none'>"; // make the list pretty with fo
 if ($k_id == -1){
   $query = "SELECT id_person, name_person, name_group FROM Persons, Groups
             WHERE Persons.id_group = Groups.id_group
-            AND name_person like '%$part_name%'";
+            AND name_person like '%$part_name%' "
+          . "ORDER BY name_person";
           }
 else {
   $query = "SELECT id_person, name_person, name_group FROM Persons, Groups
             WHERE Persons.id_group = Groups.id_group
             AND Groups.id_kingdom = $k_id
-            AND name_person like '%$part_name%'";
+            AND name_person like '%$part_name%' "
+          . "ORDER BY name_person";
       };
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
@@ -61,12 +63,14 @@ echo "<div class='list-group'><ul type='none'>"; // make the list pretty with fo
 if ($k_id == -1)
 {
   $query = "SELECT id_award, name_award FROM Awards
-            WHERE name_award like '%$part_name%'";
+            WHERE name_award like '%$part_name%'"
+          . "ORDER BY name_award";
 }
 else {
 $query = "SELECT id_award, name_award FROM Awards
           WHERE name_award like '%$part_name%'
-          AND id_kingdom = $k_id ";
+          AND id_kingdom = $k_id "
+        . "ORDER BY name_award";
       };
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
@@ -89,13 +93,15 @@ if ($k_id == -1)
 {
   $query = "SELECT id_group, name_group, name_kingdom FROM Groups, Kingdoms
             WHERE name_group like '%$part_name%'
-            AND Groups.id_kingdom = Kingdoms.id_kingdom";
+            AND Groups.id_kingdom = Kingdoms.id_kingdom "
+          . "ORDER BY name_group";
 }
 else {
   $query = "SELECT id_group, name_group, name_kingdom FROM Groups, Kingdoms
             WHERE name_group like '%$part_name%'
             AND Groups.id_kingdom = Kingdoms.id_kingdom
-            AND Groups.id_kingdom = $k_id";
+            AND Groups.id_kingdom = $k_id "
+          . "ORDER BY name_group";
       };
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");

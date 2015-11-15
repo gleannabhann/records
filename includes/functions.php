@@ -148,10 +148,12 @@
 
     function permissions($role) {
         $perm =0;
-        if (isset($_SESSION["Admin"])) {$perm=$_SESSION["Admin"];}
         if (is_logged_in()) {
+            if (isset($_SESSION["Admin"])) {$perm=$_SESSION["Admin"];}
             if (isset($_SESSION[$role])  && (is_numeric($_SESSION[$role]))) {
                 return max($_SESSION[$role],$perm);
+            } else {
+                return $perm;
             }
         }
         return 0;
@@ -199,7 +201,15 @@
     }
 
     // TODO: new function, sanitize
-    
+    /* Sanitizes a string to insert into mysql.
+     *  - trims extra spaces
+     *  - escapes special characters
+     */
+    function sanitize_mysql($str){
+       $str = trim($str);
+       $str = addslashes($str);
+       return $str;
+   }
     /*
      * Exits the script, but only after displaying the footer.  
      * Allows for more graceful exits.
@@ -208,3 +218,5 @@
         require(ROOTDIR."/templates/footer.php");
         exit();
     }
+    
+    
