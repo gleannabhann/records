@@ -1,5 +1,6 @@
 <div class="container">
 <?php
+
 /* connect to the database */
 $cxn = open_db_browse();
 /*#######################################################################################*/
@@ -53,7 +54,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         echo "<td class='text-left' style=\"width:10%\">$contact_site</td>";
         if (permissions("Sites") >= 3){
             echo "<td class='text-left' style=\"width:5%\">
-            <a href=\"./edit_site.php?id=$id_site\">Edit</a> &nbsp <a href=\"\">Delete</a>
+            <a href=\"./edit_site.php?id=$id_site\">Edit</a>
             </td>";
         };
         echo "</tr>";

@@ -23,8 +23,8 @@ if (permissions("Sites")>= 3) {
 $cxn = open_db_browse();
 
 //obtain a count of how many site records are in the db
-$query = "SELECT COUNT(*) from sites";
-$result = mysqli_query($cxn, $query) or die ("Couldn't execute query");
+$query = "SELECT COUNT(*) from Sites";
+$result = mysqli_query($cxn, $query) or die ("Couldn't execute query to find max count");
 if (mysqli_num_rows($result)==1) {
    $max_item_result= mysqli_fetch_assoc($result);
 } else {
@@ -34,11 +34,11 @@ if (mysqli_num_rows($result)==1) {
 $max_item = $max_item_result['COUNT(*)'];
 
 //start the Bootstrap row
-echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
+echo "<div class='row'><div class='col-md-8 col-md-offset-2'>\n";
 
 //look up the information for the site we want to edit
 $query = "SELECT * from Sites where id_site = $id_site";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
+$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query to find site info");
 if (mysqli_num_rows($result)==1) {
    $site= mysqli_fetch_assoc($result);
 } else {
@@ -50,23 +50,27 @@ $next_item++;
 $previous_item = $id_site; //$previous item refers to the site id that occurs numerically prior to the current site
 $previous_item--;
 
-// NOTE: By building the site first, we've populated all the variables.
-// Display form with all person's info.
-echo '<form action="edit_site.php" method="post">';
-echo "<h2>Editing Event Site Information</h2>";
-echo '<input type="hidden" name="id" value="'.$id_site.'">';
 
 //top navigation buttons: previous, next, return to list
-echo "<div class=\"btn-group\" role=\"group\" aria-label=\"navigation\">";
+echo "<div class=\"btn-group\" role=\"group\" aria-label=\"navigation\">\n";
 //previous page
-if ($previous_item >= 1) {echo "<button type=\"button\" class=\"btn btn-default\"><a href=\"./edit_site.php?id=".$previous_item."\">Previous Site</a></button>";}
+if ($previous_item >= 1) {
+    echo button_link("./edit_site.php?id=".$previous_item, "Previous Site")."\n";
+}
 //next page
-if ($next_item < $max_item) {echo "<button type=\"button\" class=\"btn btn-default\"><a href=\"./edit_site.php?id=".$next_item."\">Next Site</a></button>";}
-//go back to the list
-echo "<button type=\"button\" class=\"btn btn-default\"><a href=\"./list_site.php\">Return to List of Sites</a></button></div>";
+if ($next_item < $max_item) {
+    echo button_link("./edit_site.php?id=".$next_item, "Next Site")."\n";
+}
+echo button_link("./list_site.php", "Return to List of Sites")."\n";
+echo "</div><!-- class btn-group -->\n";
+// NOTE: By building the site first, we've populated all the variables.
+// Display form with all person's info.
+echo "<h2>Editing Event Site Information</h2>\n";
+echo "<form action=\"./edit_site.php\" method=\"post\">\n";
+echo '<input type="hidden" name="id" value="'.$id_site.'"'.">\n";
 //open the table
-echo "<table class='table table-condensed table-bordered'>";
-echo "<thead><td class='text-right'>Label</td><td class='text-left'>Field</td><td>Instructions</td></thead>";
+echo "\n<table class='table table-condensed table-bordered'>\n";
+echo "<thead><td class='text-right'>Label</td><td class='text-left'>Field</td><td>Instructions</td></thead>\n";
 
 /*****************************************************************************/
 $varname="name_site";
@@ -77,7 +81,8 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 }
 echo '<tr><td class="text-right">Name of Site:</td><td><input type="text" '
      . 'name="'.$varname.'" size="50" maxlength="256" value="'
-     . $name_site.'" required></td><td></td></tr>';
+     . $name_site.'" required></td>'
+     . '<td>This field is required.</td></tr>'."\n";
 /*****************************************************************************/
 $varname="url_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -89,7 +94,8 @@ echo '<tr><td class="text-right">URL of Site:</td><td><input type="url" '
      . 'name="'.$varname.'" size="50" maxlength="256" value="'
      .$url_site.'"></td><td>If this field is empty, please do a search to see if
      the venue has a web site. Preference is for independent web sites, but if
-     all they have is a Facebook Page, that will be sufficient.</td></tr>';
+     all they have is a Facebook Page, that will be sufficient.</td></tr>'
+        ."\n";
 /*****************************************************************************/
 $varname="facilities_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -97,11 +103,11 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $facilities_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Facilities:</td>"'
+echo '<tr><td class="text-right">Facilities:</td>'
      . '<td><textarea '
      . 'name="'.$varname.'" rows="3" cols="50">'
      . $facilities_site.'</textarea></td><td>What facilities/amenities does the
-     venue offer?</td></tr>';
+     venue offer?</td></tr>'."\n";
 /*****************************************************************************/
 $varname="capacity_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -111,7 +117,7 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 }
 echo '<tr><td class="text-right">Capacity:</td><td><input type="number" '
      . 'name="'.$varname.'" value="'
-     . $capacity_site.'"></td><td>Maximum number of people permitted</td></tr>';
+     . $capacity_site.'"></td><td>Maximum number of people permitted</td></tr>'."\n";
 /*****************************************************************************/
 $varname="rates_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -122,7 +128,7 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 echo '<tr><td class="text-right">Rates:</td>'
      . '<td><textarea '
      . 'name="'.$varname.'" rows="3" cols="50">'
-     . $rates_site.'</textarea></td><td>Place information about fees and rates here</td></tr>';
+     . $rates_site.'</textarea></td><td>Place information about fees and rates here</td></tr>'."\n";
 /*****************************************************************************/
 $varname="area_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -134,7 +140,7 @@ echo '<tr><td class="text-right">Area<br> (Deprecated by address):</td>'
      . '<td><textarea '
      . 'name="'.$varname.'" rows="2" cols="50">'
      . $area_site.'</textarea></td><td>Place location description here (ie PO Box
-     Mailing Address, driving directions, etc.)</td></tr>';
+     Mailing Address, driving directions, etc.)</td></tr>'."\n";
 /*****************************************************************************/
 $varname="contact_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -146,7 +152,7 @@ echo '<tr><td class="text-right">Contact Info:</td>'
      . '<td><textarea '
      . 'name="'.$varname.'" rows="2" cols="50">'
      . $contact_site.'</textarea></td><td>Information about how to contact the
-     site manager. Can include telephone numbers and/or email addresses.</td></tr>';
+     site manager. Can include telephone numbers and/or email addresses.</td></tr>'."\n";
 /*****************************************************************************/
 $varname="lat_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -156,7 +162,7 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 }
 echo '<tr><td class="text-right">Latitude:</td><td><input type="number" step="any" '
      . 'name="'.$varname.'" value="'
-     . $lat_site.'"></td><td>Format: 29.1234567</td></tr>';
+     . $lat_site.'"></td><td>Format: 29.1234567</td></tr>'."\n";
 /*****************************************************************************/
 $varname="long_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -166,7 +172,7 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 }
 echo '<tr><td class="text-right">Longitude:</td><td><input type="number" step="any" '
      . 'name="'.$varname.'"  value="'
-     . $long_site.'"></td><td>Format: -90.1234567</td></tr>';
+     . $long_site.'"></td><td>Format: -90.1234567</td></tr>'."\n";
 // TODO: Create button to update the lat/lng fields based on Google Maps API
 // geocoding of the street address.
 /*****************************************************************************/
@@ -179,7 +185,7 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 }
 echo '<tr><td class="text-right">Street:</td><td><input type="text" '
      . 'name="'.$varname.'" size="50" maxlength="256" value="'
-     . $street_site.'"></td><td>Standard Postal Number and street</td></tr>';
+     . $street_site.'"></td><td>Standard Postal Number and street</td></tr>'."\n";
 /*****************************************************************************/
 $varname="city_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -189,7 +195,7 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 }
 echo '<tr><td class="text-right">City:</td><td><input type="text" '
      . 'name="'.$varname.'" size="50" maxlength="256" value="'
-     . $city_site.'"></td><td>Standard Postal Address City</td></tr>';
+     . $city_site.'"></td><td>Standard Postal Address City</td></tr>'."\n";
 
 /*****************************************************************************/
 $varname="state_site";
@@ -200,7 +206,7 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 }
 echo '<tr><td class="text-right">State<br>(abbreviated):</td><td><input type="text" '
      . 'name="'.$varname.'" size="2" maxlength="2" value="'
-     . $state_site.'"></td><td>State, using 2 letters and no punctuation</td></tr>';
+     . $state_site.'"></td><td>State, using 2 letters and no punctuation</td></tr>'."\n";
 /*****************************************************************************/
 $varname="zip_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -210,7 +216,7 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 }
 echo '<tr><td class="text-right">Zip<br>(abbreviated):</td><td><input type="text" '
      . 'name="'.$varname.'" size="5" maxlength="5" value="'
-     . $zip_site.'"></td><td>5 digit zip code.</td></tr>';
+     . $zip_site.'"></td><td>5 digit zip code.</td></tr>'."\n";
 /*****************************************************************************/
 $varname="active_site";
 if (isset($_POST[$varname])) {
@@ -226,25 +232,36 @@ if ($active_site>0) { echo ' checked="checked" ';}
 echo '></td><td>"Active" means site is available for rental for SCA events.
 If site becomes unavailable due to change in management or for other reasons,
 uncheck box. Listing will remain in the database in case it becomes available again
-later, but will not display in the public list.</td></tr>';
+later, but will not display in the public list.</td></tr>'."\n";
 
 echo "</table>";
 echo '<input type="submit" value="Update Event Site Information">';
 //echo '<button type="reset" value="Reset">Reset</button>';
 echo '</form>';
-/*****************************************************************************/
-/*****************************************************************************/
 
+/*****************************************************************************/
+/*****************************************************************************/
+echo "<p>";
 // Add Links back to the main list, and to the next site needing to be verified.
+echo "<div class=\"btn-group\" role=\"group\" aria-label=\"navigation\">\n";
+if ($previous_item >= 1) {
+    echo button_link("./edit_site.php?id=".$previous_item, "Previous Site")."\n";
+}
+if ($next_item < $max_item) {
+    echo button_link("./edit_site.php?id=".$next_item, "Next Site")."\n";
+}
 
+$query="SELECT id_site, verified_site from Sites order by verified_site desc, id_site;";
+$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
+if (mysqli_num_rows($result)>=1) {
+   $next_site= mysqli_fetch_assoc($result);
 
+    echo button_link("./edit_site.php?id=".$next_site["id_site"],
+                     "Next Site Needed to Verify");
+}
 
-echo "<div class=\"btn-group\" role=\"group\" aria-label=\"navigation\">";
-//previous page
-if ($previous_item >= 1) {echo "<button type=\"button\" class=\"btn btn-default\"><a href=\"./edit_site.php?id=".$previous_item."\">Previous Site</a></button>";}
-//next page
-if ($next_item < $max_item) {echo "<button type=\"button\" class=\"btn btn-default\"><a href=\"./edit_site.php?id=".$next_item."\">Next Site</a></button>";}
-
+echo button_link("./list_site.php", "Return to List of Sites")."\n";
+echo "</div><!-- ./col-md-8 --></div><!-- ./row -->\n"; //close out list and open divs
 
 /* if either the lat or long variables are null, make a geocode request via the
    geocode() function.
@@ -268,17 +285,6 @@ if ($lat_site == NULL OR $long_site == NULL)
 
 */
 
-//TODO: should this query only select rows where verified_site == NULL to exclude any site that has a date stamp?
-$query="SELECT id_site, verified_site from Sites order by verified_site desc, id_site;";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
-if (mysqli_num_rows($result)>=1) {
-   $next_site= mysqli_fetch_assoc($result);
-
-    echo "<a href=\"./edit_site.php?id=".$next_site["id_site"]."\">
-    <button type=\"button\" class=\"btn btn-default\">Next Site Needed to Verify</a></button>";
-}
-echo "<button type=\"button\" class=\"btn btn-default\"><a href=\"./list_site.php\">Return to List of Sites</a></button></div>";
-echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 
 // Now that the variables are all populated,
 // let's go ahead and update the database if the Update button was pressed.

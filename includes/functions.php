@@ -235,3 +235,14 @@
         require(ROOTDIR."/templates/footer.php");
         exit();
     }
+
+    // Produces a string output to create a button in html
+    //<a href="somepage.html"><button type="button">Text of Some Page</button></a>
+    function button_link($link,$label)
+    {
+        return '<a href="'.$link.'">'
+                .'<button type="button">'
+                .$label
+                .'</button></a>';
+             
+    }

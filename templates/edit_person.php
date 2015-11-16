@@ -79,7 +79,7 @@ $groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 // Display form with all person's info.
 echo '<form action="edit_person.php" method="post">';
 echo "<h2>Editing Personal Information</h2>";
-echo '<a href="person.php?id='.$id_person.'">Exit Edit Page</a>';
+echo button_link("person.php?id=".$id_person, "To Personal Overview Page");
 echo '<input type="hidden" name="id" value="'.$person["id_person"].'">';
 echo "<table class='table table-condensed table-bordered'>";
 //<thead><td class='text-right'>Column</td><td class='text-left'>Value</td></thead>";
@@ -146,10 +146,10 @@ echo "<p>";
 
 if (permissions("Herald")>= 3){
 echo "<h2>Editing awards</h2>";
-echo "<a href='./add_person_award.php?id=$id_person'>Add a new award</a>";
-echo "<table class='table table-condensed table-bordered'>
-<thead><td class='text-left'><strong>Award</strong></td>
-<td class='text-left'><strong>Date</strong></td><td>Edit</td><td>Delete</td></thead>";
+echo button_link("./add_person_award.php?id=".$id_person, "Add a new Award for ".$sca_name);
+echo "<table class='table table-condensed table-bordered'>\n
+<thead><td class='text-left'><strong>Award</strong></td>\n
+<td class='text-left'><strong>Date</strong></td><td>Edit</td><td>Delete</td></thead>\n";
 
 // Display person's awards with edit & delete link for each award
  $query = "SELECT  id_person_award, name_award, date_award,name_kingdom from Persons, Persons_Awards, Awards, Kingdoms
@@ -162,9 +162,10 @@ $awards = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($awards))
   {extract($row);
 // echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
-  echo "<tr><td class='text-left'>$name_award</td><td class='text-left'>$date_award</td>";
-  echo "<td><a href='./edit_person_award.php?idpa=$id_person_award'>Edit</a></td>";
-  echo "<td><a href='./delete_person_award.php?id=$id_person&idpa=$id_person_award'>Delete</a></td>";
+  echo "<tr><td class='text-left'>$name_award</td><td class='text-left'>$date_award</td>\n";
+  echo "<td>".button_link("./edit_person_award.php?idpa=".$id_person_award, "Edit Date")."</td>\n";
+  echo "<td>".button_link("./delete_person_award.php?id=".$id_person."&idpa=".$id_person_award, 
+                          "Delete Award")."</td>\n";
   echo "</tr>";
 };
 echo "</table>";
