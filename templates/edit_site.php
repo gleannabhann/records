@@ -68,6 +68,10 @@ echo "</div><!-- class btn-group -->\n";
 echo "<h2>Editing Event Site Information</h2>\n";
 echo "<form action=\"./edit_site.php\" method=\"post\">\n";
 echo '<input type="hidden" name="id" value="'.$id_site.'"'.">\n";
+echo "<div class='well danger'><p class='danger'>Caution: Do not enter P.O. Box addresses into the
+Street Address field. Place them in the Area field, and type 'None' into the
+Street Address field. </p><p>You will also need to manually enter latitude and
+longitude coordinates for sites without street addresses.</p></div>";
 //open the table
 echo "\n<table class='table table-condensed table-bordered'>\n";
 echo "<thead><td class='text-right'>Label</td><td class='text-left'>Field</td><td>Instructions</td></thead>\n";
@@ -330,13 +334,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     if ($active_site!= $site["active_site"])
         {$update=$update . ", active_site=$active_site ";}
     $update=$update. ", verified_site=curdate() WHERE id_site=" .$id_site;
+
+    /* Testing code
     echo "<p>Query is " . $update . "<p>";
     echo "Value of $active_site is ".$active_site
             ." and from post is ".$_POST["active_site"]
             ." and from query is ".$site["active_site"]."<p>";
+
+    */
     $result=update_query($cxn, $update);
     if ($result !== 1) {echo "Error updating record: " . mysqli_error($cxn);}
 }
+
 
 mysqli_close ($cxn); /* close the db connection */
 ?>
