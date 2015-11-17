@@ -99,7 +99,7 @@ if (isset($_POST["mundane_name"])&& is_string($_POST["mundane_name"])) {
 } else {
     $mundane_name=$person["name_mundane_person"];
 }
-echo '<tr><td class="text-right">Mundane Name:</td><td> <input type="text" name="mundane_name" value="'
+echo '<tr><td class="text-right">Legal Name:</td><td> <input type="text" name="mundane_name" value="'
      . $mundane_name.'"></td></tr>';
 // SCA email address
 if (isset($_POST["email"]) && is_string($_POST["email"])) {

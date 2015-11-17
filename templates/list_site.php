@@ -18,7 +18,7 @@ or die ("Couldn't execute query");
 echo "<div class='row'><div class='col-md-10 col-md-offset-1'>";
 
   if (permissions("Sites") >= 3){
-      echo "<p><strong><a href='./add_site.php'>Add a New Site</a></strong></p>";
+      echo "<p>".button_link("./add_site.php", "Add a New Site")."</p>";
   };
 echo "<table class='table table-bordered'>
 <thead>
@@ -69,9 +69,9 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         echo "<td class='text-left'>$contact_site</td>";
         if (permissions("Sites") >= 3){
-            echo "<td class='text-left'>
-            <a href=\"./edit_site.php?id=$id_site\">Edit</a>
-            </td>";
+            echo "<td class='text-left'>";
+            echo button_link("./edit_site.php?id=".$id_site,"Edit");
+            echo "</td>";
         };
         echo "</tr>";
     }
