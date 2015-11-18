@@ -25,7 +25,7 @@ echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 /*#######################################################################################*/
 echo form_title("People matching <i>$part_name</i>");
 if (permissions("Any")>=3){
-    echo button_link("./add_person.php", "Add A New Person");
+    echo button_link("./add_person.php?part_name=".$part_name, "Add A New Person");
 }
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1){
@@ -83,7 +83,14 @@ while ($row = mysqli_fetch_assoc($result)) {
 //    extract($row);
     $Name = $row['name_award'];
     $ID = $row['id_award'];
-    $link = "<li class='list-group-item text-left'><a href='./list.php?award=$ID'>$Name</a></li>";
+    if (permissions("Herald")>=3){
+        $link = "<li class='list-group-item text-left'>"
+                . "<a href='./edit_award.php?id=$ID&name=$part_name'>"
+                . "$Name</a></li>";
+    } else {
+        $link = "<li class='list-group-item text-left'>"
+                . "<a href='./list.php?award=$ID'>$Name</a></li>";
+    }
 //    $link = "<li> $Name </li>";
     echo "$link";
 }

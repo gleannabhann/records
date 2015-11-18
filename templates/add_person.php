@@ -5,10 +5,20 @@ if (permissions("Any")< 3) {
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();    
 }
-
+if ((isset($_GET['part_name'])) && (is_string($_GET['part_name']))) {
+    // We got here through the add_person link on search.php
+    // echo "Arrived from person.php";
+    $part_name = $_GET["part_name"];
+} elseif ((isset($_POST['part_name'])) && (is_string($_POST['part_name']))) {
+    // We got here from form submission
+    // echo "Arrived as form submission";
+    $part_name = $_POST["part_name"];
+} else  {
+    echo '<p class="error"> This page has been accessed in error.</p>';
+    exit_with_footer();
+}
 $cxn = open_db_browse();
 
-echo form_title("Adding a New Person")."\n";
 // Build list of groups for add_person page.
 if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
     //echo "Now adding ".$_POST["SCA_name"]." to the database.<br>";
@@ -118,9 +128,13 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
     if ($result !== 1) {
            echo "Error updating record: " . mysqli_error($cxn);
     } else {
-           echo "Successfully added $sca_name to the Database.<br>\n";
-           echo button_link("awards.php", "Return to Awards Page")."<br>\n";
-           echo 'Continue adding new persons below:';
+           echo "Successfully added $sca_name to the Database.<p>\n";
+           $query = "SELECT id_person from Persons where name_person='$sca_name';";
+           $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
+           $person=  mysqli_fetch_array($result);
+           $id_person=$person["id_person"];
+           echo button_link("edit_person.php?id=$id_person", "Go To Edit Awards for $sca_name");
+           echo '<p>or continue adding new persons below:';
     }
 
 }
@@ -137,6 +151,10 @@ $groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 
 <div class='row'><div class='col-md-8 col-md-offset-2'>
 <form action="add_person.php" method="post">
+   <?php 
+         echo form_title("Adding a New Person")."\n";
+         echo button_link("search.php?name=".$part_name, "Return to Search Page");
+         echo '<input type="hidden" name="part_name" value="'.$part_name.'">'; ?>
    <table class='table table-condensed table-bordered'>
       <tr>
           <td class="text-right">SCA Name:<br>(required)</td>

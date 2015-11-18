@@ -197,8 +197,8 @@ while ($row = mysqli_fetch_assoc($awards))
   echo "</tr>";
 };
 echo "</table>";
-echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 }
+echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 
 if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
 
