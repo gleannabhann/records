@@ -149,10 +149,7 @@
     function permissions($role) {
         $perm =0;
         if (is_logged_in()) {
-            //echo var_dump($_SESSION);
-            if (isset($_SESSION["Admin"])) {
-                $perm=$_SESSION["Admin"];
-            }
+            if (isset($_SESSION["Admin"])) {$perm=$_SESSION["Admin"];}
             if (isset($_SESSION[$role])  && (is_numeric($_SESSION[$role]))) {
                 return max($_SESSION[$role],$perm);
             } else {
@@ -230,6 +227,38 @@
      return 0;
    }
 
+
+   /* Checks time stamps in the session variables to ensure that the session
+    * isn't too old, and resets the UPDATE variable for the inactivity timeout
+    * runs logout() if inactivity timeout or lifetime expiration are exceeded.
+    */
+   function validate_session() {
+     if (isset($_SESSION['CREATED'])) {
+       // if the session creation date stamp is older than 7 days, destroy the session
+       if (time() - $_SESSION['CREATED'] > 604800) {
+         // log out current user, if any
+         logout();
+         // redirect user
+         redirect("/");
+         }
+       } else if (isset($_SESSION['UPDATED']) && (time() - $_SESSION['UPDATED'] > 7200)) {
+         // last request was more than 2 hours ago
+         // log out current user, if any
+         logout();
+
+         // redirect user
+         redirect("/");
+       } else {
+         $_SESSION['UPDATED'] = time(); // update last activity time stamp
+       }
+       if (time() - $_SESSION['REFRESHED'] > 1800) {
+         // session last refreshed more than 30 minutes ago
+         session_regenerate_id(true);    // change session ID for the current session and invalidate old session ID
+         $_SESSION['REFRESHED'] = time();  // update creation time
+       } 
+       return 1;
+}
+
     /*
      * Exits the script, but only after displaying the footer.
      * Allows for more graceful exits.
@@ -247,5 +276,5 @@
                 .'<button type="button">'
                 .$label
                 .'</button></a>';
-             
+
     }

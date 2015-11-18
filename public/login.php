@@ -80,7 +80,9 @@
                     $max_perm=max($max_perm, $perm_role);
                 }
                 $_SESSION["Any"]=$max_perm;
-
+                $_SESSION["CREATED"] = time();
+                $_SESSION["UPDATED"] = time();
+                $_SESSION["REFRESHED"] = time();
               // TODO: set expirations. Need: destroy on browser close; expire after
               // 14 days, if (using a public computer) {expire after 4 hours}
               // based on login form input -> tickbox asking, "Are you using a shared or

@@ -66,7 +66,7 @@
     </head>
 
     <body>
-
+<?php if (isset($_SESSION['initiated'])) validate_session();?>
 <div class="container-fluid">
   <!-- begin page -->
   <header class="header">
