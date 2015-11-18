@@ -14,7 +14,10 @@
 
 // Checks for privs is conducted by code in config.php.
 
-
+if (!permissions("Any")>=3){
+    echo '<p class="error"> This page has been accessed in error.</p>';
+    exit_with_footer();
+}
 
 if ((isset($_GET['id'])) && (is_numeric($_GET['id'])) && (isset($_SESSION['id']))) {
     // We got here through the edit link on person.php
@@ -31,32 +34,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id'])) && (isset($_SESSION['id'])
 
 $cxn = open_db_browse();
 
-if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
-// Process form by updating the database
-// TODO: Should only update if actual changes have been made.
-//       How to test for that?
-    // TODO: We need to filter these variables much more carefully
-    $sca_name=$_POST["SCA_name"];
-    $mundane_name=$_POST["mundane_name"];
-    $email = $_POST["email"];
-    $mem_num = $_POST["mem_num"];
-    $mem_exp = $_POST["mem_exp"];
-    $id_group = $_POST["id_group"];
-  // TODO: Need to worry about expiry date: for browsers not using
-  // the date type in the form, dates have to be entered as yyyy-mm-dd
-    $update = "UPDATE Persons SET ";
-    if (!empty($sca_name)){ $update=$update . "name_person='" . $sca_name . "'" ;}
-if (!empty($mundane_name)) {$update=$update . ", name_mundane_person='" . $mundane_name ."' ";}
-    if (!empty($email)) {$update=$update . ", email_person='" . $email."' ";}
-    if (!empty($mem_num)) {$update=$update . ", membership_person=" . $mem_num." ";}
-    if (!empty($mem_exp)) {$update=$update . ", membership_expire_person='" . $mem_exp."' ";}
-    if (!empty($id_group)) {$update=$update . ", id_group = " . $id_group;}
-    $update=$update. " WHERE id_person=" .$id_person;
-    // echo "<p>Query is " . $update . "<p>";
-    $result=update_query($cxn, $update);
-    if ($result !== 1) {echo "Error updating record: " . mysqli_error($cxn);}
-}
-
+// First we display the form, then we process it.
 echo "
 <div class='row'>
   <div class='col-md-8 col-md-offset-2'>";
@@ -101,14 +79,6 @@ if (isset($_POST["mundane_name"])&& is_string($_POST["mundane_name"])) {
 }
 echo '<tr><td class="text-right">Legal Name:</td><td> <input type="text" name="mundane_name" value="'
      . $mundane_name.'"></td></tr>';
-// SCA email address
-if (isset($_POST["email"]) && is_string($_POST["email"])) {
-    $email = $_POST["email"];
-} else {
-    $email = $person["email_person"];
-}
-echo '<tr><td class="text-right">Email address:</td><td> <input type="email" name="email" value =" '
-    . $email . '"</td></tr>';
 // SCA Membership Number
 if (isset($_POST["mem_num"]) && is_numeric($_POST["mem_num"])) {
     $mem_num = $_POST["mem_num"];
@@ -131,18 +101,76 @@ if (isset($_POST["id_group"]) && is_numeric($_POST["id_group"])) {
 } else {
     $id_group = $person["id_group"];
 }
-echo '<tr><td class="text-right">SCA Group:</td><td> <select name="id_group" >';
+echo '<tr><td class="text-right">SCA Group:</td><td>';
+echo '<select name="id_group" ><option value="0"></option>';
 while ($row= mysqli_fetch_array($groups)) {
     echo '<option value="'.$row["id_group"].'"';
     if ($row["id_group"]==$id_group) echo ' selected';
     echo '>'.$row["Name_Group"].'</option>';
 }
 echo '</select></td></tr>';
+// SCA email address
+if (isset($_POST["email"]) && is_string($_POST["email"])) {
+    $email = $_POST["email"];
+} else {
+    $email = $person["email_person"];
+}
+echo '<tr><td class="text-right">Email address:</td><td> <input type="email" name="email" value =" '
+    . $email . '"</td></tr>';
+// phone_person       
+if (isset($_POST["phone"]) && is_string($_POST["phone"])) {
+    $phone = $_POST["phone"];
+} else {
+    $phone = $person["phone_person"];
+}
+echo '<tr><td class="text-right">Phone Number:</td><td>'
+    .  '<input type="text" name="phone" value="'.$phone.'"size="45" maxlength="45"></td>'
+    .  '</tr>';
+// street_person
+if (isset($_POST["street"]) && is_string($_POST["street"])) {
+    $street = $_POST["street"];
+} else {
+    $street = $person["street_person"];
+}
+echo '<tr><td class="text-right">Street Address:</td>'
+    .'<td><input type="text" name="street" value="'.$street.'" size="50" maxlength="128"></td>'
+    .'</tr>';
+// city_person        
+if (isset($_POST["city"]) && is_string($_POST["city"])) {
+    $city = $_POST["city"];
+} else {
+    $city = $person["city_person"];
+}
+echo '<tr><td class="text-right">City:</td>'
+    .'<td><input type="text" name="city" value="'.$city.'"size="45" maxlength="45"></td>'
+    .'</tr>';
+// state_person        
+if (isset($_POST["state"]) && is_string($_POST["state"])) {
+    $state = $_POST["state"];
+} else {
+    $state = $person["state_person"];
+}
+echo '<tr><td class="text-right">State:</td>'
+    .'<td><input type="text" name="state" value="'.$state.'" size="2" maxlength="45"></td>'
+    .'</tr>';
+// zip_person
+if (isset($_POST["zip"]) && is_string($_POST["zip"])) {
+    $zip = $_POST["zip"];
+} else {
+    $zip = $person["postcode_person"];
+}
+echo '<tr><td class="text-right">Zip:</td>'
+    .'<td><input type="text" name="zip" value="'.$zip.'"size="5" maxlength="45"></td>'
+    .'</tr>';
+
 echo "</table>";
 echo '<input type="submit" value="Update Personal Information">';
 echo '</form>';
 
 echo "<p>";
+
+//echo "Permissions for herald is ".permissions("Herald")."<br>";
+//echo var_dump($_SESSION);
 
 if (permissions("Herald")>= 3){
 echo "<h2>Editing awards</h2>";
@@ -171,5 +199,47 @@ while ($row = mysqli_fetch_assoc($awards))
 echo "</table>";
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 }
+
+if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
+
+    $update = "UPDATE Persons SET ";
+    $update=$update." name_person='$sca_name'";
+    if ($mundane_name!=$person["name_mundane_person"]) {
+        $update=$update.", name_mundane_person='$mundane_name'";        
+    }
+    if ($mem_num!=$person["membership_person"]) {
+        $update=$update.", membership_person='$mem_num'";        
+    }
+    if ($mem_exp!=$person["membership_expire_person"]) {
+        $update=$update.", membership_expire_person='$mem_exp'";        
+    }
+    if ($id_group!=$person["id_group"]) {
+        $update=$update.", id_group_person='$id_group'";        
+    }
+    if ($email!=$person["email_person"]) {
+        $update=$update.", email_person='$email'";        
+    }
+    if ($phone!=$person["phone_person"]) {
+        $update=$update.", phone_person='$phone'";        
+    }
+    if ($street!=$person["street_person"]) {
+        $update=$update.", street_person='$street'";        
+    }
+    if ($city!=$person["city_person"]) {
+        $update=$update.", city_person='$city'";        
+    }
+    if ($state!=$person["state_person"]) {
+        $update=$update.", state_person='$state'";        
+    }
+    if ($zip!=$person["postcode_person"]) {
+        $update=$update.", postcode_person='$zip'";        
+    }
+
+    $update=$update. " WHERE id_person=" .$id_person;
+    // echo "<p>Query is " . $update . "<p>";
+    $result=update_query($cxn, $update);
+    if ($result !== 1) {echo "Error updating record: " . mysqli_error($cxn);}
+}
+
 mysqli_close ($cxn); /* close the db connection */
 ?>

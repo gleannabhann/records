@@ -57,10 +57,57 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
         $query_head = $query_head.",id_group";
         $query_tail = $query_tail.",$id_group";
     }  
+    
+    // phone -> phone_person
+    if (isset($_POST["phone"])
+            && !empty($_POST["phone"])
+            && (is_string($_POST["phone"]))){
+        $phone = sanitize_mysql($_POST["phone"]);
+        $query_head = $query_head.",phone_person";
+        $query_tail = $query_tail.",$phone";
+    }
+        
+    // street -> street_person
+    if (isset($_POST["street"])
+            && !empty($_POST["street"])
+            && (is_string($_POST["street"]))){
+        $street = sanitize_mysql($_POST["street"]);
+        $query_head = $query_head.",street_person";
+        $query_tail = $query_tail.",$street";
+    }
+        
+    // city -> city_person
+    if (isset($_POST["city"])
+            && !empty($_POST["city"])
+            && (is_string($_POST["city"]))){
+        $city = sanitize_mysql($_POST["city"]);
+        $query_head = $query_head.",city_person";
+        $query_tail = $query_tail.",$city";
+    }
+        
+    // state -> state_person
+    if (isset($_POST["state"])
+            && !empty($_POST["state"])
+            && (is_string($_POST["state"]))){
+        $state = sanitize_mysql($_POST["state"]);
+        $query_head = $query_head.",state_person";
+        $query_tail = $query_tail.",$state";
+    }
+        
+    // zip -> postcode_person
+    if (isset($_POST["zip"])
+            && !empty($_POST["zip"])
+            && (is_string($_POST["zip"]))){
+        $zip = sanitize_mysql($_POST["zip"]);
+        $query_head = $query_head.",postcode_person";
+        $query_tail = $query_tail.",$zip";
+    }
+        
+    
+    
     $query_head=$query_head.",active_person)";
     $query_tail=$query_tail.",1);";
     //echo "Query is:<br>".$query_head."<br>".$query_tail."</p>";
-    
     $query = $query_head.$query_tail;
     $result=update_query($cxn, $query);
     if ($result !== 1) {
@@ -94,13 +141,8 @@ $groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
           <td class="text-right">Legal Name:</td>
           <td><input type="text" name="mundane_name" size="50" maxlength="128"></td>
       </tr>
-      <tr>
-          <td class="text-right">Email Address:</td>
-          <td><input type="email" name="email" size="50" maxlength="128"></td>
-      </tr>
-      <tr>
           <td class="text-right">SCA Membership #:<br>(required)</td>
-          <td><input type="number" name="mem_num" size="50" maxlength="128"></td>
+          <td><input type="number" name="mem_num" min="1" step="1"></td>
       </tr>
       <tr>
            <td class="text-right">expires:</td>
@@ -109,6 +151,7 @@ $groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
       <tr>
           <td class="text-right">SCA Group:</td>
           <td><select name="id_group" >
+                  <option value="0"></option>
               <?php 
               while ($row= mysqli_fetch_array($groups)) {
                 echo '<option value="'.$row["id_group"].'"';
@@ -117,7 +160,30 @@ $groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
               ?>
               </select></td>
       </tr>
-              
+      <tr>
+          <td class="text-right">Email Address:</td>
+          <td><input type="email" name="email" size="50" maxlength="128"></td>
+      </tr>
+      <tr>
+          <td class="text-right">Phone Number:</td>
+          <td><input type="text" name="phone" size="45" maxlength="45"></td>
+      </tr>
+      <tr>
+          <td class="text-right">Street Address:</td>
+          <td><input type="text" name="street" size="50" maxlength="128"></td>
+      </tr>
+      <tr>
+          <td class="text-right">City:</td>
+          <td><input type="text" name="city" size="45" maxlength="45"></td>
+      </tr>
+      <tr>
+          <td class="text-right">State:</td>
+          <td><input type="text" name="state" size="2" maxlength="45"></td>
+      </tr>
+      <tr>
+          <td class="text-right">Zip:</td>
+          <td><input type="text" name="zip" size="5" maxlength="45"></td>
+      </tr>         
   </table>
   <input type="submit" value="Add Person to Database">
 </form>  

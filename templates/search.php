@@ -24,6 +24,9 @@ echo "(<small><a href='#groups'>Skip to groups</a></small>)";
 echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 /*#######################################################################################*/
 echo "<h2>People matching <i>$part_name</i></h2>";
+if (permissions("Any")>=3){
+    echo button_link("./add_person.php", "Add A New Person");
+}
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1){
   $query = "SELECT id_person, name_person, name_group FROM Persons, Groups
@@ -47,7 +50,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     $Name = $row['name_person'];
     $ID = $row['id_person'];
     $Group = $row['name_group'];
-    if (is_logged_in()){
+    if (permissions("Any")>= 3){
         $link = "<li class='list-group-item text-left'><a href='./edit_person.php?id=$ID'>$Name</a>&nbsp-&nbsp$Group</li>";
     } else {
         $link = "<li class='list-group-item text-left'><a href='./person.php?id=$ID'>$Name</a>&nbsp-&nbsp$Group</li>";
