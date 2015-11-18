@@ -87,7 +87,7 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 echo '<div class="form-group"><label for='.$varname.'>Name of Site:</label><br/><input class="form-control" type="text" '
      . 'name="'.$varname.'" maxlength="256" value="'
      . $name_site.'" required>'
-     . '<br/>This field is required</div>.'."\n";
+     . '<br/>This field is required</div>'."\n";
 /*****************************************************************************/
 $varname="url_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
