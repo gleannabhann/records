@@ -151,7 +151,7 @@ if (isset($_POST["msgSubmit"])) {
 <!-- end of php -->
 
 <div class="row">
-  <h2>Report a problem with this record:</h2>
+  <?php echo form_title("Report a problem with this record") ?>
   <form class="form-horizontal" role="form" method="post" action="person.php">
     <div class="form-group">
       <label for="name" class="col-sm-2 col-md-3 control-label">Name:</label>

@@ -65,7 +65,7 @@ echo button_link("./list_site.php", "Return to List of Sites")."\n";
 echo "</div><!-- class btn-group -->\n";
 // NOTE: By building the site first, we've populated all the variables.
 // Display form with all person's info.
-echo "<h2>Editing Event Site Information</h2>\n";
+echo form_title("Editing Event Site Information")."\n";
 
 echo "<div class='well danger'><p class='danger'>Caution: Do not enter P.O. Box addresses into the
 Street Address field. Place them in the Area field, and type 'None' into the

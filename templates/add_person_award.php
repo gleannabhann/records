@@ -2,6 +2,10 @@
 /* 
  * Adds another award for the person whose id is passed in.
  */
+if (permissions("Herald")< 3) {
+    echo '<p class="error"> This page has been accessed in error.</p>';
+    exit_with_footer();    
+}
 
 if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
     // We got here through the edit link on person.php
@@ -59,9 +63,9 @@ $kingdoms = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query")
 echo "<div class='row'>
   <div class='col-md-8 col-md-offset-2'>";
 echo '<form action="add_person_award.php" method="post">';
-echo '<h2>Adding a New Award for '.
+echo form_title('Adding a New Award for '.
         '<a href="edit_person.php?id='.$id_person.'">'
-        . $person["name_person"].'</a></h2>'; 
+        . $person["name_person"].'</a>'); 
 echo '<input type="hidden" name="id" value="'.$id_person.'">';
 echo "<table class='table table-condensed table-bordered'>";
 // Date the award was handed out

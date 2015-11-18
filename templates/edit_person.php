@@ -14,7 +14,7 @@
 
 // Checks for privs is conducted by code in config.php.
 
-if (!permissions("Any")>=3){
+if (permissions("Any")<3){
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();
 }
@@ -56,7 +56,7 @@ $groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 
 // Display form with all person's info.
 echo '<form action="edit_person.php" method="post">';
-echo "<h2>Editing Personal Information</h2>";
+echo form_title("Editing Personal Information");
 echo button_link("person.php?id=".$id_person, "To Personal Overview Page");
 echo '<input type="hidden" name="id" value="'.$person["id_person"].'">';
 echo "<table class='table table-condensed table-bordered'>";
@@ -173,7 +173,7 @@ echo "<p>";
 //echo var_dump($_SESSION);
 
 if (permissions("Herald")>= 3){
-echo "<h2>Editing awards</h2>";
+echo form_title("Editing awards");
 echo button_link("./add_person_award.php?id=".$id_person, "Add a new Award for ".$sca_name);
 echo "<table class='table table-condensed table-bordered'>\n
 <thead><td class='text-left'><strong>Award</strong></td>\n
@@ -191,7 +191,7 @@ while ($row = mysqli_fetch_assoc($awards))
   {extract($row);
 // echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
   echo "<tr><td class='text-left'>$name_award</td><td class='text-left'>$date_award</td>\n";
-  echo "<td>".button_link("./edit_person_award.php?idpa=".$id_person_award, "Edit Date")."</td>\n";
+  echo "<td>".button_link("./edit_person_award.php?idpa=".$id_person_award."&id=".$id_person, "Edit Date")."</td>\n";
   echo "<td>".button_link("./delete_person_award.php?id=".$id_person."&idpa=".$id_person_award, 
                           "Delete Award")."</td>\n";
   echo "</tr>";

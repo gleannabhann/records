@@ -23,7 +23,7 @@ echo "(<small><a href='#awards'>Skip to awards</a></small>)</br>";
 echo "(<small><a href='#groups'>Skip to groups</a></small>)";
 echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 /*#######################################################################################*/
-echo "<h2>People matching <i>$part_name</i></h2>";
+echo form_title("People matching <i>$part_name</i>");
 if (permissions("Any")>=3){
     echo button_link("./add_person.php", "Add A New Person");
 }
@@ -61,7 +61,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
 /*#######################################################################################*/
 echo "<a name='awards'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
-echo "<h2>Awards matching <i>$part_name</i></h2>";
+echo form_title("Awards matching <i>$part_name</i>");
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1)
 {
@@ -90,7 +90,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
 /*#######################################################################################*/
 echo "<a name='groups'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
-echo "<h2>Groups matching <i>$part_name</i></h2>";
+echo form_title("Groups matching <i>$part_name</i>");
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1)
 {

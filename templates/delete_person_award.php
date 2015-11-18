@@ -5,6 +5,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+// Check just in case we got here by accident
+if (permissions("Herald")< 3) {
+    echo '<p class="error"> This page has been accessed in error.</p>';
+    exit_with_footer();    
+}
 if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
     // We got here through the edit link on person.php
     // echo "Arrived from person.php";
@@ -42,9 +47,9 @@ if (mysqli_num_rows($result)!=1) {
 }
 if (!$is_deleted) { // Haven't pressed delete button yet
 // Form that basically consists of 2 buttons: delete and cancel
-    echo '<h2>You are deleting the award of '.$award["name_award"].' to '
+    echo form_title('You are deleting the award of '.$award["name_award"].' to '
         . $award["name_person"].' on '.$award["date_award"].' in '
-        . $award["name_kingdom"]."</h2><br>";
+        . $award["name_kingdom"]);
     echo "<table><tr>"; 
   echo '<td><form action="delete_person_award.php" method="post">';
    echo '<input type="hidden" name="id" value="'.$id_person.'">';
@@ -60,9 +65,9 @@ if (!$is_deleted) { // Haven't pressed delete button yet
     $result=update_query($cxn, $delete);
     if ($result !== 1) {echo "Error deleting record: " . mysqli_error($cxn);}
 
-   echo '<h2>You have deleted the award of '.$award["name_award"].' to '
+   echo form_title('You have deleted the award of '.$award["name_award"].' to '
         . $award["name_person"].' on '.$award["date_award"].' in '
-        . $award["name_kingdom"]."</h2><br>";
+        . $award["name_kingdom"]);
 
    echo '<form action="edit_person.php" method="get">';
    echo '<input type="hidden" name="id" value="'.$id_person.'">';

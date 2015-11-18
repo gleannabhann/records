@@ -278,3 +278,8 @@
                 .'</button></a>';
 
     }
+
+    function form_title($label)
+    {
+        return '<h2>'.$label.'</h2>';
+    }

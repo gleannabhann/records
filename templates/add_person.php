@@ -1,9 +1,14 @@
 <?php
 // Purpose: to enter data for a new site,
 // Privileges needed: permissions("Any")>= 3
+if (permissions("Any")< 3) {
+    echo '<p class="error"> This page has been accessed in error.</p>';
+    exit_with_footer();    
+}
+
 $cxn = open_db_browse();
 
-echo "<h2>Adding a New Person</h2>\n";
+echo form_title("Adding a New Person")."\n";
 // Build list of groups for add_person page.
 if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
     //echo "Now adding ".$_POST["SCA_name"]." to the database.<br>";

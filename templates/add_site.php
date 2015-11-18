@@ -156,7 +156,7 @@ if (permissions("Sites")>=  3) {
 
 <div class='row'><div class='col-md-8 col-md-offset-2'>
 <form action="add_site.php" method="post">
-  <h2>Adding a New Event Site</h2>
+  <?php echo form_title("Adding a New Event Site"); ?>
   <table class='table table-condensed table-bordered'>
       <tr>
           <td class="text-right">Name of Site<br>(Required)</td>
