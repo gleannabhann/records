@@ -49,6 +49,14 @@
             .navbar-brand {
               color: #fff !important;
             }
+            input {
+               width: 100%;
+               box-sizing: border-box;
+               height: 28px; }
+            textarea {
+              width: 100%;
+              box-sizing: border-box;
+              height: 28px; }
             </style>
 
             <?php if (isset($title)): ?>

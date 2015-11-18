@@ -34,7 +34,7 @@ if (mysqli_num_rows($result)==1) {
 $max_item = $max_item_result['COUNT(*)'];
 
 //start the Bootstrap row
-echo "<div class='row'><div class='col-md-8 col-md-offset-2'>\n";
+echo "<div class='row'><div class='col-md-10 col-md-offset-1'>\n";
 
 //look up the information for the site we want to edit
 $query = "SELECT * from Sites where id_site = $id_site";
@@ -66,15 +66,16 @@ echo "</div><!-- class btn-group -->\n";
 // NOTE: By building the site first, we've populated all the variables.
 // Display form with all person's info.
 echo "<h2>Editing Event Site Information</h2>\n";
-echo "<form action=\"./edit_site.php\" method=\"post\">\n";
-echo '<input type="hidden" name="id" value="'.$id_site.'"'.">\n";
+
 echo "<div class='well danger'><p class='danger'>Caution: Do not enter P.O. Box addresses into the
 Street Address field. Place them in the Area field, and type 'None' into the
 Street Address field. </p><p>You will also need to manually enter latitude and
 longitude coordinates for sites without street addresses.</p></div>";
-//open the table
-echo "\n<table class='table table-condensed table-bordered'>\n";
-echo "<thead><td class='text-right'>Label</td><td class='text-left'>Field</td><td>Instructions</td></thead>\n";
+//open the form
+
+echo "<form class='form-horizontal' action=\"./edit_site.php\" method=\"post\">\n";
+echo '<input type="hidden" name="id" value="'.$id_site.'"'.">\n";
+
 
 /*****************************************************************************/
 $varname="name_site";
@@ -83,10 +84,10 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $name_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Name of Site:</td><td><input type="text" '
-     . 'name="'.$varname.'" size="50" maxlength="256" value="'
-     . $name_site.'" required></td>'
-     . '<td>This field is required.</td></tr>'."\n";
+echo '<div class="form-group"><label for='.$varname.'>Name of Site:</label><br/><input class="form-control" type="text" '
+     . 'name="'.$varname.'" maxlength="256" value="'
+     . $name_site.'" required>'
+     . '<br/>This field is required</div>.'."\n";
 /*****************************************************************************/
 $varname="url_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -94,11 +95,11 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $url_site=$site[$varname];
 }
-echo '<tr><td class="text-right">URL of Site:</td><td><input type="url" '
-     . 'name="'.$varname.'" size="50" maxlength="256" value="'
-     .$url_site.'"></td><td>If this field is empty, please do a search to see if
+echo '<div class="form-group"><label for='.$varname.'>URL of Site:</label><br/><input  class="form-control" type="url" '
+     . 'name="'.$varname.'" maxlength="256" value="'
+     .$url_site.'"> <br/>If this field is empty, please do a search to see if
      the venue has a web site. Preference is for independent web sites, but if
-     all they have is a Facebook Page, that will be sufficient.</td></tr>'
+     all they have is a Facebook Page, that will be sufficient.</div>'
         ."\n";
 /*****************************************************************************/
 $varname="facilities_site";
@@ -107,11 +108,11 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $facilities_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Facilities:</td>'
-     . '<td><textarea '
-     . 'name="'.$varname.'" rows="3" cols="50">'
-     . $facilities_site.'</textarea></td><td>What facilities/amenities does the
-     venue offer?</td></tr>'."\n";
+echo '<div class="form-group"><label for='.$varname.'>Facilities:</label>'
+     . '<br/><textarea  class="form-control" '
+     . 'name="'.$varname.'" rows="3">'
+     . $facilities_site.'</textarea> <br/>What facilities/amenities does the
+     venue offer?</div>'."\n";
 /*****************************************************************************/
 $varname="capacity_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -119,9 +120,9 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $capacity_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Capacity:</td><td><input type="number" '
+echo '<div class="form-group"><label for='.$varname.'>Capacity:</label><br/><input class="form-control"  type="number" '
      . 'name="'.$varname.'" value="'
-     . $capacity_site.'"></td><td>Maximum number of people permitted</td></tr>'."\n";
+     . $capacity_site.'"> <br/>Maximum number of people permitted</div>'."\n";
 /*****************************************************************************/
 $varname="rates_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -129,10 +130,12 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $rates_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Rates:</td>'
-     . '<td><textarea '
-     . 'name="'.$varname.'" rows="3" cols="50">'
-     . $rates_site.'</textarea></td><td>Place information about fees and rates here</td></tr>'."\n";
+echo '<div class="form-group"><label for='.$varname.'>Rates:</label>'
+     . '<br/><textarea  class="form-control" '
+     . 'name="'.$varname.'" rows="3">'
+     . $rates_site.'</textarea> <br/>Place information about fees and rates here.</div>'."\n";
+
+
 /*****************************************************************************/
 $varname="area_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -140,11 +143,11 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $area_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Area<br> (Deprecated by address):</td>'
-     . '<td><textarea '
-     . 'name="'.$varname.'" rows="2" cols="50">'
-     . $area_site.'</textarea></td><td>Place location description here (ie PO Box
-     Mailing Address, driving directions, etc.)</td></tr>'."\n";
+echo '<div class="form-group"><label for='.$varname.'>Area:</label>'
+     . '<br/><textarea  class="form-control" '
+     . 'name="'.$varname.'" rows="2">'
+     . $area_site.'</textarea> <br/>Place location description here (ie PO Box
+     Mailing Address, driving directions, etc.).</div>'."\n";
 /*****************************************************************************/
 $varname="contact_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -152,44 +155,21 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $contact_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Contact Info:</td>'
-     . '<td><textarea '
-     . 'name="'.$varname.'" rows="2" cols="50">'
-     . $contact_site.'</textarea></td><td>Information about how to contact the
-     site manager. Can include telephone numbers and/or email addresses.</td></tr>'."\n";
+echo '<div class="form-group"><label for='.$varname.'>Contact Info:</label>'
+     . '<br/><textarea  class="form-control" '
+     . 'name="'.$varname.'" rows="2">'
+     . $contact_site.'</textarea> <br/>Information about how to contact the
+     site manager. Can include telephone numbers and/or email addresses.</div>'."\n";
 /*****************************************************************************/
-$varname="lat_site";
-if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-    $lat_site=$_POST[$varname];
-} else {
-    $lat_site=$site[$varname];
-}
-echo '<tr><td class="text-right">Latitude:</td><td><input type="number" step="any" '
-     . 'name="'.$varname.'" value="'
-     . $lat_site.'"></td><td>Format: 29.1234567</td></tr>'."\n";
-/*****************************************************************************/
-$varname="long_site";
-if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-    $long_site=$_POST[$varname];
-} else {
-    $long_site=$site[$varname];
-}
-echo '<tr><td class="text-right">Longitude:</td><td><input type="number" step="any" '
-     . 'name="'.$varname.'"  value="'
-     . $long_site.'"></td><td>Format: -90.1234567</td></tr>'."\n";
-// TODO: Create button to update the lat/lng fields based on Google Maps API
-// geocoding of the street address.
-/*****************************************************************************/
-
 $varname="street_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
     $street_site=$_POST[$varname];
 } else {
     $street_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Street:</td><td><input type="text" '
-     . 'name="'.$varname.'" size="50" maxlength="256" value="'
-     . $street_site.'"></td><td>Standard Postal Number and street</td></tr>'."\n";
+echo '<div class="form-group"><label for='.$varname.'>Street:</label><br/><input  class="form-control" type="text" '
+     . 'name="'.$varname.'" maxlength="256" value="'
+     . $street_site.'"> <br/>Standard Postal Number and street.</div>'."\n";
 /*****************************************************************************/
 $varname="city_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -197,9 +177,9 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $city_site=$site[$varname];
 }
-echo '<tr><td class="text-right">City:</td><td><input type="text" '
-     . 'name="'.$varname.'" size="50" maxlength="256" value="'
-     . $city_site.'"></td><td>Standard Postal Address City</td></tr>'."\n";
+echo '<div class="form-group"><label for='.$varname.'>City:</label><br/><input class="form-control"  type="text" '
+     . 'name="'.$varname.'" maxlength="256" value="'
+     . $city_site.'"> <br/>Standard Postal Address City.</div>'."\n";
 
 /*****************************************************************************/
 $varname="state_site";
@@ -208,9 +188,9 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $state_site=$site[$varname];
 }
-echo '<tr><td class="text-right">State<br>(abbreviated):</td><td><input type="text" '
+echo '<div class="form-group"><label for='.$varname.'>State<br>(abbreviated):</label><br/><input  class="form-control" type="text" '
      . 'name="'.$varname.'" size="2" maxlength="2" value="'
-     . $state_site.'"></td><td>State, using 2 letters and no punctuation</td></tr>'."\n";
+     . $state_site.'"> <br/>State, using 2 letters and no punctuation.</div>'."\n";
 /*****************************************************************************/
 $varname="zip_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -218,9 +198,34 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $zip_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Zip<br>(abbreviated):</td><td><input type="text" '
+echo '<div class="form-group"><label for='.$varname.'>Zip Code:</label><br/><input  class="form-control" type="text" '
      . 'name="'.$varname.'" size="5" maxlength="5" value="'
-     . $zip_site.'"></td><td>5 digit zip code.</td></tr>'."\n";
+     . $zip_site.'"> <br/>5 digit zip code.</div>'."\n";
+/*****************************************************************************/
+$varname="lat_site";
+if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
+    $lat_site=$_POST[$varname];
+} else {
+    $lat_site=$site[$varname];
+}
+echo '<div class="form-group"><label for='.$varname.'>Latitude:</label><br/><input class="form-control" type="number" step="any" '
+     . 'name="'.$varname.'" value="'
+     . $lat_site.'">&nbsp;<button>Calculate Coordinates</button>
+     <br/>Format: 29.1234567</div>'."\n";
+
+/*****************************************************************************/
+$varname="long_site";
+if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
+    $long_site=$_POST[$varname];
+} else {
+    $long_site=$site[$varname];
+}
+echo '<div class="form-group"><label for='.$varname.'>Longitude:</label><br/><input class="form-control"  type="number" step="any" '
+     . 'name="'.$varname.'"  value="'
+     . $long_site.'"> <br/>Format: -90.1234567<br/>The "Calculate Coordinates" button will calculate the lat/long based on the street address. Save the
+    street address before using this button.</div>'."\n";
+// TODO: Create button to update the lat/lng fields based on Google Maps API
+// geocoding of the street address.
 /*****************************************************************************/
 $varname="active_site";
 if (isset($_POST[$varname])) {
@@ -230,15 +235,15 @@ if (isset($_POST[$varname])) {
 } else {
     $active_site=$site[$varname];
 }
-echo '<tr><td class="text-right">Active<br>(abbreviated):</td><td><input type="checkbox" '
+echo '<div class="form-group"><label for='.$varname.'>Active?</label><br/><input  class="form-control" type="checkbox" '
      . 'name="'.$varname.'" value="Yes"';
 if ($active_site>0) { echo ' checked="checked" ';}
-echo '></td><td>"Active" means site is available for rental for SCA events.
+echo '> <br/>"Active" means site is available for rental for SCA events.
 If site becomes unavailable due to change in management or for other reasons,
 uncheck box. Listing will remain in the database in case it becomes available again
-later, but will not display in the public list.</td></tr>'."\n";
+later, but will not display in the public list.</div>'."\n";
 
-echo "</table>";
+
 echo '<input type="submit" value="Update Event Site Information">';
 //echo '<button type="reset" value="Reset">Reset</button>';
 echo '</form>';
