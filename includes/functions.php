@@ -213,52 +213,84 @@
 
    /* takes a Street Address and returns a corresponding
     * latitude and Longitude
-    * TODO: finish writing this function
+    * Has built in failure checks
     */
-   function geocode($address)
-   {
-     //begin JS session
-     //pass the contents of $address to JS using json_encode()
-     //make the geocode request:
-     //http://maps.googleapis.com/maps/api/geocode/json?$address
-     //extract the lat and lng from the results and store into a simple array
-     //pass the resulting array back to php using json_decode()
-     //return the results to the page making the request
-     return 0;
+   function geocode($address){
+
+      // url encode the address
+      $address = urlencode($address);
+
+      // google map geocode api url
+      $url = "http://maps.google.com/maps/api/geocode/json?sensor=false&address={$address}";
+
+      // get the json response
+      $geocode_json = file_get_contents($url);
+
+      // decode the json
+      $geocode = json_decode($geocode_json, true);
+
+      // response status will be 'OK', if able to geocode given address
+      if($geocode['status']=='OK'){
+
+          // get the important data
+          $lat = $geocode['results'][0]['geometry']['location']['lat'];
+          $lng = $geocode['results'][0]['geometry']['location']['lng'];
+
+
+          // verify if data is complete
+          if($lat && $lng){
+
+              // put the data in the array
+              $coords = array();
+
+              array_push(
+                  $coords,
+                      $lat,
+                      $lng
+                  );
+
+              return $coords;
+
+          }else{
+              return false;
+          }
+
+      }else{
+          return false;
+      }
    }
-
-
    /* Checks time stamps in the session variables to ensure that the session
     * isn't too old, and resets the UPDATE variable for the inactivity timeout
     * runs logout() if inactivity timeout or lifetime expiration are exceeded.
     */
    function validate_session() {
+
      if (isset($_SESSION['CREATED'])) {
        // if the session creation date stamp is older than 7 days, destroy the session
-       if (time() - $_SESSION['CREATED'] > 604800) {
+       $time_creation = time() - $_SESSION['CREATED'];
+       echo "Time since creation". $time_creation . "(604800)<br/>";
+       $time_updated = time() - $_SESSION['UPDATED'];
+       echo "Time since update". $time_updated. "(7200)<br/>";
+       $time_refreshed = time() - $_SESSION['REFRESHED'];
+       echo "Time since refresh". $time_refreshed. "(1800)<br/>";
+       if ((time() - $_SESSION['CREATED'] > 604800) || (isset($_SESSION['UPDATED']) && (time() - $_SESSION['UPDATED'] > 7200 ))) {
          // log out current user, if any
          logout();
          // redirect user
          redirect("/");
          }
-       } else if (isset($_SESSION['UPDATED']) && (time() - $_SESSION['UPDATED'] > 7200)) {
-         // last request was more than 2 hours ago
-         // log out current user, if any
-         logout();
 
-         // redirect user
-         redirect("/");
-       } else {
+       else {
          $_SESSION['UPDATED'] = time(); // update last activity time stamp
        }
        if (time() - $_SESSION['REFRESHED'] > 1800) {
          // session last refreshed more than 30 minutes ago
          session_regenerate_id(true);    // change session ID for the current session and invalidate old session ID
          $_SESSION['REFRESHED'] = time();  // update creation time
-       } 
+       }
+     }
        return 1;
 }
-
     /*
      * Exits the script, but only after displaying the footer.
      * Allows for more graceful exits.

@@ -4,6 +4,6 @@
     require("../includes/config.php");
 
     // render portfolio
-    render("edit_site.php", ["title" => "Individual"]);
+    render("edit_site.php", ["title" => "Edit Site"]);
 
 ?>
