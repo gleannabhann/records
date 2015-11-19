@@ -186,7 +186,7 @@ if (isset($_POST["msgSubmit"])) {
 
     <div class="form-group">
       <div class="input-group col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
-        <input id="msgSubmit" name="msgSubmit" type="submit" value="Send" class="btn btn-primary">
+          <input id="msgSubmit" name="msgSubmit" type="submit" value="Send Report">
         <input type="hidden" name="id"
              value="<?php
                          echo "$id_person";

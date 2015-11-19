@@ -53,6 +53,7 @@
 
               // remember that user is now logged in by storing user's ID in session
               $_SESSION["id"] = $row["id_webuser"];
+              $_SESSION["webuser_name"] = $row["name_webuser"];
 
               // generate a key based on user_agent, user ID,
 

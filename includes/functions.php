@@ -268,11 +268,13 @@
      if (isset($_SESSION['CREATED'])) {
        // if the session creation date stamp is older than 7 days, destroy the session
        $time_creation = time() - $_SESSION['CREATED'];
-       echo "Time since creation". $time_creation . "(604800)<br/>";
        $time_updated = time() - $_SESSION['UPDATED'];
-       echo "Time since update". $time_updated. "(7200)<br/>";
        $time_refreshed = time() - $_SESSION['REFRESHED'];
-       echo "Time since refresh". $time_refreshed. "(1800)<br/>";
+       if (DEBUG){
+          echo "Time since creation". $time_creation . "(604800)<br/>";
+          echo "Time since update". $time_updated. "(7200)<br/>";
+          echo "Time since refresh". $time_refreshed. "(1800)<br/>";
+       }
        if ((time() - $_SESSION['CREATED'] > 604800) || (isset($_SESSION['UPDATED']) && (time() - $_SESSION['UPDATED'] > 7200 ))) {
          // log out current user, if any
          logout();
@@ -311,7 +313,14 @@
 
     }
 
+    // Produces string output in header format.  
+    // Useful for synchronizing across web pages
     function form_title($label)
     {
         return '<h2>'.$label.'</h2>';
+    }
+
+    function form_subtitle($label)
+    {
+        return '<h3>'.$label.'</h3>';
     }

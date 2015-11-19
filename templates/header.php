@@ -56,7 +56,7 @@
             textarea {
               width: 100%;
               box-sizing: border-box;
-              height: 28px; }
+              height: 84px; }
             </style>
 
             <?php if (isset($title)): ?>
@@ -127,6 +127,7 @@
           <?php
           if (isset($_SESSION["id"]))
           {
+            echo '<li class="navbar-brand" >Logged in as '.$_SESSION["webuser_name"].'</li>';
             echo '<li><a href="logout.php" class="navbar-brand">Logout</a></li>';
           }
           ?>

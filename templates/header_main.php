@@ -66,7 +66,10 @@
     </head>
 
     <body>
-<?php if (isset($_SESSION['initiated'])) validate_session();?>
+<?php if (isset($_SESSION['initiated'])) {
+    validate_session();
+}
+?>
 <div class="container-fluid">
   <!-- begin page -->
   <header class="header">
@@ -118,7 +121,8 @@
             <!-- display logout button if user is logged in -->
             <?php
             if (isset($_SESSION["id"]))
-            {
+            {    
+              echo '<li class="navbar-brand" >Logged in as '.$_SESSION["webuser_name"].'</li>';
               echo '<li><a href="public/logout.php" class="navbar-brand">Logout</a></li>';
             }
             ?>

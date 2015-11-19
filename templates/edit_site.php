@@ -54,21 +54,7 @@ $previous_item--;
 *  geocode() function.
 */
 
-//check to see if either lat or lng is NULL
-if (($site['lat_site'] == NULL OR $site['long_site'] == NULL) && (isset($site['street_site'])))
-  {
-    //combine the address fields into a standard USPS address
-    $address = $site['street_site'].", ".$site['city_site'].", ".$site['state_site']." ".$site['zip_site'];
 
-    //pass $address to geocode()
-    $result = geocode($address);
-    //store the results in the appropriate variables
-    //you give one variable and it returns an array containing two items: a lat
-    //value and a long value.
-    $lat_site = $result[0];
-    $long_site = $result[1];
-    $coord_flag = true;
-  } else {$coord_flag = false;}
 
 //top navigation buttons: previous, next, return to list
 echo "<div class=\"btn-group\" role=\"group\" aria-label=\"navigation\">\n";
@@ -91,11 +77,6 @@ Street Address field. Place them in the Area field, and type 'None' into the
 Street Address field. </p><p>You will also need to manually enter latitude and
 longitude coordinates for sites without street addresses.</p></div>";
 
-if ($coord_flag == TRUE) {
-  echo "<div class='well danger'><p class='danger'>NOTICE! Latitude and Longitude
-  coordinates were auto-generated for this site. Please click the \"Update Event
-  Site Information\" button before you leave this page.<p></div>";
-}
 //open the form
 
 echo "<form class='form-horizontal' action=\"./edit_site.php?id=".$id_site."\" method=\"post\">\n";
@@ -228,35 +209,54 @@ echo '<div class="form-group"><label for='.$varname.'>Zip Code:</label><input ty
      . $zip_site.'"> <br/>5 digit zip code.</div>'."\n";
 /*****************************************************************************/
 $varname="lat_site";
-if (!isset($lat_site)) {
-  if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-      $lat_site=$_POST[$varname];
-  } else {
-      $lat_site=$site[$varname];
-  }
+if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
+  $lat_site=$_POST[$varname];
+} else {
+  $lat_site=$site[$varname];
 }
+
+$varname="long_site";
+if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
+  $long_site=$_POST[$varname];
+} else {
+  $long_site=$site[$varname];
+}
+
+//check to see if either lat or lng is NULL and update if the address is not null
+if (($site['lat_site'] == NULL OR $site['long_site'] == NULL) && ($street_site!=NULL))
+  {
+    //combine the address fields into a standard USPS address
+    $address = $site['street_site'].", ".$site['city_site'].", ".$site['state_site']." ".$site['zip_site'];
+
+    //pass $address to geocode()
+    $result = geocode($address);
+    //store the results in the appropriate variables
+    //you give one variable and it returns an array containing two items: a lat
+    //value and a long value.
+    $lat_site = $result[0];
+    $long_site = $result[1];
+    $coord_flag = true;
+  } else {$coord_flag = false;}
+
+
 echo '<div class="form-group"><label for='.$varname.'>Latitude:</label><input type="number" step="any" '
      . 'name="'.$varname.'" value="'
      . $lat_site.'">
      <br/>Format: 29.1234567</div>'."\n";
-
-
-/*****************************************************************************/
-$varname="long_site";
-if (!isset($long_site)) {
-  if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-      $long_site=$_POST[$varname];
-  } else {
-      $long_site=$site[$varname];
-  }
-}
 echo '<div class="form-group"><label for='.$varname.'>Longitude:</label><input type="number" step="any" '
      . 'name="'.$varname.'"  value="'
      . $long_site.'"> <br/>Format: -90.1234567
      </div>'."\n";
 
+
+//  if ($coord_flag == TRUE) {
+//  echo "<div class='well danger'><p class='danger'>NOTICE! Latitude and Longitude
+//  coordinates were auto-generated for this site. Please click the \"Update Event
+//  Site Information\" button before you leave this page.<p></div>";
+//}
+  
 /*****************************************************************************/
-$varname="active_site";
+  $varname="active_site";
 if (isset($_POST[$varname])) {
     if ($_POST[$varname]=="Yes") { $active_site=1;}
     else {$active_site=0;}
