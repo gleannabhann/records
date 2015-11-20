@@ -35,7 +35,7 @@ $query = "SELECT Persons.id_person, name_person, name_award, date_award "
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result)) {
     extract($row);
-    echo "<li><a href='edit.php?id=$id_person'>"
+    echo "<li><a href='person.php?id=$id_person'>"
             . "$name_person</a> received $name_award on $date_award"
             . "</li>";
 }

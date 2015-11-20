@@ -26,9 +26,10 @@ while ($row = mysqli_fetch_assoc($result))
   echo "<div class='page-header'><h1>$name_person</h1><small>";
   include("../templates/warning.php"); // includes the warning text about paper precedence
   echo "</small>";
-  if (permissions("Herald")>= 3) {
+  if ((permissions("Herald")>= 3) or (permissions("Marshal")>=3)) {
       // TODO: Make this link more visible?
-echo "<br><a href='./edit_person.php?id=$id_person'>Edit this record</a>";
+    echo "<br>".button_link("./edit_person.php?id=$id_person", 
+                            "Edit $name_person's record");
   }
   echo "</div>";
 };
@@ -103,7 +104,9 @@ or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result))
   {extract($row);
 // echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
-  echo "<tr><td class='text-left'>$name_award</td><td class='text-left'>$date_award</tr></td>";
+  echo "<tr><td class='text-left'>$name_award</td>"
+          . "<td class='text-left'>$date_award</td>";
+  echo "</tr>";
 };
 echo "</table>";
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
