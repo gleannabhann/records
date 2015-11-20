@@ -91,9 +91,11 @@
 
       <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <!-- (Disabled until needed)  <ul class="nav navbar-nav">
-            <li><a href="#">Awards</a></li>
-          <li class="dropdown">
+      <ul class="nav navbar-nav">
+            <li><a class="navbar-brand"  href="/public/awards.php">Awards</a></li>
+            <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
+            <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
+          <!-- (disabled until needed) <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
             <ul class="dropdown-menu">
               <li><a href="#">Recent Additions</a></li>
@@ -105,10 +107,10 @@
               <li><a href="#">One more separated link</a></li>
             </ul>
           </li>
-
+-->
 
         </ul>
-      -->
+
 
           <ul class="nav navbar-nav navbar-right">
             <form class="navbar-form navbar-right" role="search" action="public/search.php" method="get">
@@ -121,7 +123,7 @@
             <!-- display logout button if user is logged in -->
             <?php
             if (isset($_SESSION["id"]))
-            {    
+            {
               echo '<li class="navbar-brand" >Logged in as '.$_SESSION["webuser_name"].'</li>';
               echo '<li><a href="public/logout.php" class="navbar-brand">Logout</a></li>';
             }

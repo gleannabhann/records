@@ -72,7 +72,7 @@ echo "</div><!-- class btn-group -->\n";
 // Display form with all person's info.
 echo form_title("Editing Event Site Information")."\n";
 
-echo "<div class='well danger'><p class='danger'>Caution: Do not enter P.O. Box addresses into the
+echo "<div class='alert alert-danger'><p>Caution: Do not enter P.O. Box addresses into the
 Street Address field. Place them in the Area field, and type 'None' into the
 Street Address field. </p><p>You will also need to manually enter latitude and
 longitude coordinates for sites without street addresses.</p></div>";
@@ -254,7 +254,7 @@ echo '<div class="form-group"><label for='.$varname.'>Longitude:</label><input t
 //  coordinates were auto-generated for this site. Please click the \"Update Event
 //  Site Information\" button before you leave this page.<p></div>";
 //}
-  
+
 /*****************************************************************************/
   $varname="active_site";
 if (isset($_POST[$varname])) {

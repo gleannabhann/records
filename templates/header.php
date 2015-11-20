@@ -32,7 +32,9 @@
             body {
               /* Margin bottom by footer height */
               margin-bottom: 60px;
+              min-height: 100%;
             }
+
             .footer {
               position: absolute;
               bottom: 0;
@@ -57,6 +59,10 @@
               width: 100%;
               box-sizing: border-box;
               height: 84px; }
+
+            #map {
+              height: 500px;
+            }
             </style>
 
             <?php if (isset($title)): ?>
@@ -96,8 +102,11 @@
 
       <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <!-- (Disabled until needed)  <ul class="nav navbar-nav">
-            <li><a href="#">Awards</a></li>
+      <ul class="nav navbar-nav">
+      <li><a class="navbar-brand"  href="/public/awards.php">Awards</a></li>
+      <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
+      <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
+          <!--
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
             <ul class="dropdown-menu">
@@ -110,10 +119,10 @@
               <li><a href="#">One more separated link</a></li>
             </ul>
           </li>
-
+-->
 
         </ul>
-      -->
+
 
           <ul class="nav navbar-nav navbar-right">
             <form class="navbar-form navbar-right" role="search" action="search.php" method="get">

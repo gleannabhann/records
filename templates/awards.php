@@ -2,29 +2,29 @@
 /* connect to the database */
 $cxn = open_db_browse();
 
-echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
+echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
 
-echo "<table class='table table-condensed table-bordered'>";
-echo "<tr>";
+
 ///////////////////////////////////////////////////////////////////////////////
 // Main portion of the page
 ///////////////////////////////////////////////////////////////////////////////
-echo "<td width='60%' align='center'>";
+echo "<div class='center-block'>";
 include "alpha.php";
-
-echo "<br/>";
+echo "</div>";
+echo "<div class='center-block'>";
 echo form_subtitle("Search on a Partial Name");
     echo '<form role="search" action="search.php" method="get">';
     echo  '<input type="text" class="form-control" '
     . 'placeholder="Search for Name or Award" name="name">';
     echo '<button type="submit" class="btn btn-default">Submit</button>';
-echo '</form>';
-echo "</td>";
+
+echo "</div>";
+echo "</div><!-- ./col-md-6 -->";
 
 ///////////////////////////////////////////////////////////////////////////////
 // News column on right
 ///////////////////////////////////////////////////////////////////////////////
-echo "<td width='40%' align='center'>";
+echo '<div class="col-md-3 well">';
 echo form_subtitle("Most recent awards");
 $query = "SELECT Persons.id_person, name_person, name_award, date_award "
         . "FROM Persons, Persons_Awards, Awards "
@@ -39,12 +39,10 @@ while ($row = mysqli_fetch_assoc($result)) {
             . "$name_person</a> received $name_award on $date_award"
             . "</li>";
 }
-echo "</td>";
-echo "</tr>";
-echo "</table>";
+
 include "warning.php"; // includes the warning text about paper precedence
 
-echo "<div> <!-- ./col-md-8 --></div> <!-- ./row -->";
+echo "<div> <!-- ./col-md-3 --></div> <!-- ./row -->";
 
 
 mysqli_close ($cxn); /* close the db connection */
