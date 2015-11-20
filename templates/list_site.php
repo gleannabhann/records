@@ -56,7 +56,7 @@ while ($row = mysqli_fetch_assoc($result)) {
           $lat = $lat_site;
           $lng = $long_site;
           $site = $name_site;
-          $site = array($site, $lat, $long);
+          $site = array($site, $lat, $lng);
           $coords[] = $site;
         }
 
