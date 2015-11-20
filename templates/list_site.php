@@ -95,9 +95,24 @@ echo "</table>";
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 #######################################################################################*/
 mysqli_close ($cxn); /* close the db connection */
+
 ?>
 
 <script>
+function addLoadEvent(func) {
+  var oldonload = window.onload;
+  if (typeof window.onload != 'function') {
+    window.onload = func;
+  } else {
+    window.onload = function() {
+      if (oldonload) {
+        oldonload();
+      }
+      func();
+    }
+  }
+}
+
 
 var map;
 function initMap() {
@@ -106,20 +121,27 @@ center: {lat: 33.535442, lng: -90.603519},
 zoom: 6
 });
 }
-/* var coords = <?php echo '["' . json_encode($coords) . '"]' ?>;
-for (var i = 0; i < coords.length; i++)
+
+var coords = <?php echo '[' . json_encode($coords) . ']' ?>;
+function populate() {
+for (var i = 0; i < coords[0].length; i++)
 {
-    var lat = coords[i].lat;
-    var lng = coords[i].lng;
-    var site = coords[i].site;
-    myLatLng =
-    map: map,
+    var lat = coords[0][i][1];
+    var lng = coords[0][i][2];
+    var site = coords[0][i][0];
+    console.log("\nSite: " + site + "\nLat: " + lat +"\nLng: " + lng);
+
+
     var marker = new google.maps.Marker({
       position: new google.maps.LatLng(lat, lng),
-      title: site
-    }); */
+      title: site,
+      map: map,
+    });
+  }
+}
+addLoadEvent(initMap);
+addLoadEvent(populate);
 </script>
-<script async defer
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDob9AuNmEVae3K6YFLgKzNMdHX8Q-rojc&callback=initMap&sensor=false">
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDob9AuNmEVae3K6YFLgKzNMdHX8Q-rojc&callback=initMap">
 </script>
 </div>
