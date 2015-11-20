@@ -4,7 +4,8 @@
 
 /* connect to the database */
 $cxn = open_db_browse();
-$query = "select @rn:=@rn+1 as row_number, s.* from Sites s, (SELECT @rn:=0) r order by active_site desc;";
+$query = "select @rn:=@rn+1 as row_number, s.* from Sites s, (SELECT @rn:=0) r "
+        . "order by active_site desc, state_site, name_site;";
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 /*#######################################################################################*/
