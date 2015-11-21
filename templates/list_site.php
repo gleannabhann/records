@@ -41,7 +41,7 @@ if (permissions("Sites") >= 3){
   echo  "<td class='text-left'><strong> </strong></td>";
 };
 echo " </thead>";
-$coords = array();
+$sites = array();
 while ($row = mysqli_fetch_assoc($result)) {
     extract($row);
     if (($active_site > 0) || (permissions("Sites") >= 3)) {
@@ -54,19 +54,19 @@ while ($row = mysqli_fetch_assoc($result)) {
         }
         // add a row to the array to hand to JS, only if coords are available
         if ($lat_site && $long_site) {
-          $lat = $lat_site;
-          $lng = $long_site;
-          $site = $name_site;
-          $site = array($site, $lat, $lng);
-          $coords[] = $site;
+
+          $site = array($name_site, $lat_site, $long_site, $url_site, $facilities_site, $capacity_site, $rates_site, $address, $contact_site, $id_site);
+          $sites[] = $site;
+
         }
 
         echo "<tr>";
-        echo "<td class='text-left' style=\"width:5%\"> $row_number</td>";
+
+        echo "<td class='text-left'><a name='$id_site'> $row_number</a></td>";
         if ($active_site) {
-                echo "<td class='text-left' style=\"width:15%\">$name_site";}
+                echo "<td class='text-left'>$name_site";}
             else {
-                echo "<td class='text-left' style=\"width:15%\">$name_site (INACTIVE)";
+                echo "<td class='text-left'>$name_site (INACTIVE)";
             }
         if ($url_site !="") echo "<a href=\"$url_site\">Link</a>";
         echo "</td>";
@@ -95,7 +95,7 @@ echo "</table>";
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 #######################################################################################*/
 mysqli_close ($cxn); /* close the db connection */
-
+var_dump($sites);
 ?>
 
 <script>
@@ -121,24 +121,85 @@ center: {lat: 33.535442, lng: -90.603519},
 zoom: 6
 });
 }
-
-var coords = <?php echo '[' . json_encode($coords) . ']' ?>;
+markers = Array();
+infoWindows = Array();
+var siteData = <?php echo '[' . json_encode($sites) . ']' ?>;
 function populate() {
-for (var i = 0; i < coords[0].length; i++)
+for (i = 0; i < siteData[0].length; i++)
 {
-    var lat = coords[0][i][1];
-    var lng = coords[0][i][2];
-    var site = coords[0][i][0];
-    console.log("\nSite: " + site + "\nLat: " + lat +"\nLng: " + lng);
+  console.log ("i = " + i);
+  /* store all siteData into individual variables for ease of use
+  $name_site = 0, $lat_site = 1, $long_site = 2, $url_site = 3,
+  $facilities_site = 4, $capacity_site = 5, $rates_site = 6, $address = 7,
+  $contact_site = 8, $id_site = 9 */
 
+    var name = siteData[0][i][0];
+    var lat = siteData[0][i][1];
+    var lng = siteData[0][i][2];
+    var url = siteData[0][i][3];
+    var facilities = siteData[0][i][4];
+    var capacity = siteData[0][i][5];
+    var rates = siteData[0][i][6];
+    var address = siteData[0][i][7];
+    var contact = siteData[0][i][8];
+    var id = siteData[0][i][9];
+    if (!name) {name = "unknown"};
+    if (!lat) {lat = "unknown"};
+    if (!lng) {lng = "unknown"};
+    if (!url) {url = "unknown"};
+    if (!facilities) {facilities = "unknown"};
+    if (!capacity) {capacity = "unknown"};
+    if (!rates) {rates = "unknown"};
+    if (!address) {address = "unknown"};
+    if (!contact) {contact = "unknown"};
+    if (!id) {id = "unknown"};
+
+    console.log ("Begin creating marker for " + name);
+
+    var contentString = '<div id="content">'+
+          '<div id="siteNotice">'+
+          '</div>'+
+          '<h1 id="firstHeading" class="firstHeading">' + name +'</h1>'+
+          '<p>' +
+          '<strong>Facilities available: </strong>' + facilities + '<br/>' +
+          '<strong>Capacity: </strong>' + capacity + '<br/>' +
+          '<strong>Rates: </strong>' + rates + '<br/>' +
+          '<strong>Address: </strong>' + address + '<br/>' +
+          '<strong>Phone Number: </strong>' + contact + '<br/>' +
+          //The below linked page doesn't exist yet
+      /*  '<a href="/site.php?id=' + id + '"><strong>Hall of Records Page</strong></a><br/>' +  */
+          // in the mean time, we'll link to an anchor within the page.
+          '<a href="#' + id + '"><strong>Go to location in the list</strong></a><br/>' +
+          // the next line is disabled until I figure out how to only display if the variable is defined
+    /*    '<a href="' + url + '"><strong>Visit this Campground\'s Web Site</strong></a><br/>' + */
+          '</p>'
+          '</div>'+
+          '</div>';
+
+    infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
 
     var marker = new google.maps.Marker({
       position: new google.maps.LatLng(lat, lng),
-      title: site,
+      title: name,
       map: map,
+      infoWindowIndex: i,
     });
+
+    google.maps.event.addListener(marker, 'click',
+      function(event)
+      {
+          infoWindows[this.infoWindowIndex].open(map, this);
+      }
+    );
+
+    infoWindows.push(infowindow);
+    markers.push(marker);
+    console.log ("Marker created for " + name);
   }
 }
+
 addLoadEvent(initMap);
 addLoadEvent(populate);
 </script>
