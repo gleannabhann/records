@@ -95,7 +95,7 @@ echo "</table>";
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 #######################################################################################*/
 mysqli_close ($cxn); /* close the db connection */
-var_dump($sites);
+
 ?>
 
 <script>
