@@ -290,8 +290,8 @@ $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 if (mysqli_num_rows($result)>=1) {
    $next_site= mysqli_fetch_assoc($result);
 
-    echo button_link("./edit_site.php?id=".$next_site["id_site"],
-                     "Next Site Needed to Verify");
+  //  echo button_link("./edit_site.php?id=".$next_site["id_site"],
+  //                   "Next Site Needed to Verify");
 }
 
 echo button_link("./list_site.php", "Return to List of Sites")."\n";
