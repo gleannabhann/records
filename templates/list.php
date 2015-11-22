@@ -1,10 +1,7 @@
 <div class="container">
 <?php
 /* connect to the database */
-//$cxn = mysqli_connect ("localhost", "oop", "ooppassword","oop")
-//or die ("message");
-$cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
-or die ("message");
+$cxn = open_db_browse();
 /*#######################################################################################*/
 // This section wil list persons beginning with initial if initial is passed
 if (isset($_GET["initial"])) {
@@ -15,7 +12,9 @@ echo "</small></div>"; //Customize the page header
 echo "<div class='row'><div class='col-md-8 offset-md-2'>";
 include "alpha.php"; // includes the A-Z link list
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
-$query = "select id_person, name_person from Persons where upper(substring(name_person,1,1)) ='$Initial'";
+$query = "select id_person, name_person from Persons "
+        . "where upper(substring(name_person,1,1)) ='$Initial'"
+        . "order by name_person";
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result)) {
@@ -42,7 +41,7 @@ echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 include "alpha.php"; // includes the A-Z link list
 include "warning.php"; // includes the warning text about paper precedence
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
-$query = "select Persons.id_person as ip, name_person, date_award from Persons, Awards_Persons where Persons.id_person = Awards_Persons.id_person and Awards_Persons.id_award=$award";
+$query = "select Persons.id_person as ip, name_person, date_award from Persons, Persons_Awards where Persons.id_person = Persons_Awards.id_person and Persons_Awards.id_award=$award";
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result)) {

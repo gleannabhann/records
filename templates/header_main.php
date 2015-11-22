@@ -16,7 +16,7 @@
             <link href="/css/bootstrap-theme.min.css" rel="stylesheet"/>
             <link href="/css/styles.css" rel="stylesheet"/>
             <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-            <!-- WARNING: Respond.js does not work if you view the page via file:// -->
+            <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
             <!--[if lt IE 9]>
               <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
               <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -32,9 +32,7 @@
             body {
               /* Margin bottom by footer height */
               margin-bottom: 60px;
-              min-height: 100%;
             }
-
             .footer {
               position: absolute;
               bottom: 0;
@@ -50,18 +48,6 @@
             }
             .navbar-brand {
               color: #fff !important;
-            }
-            input {
-               width: 100%;
-               box-sizing: border-box;
-               height: 28px; }
-            textarea {
-              width: 100%;
-              box-sizing: border-box;
-              height: 84px; }
-
-            #map {
-              height: 500px;
             }
             </style>
 
@@ -80,8 +66,10 @@
     </head>
 
     <body>
-      <?php if (isset($_SESSION['initiated'])) validate_session();?>
-
+<?php if (isset($_SESSION['initiated'])) {
+    validate_session();
+}
+?>
 <div class="container-fluid">
   <!-- begin page -->
   <header class="header">
@@ -100,14 +88,14 @@
             <a class="navbar-brand" href="../">Home</a>
           </div>
 
+
       <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-      <li><a class="navbar-brand"  href="/public/awards.php">Awards</a></li>
-      <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
-      <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
-          <!--
-          <li class="dropdown">
+            <li><a class="navbar-brand"  href="/public/awards.php">Awards</a></li>
+            <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
+            <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
+          <!-- (disabled until needed) <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
             <ul class="dropdown-menu">
               <li><a href="#">Recent Additions</a></li>
@@ -125,27 +113,31 @@
 
 
           <ul class="nav navbar-nav navbar-right">
-            <form class="navbar-form navbar-right" role="search" action="search.php" method="get">
+            <form class="navbar-form navbar-right" role="search" action="public/search.php" method="get">
               <div class="form-group">
                 <input type="text" class="form-control" placeholder="Search for Name or Award" name="name">
               </div>
               <button type="submit" class="btn btn-default">Submit</button>
             </form>
 
+            <!-- display logout button if user is logged in -->
+            <?php
+            if (isset($_SESSION["id"]))
+            {
+              echo '<li class="navbar-brand" >Logged in as '.$_SESSION["webuser_name"].'</li>';
+              echo '<li><a href="public/logout.php" class="navbar-brand">Logout</a></li>';
+            }
+            ?>
 
-          <?php
-          if (isset($_SESSION["id"]))
-          {
-            echo '<li class="navbar-brand" >Logged in as '.$_SESSION["webuser_name"].'</li>';
-            echo '<li><a href="logout.php" class="navbar-brand">Logout</a></li>';
-          }
-          ?>
+          <!-- <li class="disabled">
+             <a href="#" class="navbar-brand">About This Site</a></li>-->
           <li class="dropdown">
             <a href="#" class="dropdown-toggle navbar-brand" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
             <ul class="dropdown-menu">
               <li><a href="http://gleannabhann.net/award-recommendation-form/" rel="external">Award Recommendation Form</a></li>
-              <!--<li class="disabled">
+              <!-- <li class="disabled">
                  <a href="legal.php">Disclaimers</a></li>-->
+
               <li><a href="http://docs.gleannabhann.net/ws-ga-library/College%20of%20Heralds/Amethyst%20Herald" rel="external">Award Definitions</a></li>
               <li role="separator" class="divider"></li>
               <li><a href="http://gleannabhann.net" rel="external">GleannAbhann.net</a></li>

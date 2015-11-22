@@ -26,7 +26,7 @@
      */
     function dump($variable)
     {
-        require("../templates/dump.php");
+        require(ROOTDIR."/templates/dump.php");
         exit;
     }
 
@@ -49,109 +49,13 @@
         session_destroy();
     }
 
-    /**
-     * Returns a stock by symbol (case-insensitively) else false if not found.
+    /*
+     * Creates a database connection using the read_only account
      */
-    function lookup($symbol)
-    {
-        // reject symbols that start with ^
-        if (preg_match("/^\^/", $symbol))
-        {
-            return false;
-        }
-
-        // reject symbols that contain commas
-        if (preg_match("/,/", $symbol))
-        {
-            return false;
-        }
-
-        // open connection to Yahoo
-        $handle = @fopen("http://download.finance.yahoo.com/d/quotes.csv?f=snl1&s=$symbol", "r");
-        if ($handle === false)
-        {
-            // trigger (big, orange) error
-            trigger_error("Could not connect to Yahoo!", E_USER_ERROR);
-            exit;
-        }
-
-        // download first line of CSV file
-        $data = fgetcsv($handle);
-        if ($data === false || count($data) == 1)
-        {
-            return false;
-        }
-
-        // close connection to Yahoo
-        fclose($handle);
-
-        // ensure symbol was found
-        if ($data[2] === "0.00")
-        {
-            return false;
-        }
-
-        // return stock as an associative array
-        return [
-            "symbol" => $data[0],
-            "name" => $data[1],
-            "price" => $data[2],
-        ];
-    }
-
-    /**
-     * Executes SQL statement, possibly with parameters, returning
-     * an array of all rows in result set or false on (non-fatal) error.
-     */
-    function query(/* $sql [, ... ] */)
-    {
-        // SQL statement
-        $sql = func_get_arg(0);
-
-        // parameters, if any
-        $parameters = array_slice(func_get_args(), 1);
-
-        // try to connect to database
-        static $handle;
-        if (!isset($handle))
-        {
-            try
-            {
-                // connect to database
-                $handle = new PDO("mysql:dbname=" . DATABASE . ";host=" . SERVER, USERNAME, PASSWORD);
-
-                // ensure that PDO::prepare returns false when passed invalid SQL
-                $handle->setAttribute(PDO::ATTR_EMULATE_PREPARES, false); 
-            }
-            catch (Exception $e)
-            {
-                // trigger (big, orange) error
-                trigger_error($e->getMessage(), E_USER_ERROR);
-                exit;
-            }
-        }
-
-        // prepare SQL statement
-        $statement = $handle->prepare($sql);
-        if ($statement === false)
-        {
-            // trigger (big, orange) error
-            trigger_error($handle->errorInfo()[2], E_USER_ERROR);
-            exit;
-        }
-
-        // execute SQL statement
-        $results = $statement->execute($parameters);
-
-        // return result set's rows, if any
-        if ($results !== false)
-        {
-            return $statement->fetchAll(PDO::FETCH_ASSOC);
-        }
-        else
-        {
-            return false;
-        }
+    function open_db_browse(){
+        $connection =  mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
+                       or die ("message");
+        return $connection;
     }
 
     /**
@@ -196,22 +100,35 @@
      */
     function render($template, $values = [])
     {
-        // if template exists, render it
-        if (file_exists("../templates/$template"))
+
+        if ($template=="main.php")
         {
             // extract variables into local scope
             extract($values);
 
             // render header
-            require("../templates/header.php");
+            require(ROOTDIR."/templates/header_main.php");
 
             // render template
-            require("../templates/$template");
+            require(ROOTDIR."/templates/$template");
 
             // render footer
-            require("../templates/footer.php");
-        }
+            require(ROOTDIR."/templates/footer.php");
+        }    // if template exists, render it
+        elseif (file_exists(ROOTDIR."/templates/$template"))
+        {
+            // extract variables into local scope
+            extract($values);
 
+            // render header
+            require(ROOTDIR."/templates/header.php");
+
+            // render template
+            require(ROOTDIR."/templates/$template");
+
+            // render footer
+            require(ROOTDIR."/templates/footer.php");
+        }
         // else err
         else
         {
@@ -219,4 +136,191 @@
         }
     }
 
-?>
+    /* Returns permissions level for $role
+     * 0 means you can read the public data only
+     * 1 means you can read the records data
+     * 2 means you can read and add to the records
+     * 3 means you can read, add, and update the records
+     * 4 means you can read, add, and update records, as well as read userdata.
+     * 5 means you can invite new users in addition to everything 4 can do.
+     * 6 means you can do everything 5 can do and you can edit userdata
+     */
+
+    function permissions($role) {
+        $perm =0;
+        if (is_logged_in()) {
+            if (isset($_SESSION["Admin"])) {$perm=$_SESSION["Admin"];}
+            if (isset($_SESSION[$role])  && (is_numeric($_SESSION[$role]))) {
+                return max($_SESSION[$role],$perm);
+            } else {
+                return $perm;
+            }
+        }
+        return 0;
+    }
+    /* Test to see if user is logged in.  Until login is functional, assume true.
+     *
+     */
+    function is_logged_in() {
+        return isset($_SESSION["id"]);
+        //return false;
+/*        if ($_SESSION != NULL) {
+            return true;
+        }
+        else return false;
+*/
+    }
+
+    /*
+     * Returns the id of the webuser who is making the current change.
+     * TODO: expand to also return role, and then need to modify update_query()
+     */
+    function get_webuser() {
+        return $_SESSION["id"];
+        //TODO: Return the id_webuser of the person/account making the change
+    }
+
+    /*
+     * Runs the update $query using database connection $cxn, and then logs
+     * a copy of the update query to the transaction log.
+     * TODO: query cleaning?
+     */
+    function update_query($cxn,$query){
+        if  (mysqli_query($cxn, $query)) {
+            //echo "Record updated successfully";
+            $log = "INSERT INTO Transaction_Log VALUES ('',NOW(),"
+                    . get_webuser()
+                    . ",0,'"
+                    . addslashes($query) . "')";
+            // echo "<p>Updating the transaction log with: " . $log;
+            $result = mysqli_query($cxn, $log);
+        } else {
+            return mysqli_error($cxn);
+        }
+        return 1;
+    }
+
+    // TODO: new function, sanitize
+    /* Sanitizes a string to insert into mysql.
+     *  - trims extra spaces
+     *  - escapes special characters
+     */
+    function sanitize_mysql($str){
+       $str = trim($str);
+       $str = addslashes($str);
+       return $str;
+   }
+
+   /* takes a Street Address and returns a corresponding
+    * latitude and Longitude
+    * Has built in failure checks
+    */
+   function geocode($address){
+
+      // url encode the address
+      $address = urlencode($address);
+
+      // google map geocode api url
+      $url = "http://maps.google.com/maps/api/geocode/json?sensor=false&address={$address}";
+
+      // get the json response
+      $geocode_json = file_get_contents($url);
+
+      // decode the json
+      $geocode = json_decode($geocode_json, true);
+
+      // response status will be 'OK', if able to geocode given address
+      if($geocode['status']=='OK'){
+
+          // get the important data
+          $lat = $geocode['results'][0]['geometry']['location']['lat'];
+          $lng = $geocode['results'][0]['geometry']['location']['lng'];
+
+
+          // verify if data is complete
+          if($lat && $lng){
+
+              // put the data in the array
+              $coords = array();
+
+              array_push(
+                  $coords,
+                      $lat,
+                      $lng
+                  );
+
+              return $coords;
+
+          }else{
+              return false;
+          }
+
+      }else{
+          return false;
+      }
+   }
+   /* Checks time stamps in the session variables to ensure that the session
+    * isn't too old, and resets the UPDATE variable for the inactivity timeout
+    * runs logout() if inactivity timeout or lifetime expiration are exceeded.
+    */
+   function validate_session() {
+
+     if (isset($_SESSION['CREATED'])) {
+       // if the session creation date stamp is older than 7 days, destroy the session
+       $time_creation = time() - $_SESSION['CREATED'];
+       $time_updated = time() - $_SESSION['UPDATED'];
+       $time_refreshed = time() - $_SESSION['REFRESHED'];
+       if (DEBUG){
+          echo "Time since creation". $time_creation . "(604800)<br/>";
+          echo "Time since update". $time_updated. "(7200)<br/>";
+          echo "Time since refresh". $time_refreshed. "(1800)<br/>";
+       }
+       if ((time() - $_SESSION['CREATED'] > 604800) || (isset($_SESSION['UPDATED']) && (time() - $_SESSION['UPDATED'] > 7200 ))) {
+         // log out current user, if any
+         logout();
+         // redirect user
+         redirect("/");
+         }
+
+       else {
+         $_SESSION['UPDATED'] = time(); // update last activity time stamp
+       }
+       if (time() - $_SESSION['REFRESHED'] > 1800) {
+         // session last refreshed more than 30 minutes ago
+         session_regenerate_id(true);    // change session ID for the current session and invalidate old session ID
+         $_SESSION['REFRESHED'] = time();  // update creation time
+       }
+     }
+       return 1;
+}
+    /*
+     * Exits the script, but only after displaying the footer.
+     * Allows for more graceful exits.
+     */
+    function exit_with_footer(){
+        require(ROOTDIR."/templates/footer.php");
+        exit();
+    }
+
+    // Produces a string output to create a button in html
+    //<a href="somepage.html"><button type="button">Text of Some Page</button></a>
+    function button_link($link,$label)
+    {
+        return '<a href="'.$link.'">'
+                .'<button type="button">'
+                .$label
+                .'</button></a>';
+
+    }
+
+    // Produces string output in header format.  
+    // Useful for synchronizing across web pages
+    function form_title($label)
+    {
+        return '<h2>'.$label.'</h2>';
+    }
+
+    function form_subtitle($label)
+    {
+        return '<h3>'.$label.'</h3>';
+    }
