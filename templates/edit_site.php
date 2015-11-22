@@ -226,17 +226,17 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 if (($site['lat_site'] == NULL OR $site['long_site'] == NULL) && ($street_site!=NULL))
   {
     //combine the address fields into a standard USPS address
-    $address = $site['street_site'].", ".$site['city_site'].", ".$site['state_site']." ".$site['zip_site'];
+    $address = $street_site.", ".$city_site.", ".$state_site." ".$zip_site;
 
     //pass $address to geocode()
     $result = geocode($address);
+
     //store the results in the appropriate variables
     //you give one variable and it returns an array containing two items: a lat
     //value and a long value.
     $lat_site = $result[0];
     $long_site = $result[1];
-    $coord_flag = true;
-  } else {$coord_flag = false;}
+  }
 
 
 echo '<div class="form-group"><label for='.$varname.'>Latitude:</label><input type="number" step="any" '
@@ -249,11 +249,7 @@ echo '<div class="form-group"><label for='.$varname.'>Longitude:</label><input t
      </div>'."\n";
 
 
-//  if ($coord_flag == TRUE) {
-//  echo "<div class='well danger'><p class='danger'>NOTICE! Latitude and Longitude
-//  coordinates were auto-generated for this site. Please click the \"Update Event
-//  Site Information\" button before you leave this page.<p></div>";
-//}
+
 
 /*****************************************************************************/
   $varname="active_site";
@@ -305,6 +301,9 @@ echo "</div><!-- ./col-md-8 --></div><!-- ./row -->\n"; //close out list and ope
 // Now that the variables are all populated,
 // let's go ahead and update the database if the Update button was pressed.
 if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+// First, update local variables
+
+
 // Process form by updating the database
 
     $update = "UPDATE Sites SET ";
