@@ -253,8 +253,9 @@ echo '<div class="form-group"><label for='.$varname.'>Longitude:</label><input t
 
 /*****************************************************************************/
   $varname="active_site";
-if (isset($_POST[$varname])) {
-    if ($_POST[$varname]=="Yes") { $active_site=1;}
+  // Note: $_POST["active_site" is *only* set if the checkbox is ticked.  
+if (isset($_POST['id'])) { // So check if this was a submission
+    if (isset($_POST[$varname])) { $active_site=1;}
     else {$active_site=0;}
     //$active_site=$_POST[$varname];
 } else {
