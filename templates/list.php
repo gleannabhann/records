@@ -38,21 +38,30 @@ $row = mysqli_fetch_assoc($result);
 $name_award = $row['name_award'];
 echo "<div class='page-header'><h1>Persons who hold the award $name_award</h1></div>"; //Customize the page header
 echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
-include "alpha.php"; // includes the A-Z link list
-include "warning.php"; // includes the warning text about paper precedence
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
-$query = "select Persons.id_person as ip, name_person, date_award from Persons, Persons_Awards where Persons.id_person = Persons_Awards.id_person and Persons_Awards.id_award=$award";
+$query = "select Persons.id_person as ip, name_person, date_award "
+        . "from Persons, Persons_Awards "
+        . "where Persons.id_person = Persons_Awards.id_person "
+        . "and Persons_Awards.id_award=$award";
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result)) {
     $Name = $row['name_person'];
     $ID = $row['ip'];
     $Date_award = $row['date_award'];
-    $link = "<li class='list-group-item text-left'><a href='./person.php?id=$ID'>$Name</a> - $Date_award</li>";
+    if (permissions("Herald")>= 3){
+        $link = "<li><a href='./edit_person.php?id=$ID'>$Name</a>&nbsp-&nbsp$Date_award</li>";
+    } else {
+        $link = "<li><a href='./person.php?id=$ID'>$Name</a>&nbsp-&nbsp$Date_award</li>";
+    }
+//    $link = "<li> $Name </li>";
     echo "$link";
 }
-echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./container-fluid -->"; //close out list and open divs
+echo "</ul></div></div> <!-- ./col-md-8 --></div><!-- ./container-fluid -->"; //close out list and open divs
 }
+echo "<p>";
+include "alpha.php"; // includes the A-Z link list
+include "warning.php"; // includes the warning text about paper precedence
 /*#######################################################################################*/
 // This section will list persons in a given group if group is passed
 if (!isset($_GET["initial"]) && !isset($_GET["award"]) && isset($_GET["group"])){
