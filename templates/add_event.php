@@ -37,12 +37,19 @@ if (permissions("Herald")>=  3) {
             $query_tail = $query_tail.",$id_site";
        }
        
-       $varname = "date_event";
+       $varname = "date_event_start";
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) 
                && is_string($_POST[$varname])) {
-            $date_event = $_POST[$varname];
+            $date_event_start = $_POST[$varname];
             $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",'$date_event'";
+            $query_tail = $query_tail.",'$date_event_start'";
+       }
+       $varname = "date_event_stop";
+       if (isset($_POST[$varname]) && !empty($_POST[$varname]) 
+               && is_string($_POST[$varname])) {
+            $date_event_stop = $_POST[$varname];
+            $query_head = $query_head.",$varname";
+            $query_tail = $query_tail.",'$date_event_stop'";
        }
 
        $query_head=$query_head.") ";
@@ -99,8 +106,13 @@ if (permissions("Herald")>=  3) {
           </td>
       </tr>
       <tr>
-          <td class="text-right">Date of Event</td>
-          <td><input type="date" class="date" name="date_event">
+          <td class="text-right">Date Event Starts</td>
+          <td><input type="date" class="date" name="date_event_start">
+              <br>(format if no datepicker: yyyy-mm-dd)</td>
+      </tr>
+      <tr>
+          <td class="text-right">Date Event Ends</td>
+          <td><input type="date" class="date" name="date_event_stop">
               <br>(format if no datepicker: yyyy-mm-dd)</td>
       </tr>
       <tr>

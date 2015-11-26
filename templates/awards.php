@@ -26,7 +26,7 @@ echo "</div><!-- ./col-md-6 -->";
 ///////////////////////////////////////////////////////////////////////////////
 echo '<div class="col-md-3 well">';
 echo form_subtitle("Most recent awards");
-$query = "SELECT Persons.id_person, name_person, name_award, date_award "
+$query = "SELECT Persons.id_person, name_person, name_award, date_award, Awards.id_award "
         . "FROM Persons, Persons_Awards, Awards "
         . "WHERE Persons.id_person=Persons_Awards.id_person "
         . "AND Awards.id_award = Persons_Awards.id_award "
@@ -36,7 +36,7 @@ $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result)) {
     extract($row);
     echo "<li><a href='person.php?id=$id_person'>"
-            . "$name_person</a> received $name_award on $date_award"
+            . "$name_person</a> received <a href='list.php?award=$id_award'>$name_award</a> on $date_award"
             . "</li>";
 }
 

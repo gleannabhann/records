@@ -29,10 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     $date_exp = $_POST["date_exp"];
     $date_added = date("Y-m-d");
     $id_kingdom = $_POST["id_kingdom"];
+    $id_event = $_POST["id_event"];
     
     $update = "INSERT INTO Persons_Awards VALUES "
             . "(NULL, $id_person, $id_award,"
-            . "'$date_award','$date_exp','$date_added', $id_kingdom )";
+            . "'$date_award','$date_exp','$date_added', $id_kingdom, $id_event )";
     //echo "Update Query is ".$update;
     $result=update_query($cxn, $update);
     if ($result !== 1) {echo "Error updating record: " . mysqli_error($cxn);}
@@ -57,8 +58,12 @@ $query = "SELECT id_award, name_kingdom,"
 //echo $query;
 $awards = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
 
-$query="SELECT * from Kingdoms;";
-$kingdoms = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
+$query = "SELECT id_event, name_event, date_event_start, date_event_stop "
+        . "FROM Events ORDER BY date_event_start DESC";
+$events=mysqli_query ($cxn, $query) or die ("Couldn't execute list of events query");
+
+$query="SELECT id_kingdom, name_kingdom from Kingdoms;";
+$kingdoms = mysqli_query ($cxn, $query) or die ("Couldn't execute list of kingdoms query");
         
 echo "<div class='row'>
   <div class='col-md-8 col-md-offset-2'>";
@@ -103,6 +108,23 @@ while ($row= mysqli_fetch_array($awards)) {
 }
 echo '</select></td></tr>';
 
+// Event at which award was presented
+if (isset($_POST["id_event"]) && is_numeric($_POST["id_event"])) {
+    $id_event = $_POST["id_event"];
+} else {
+    $id_event = -1;
+}
+echo '<tr><td class="text-right">Event:</td><td> <select name="id_event" >';
+while ($row= mysqli_fetch_array($events)) {
+    echo '<option value="'.$row["id_event"].'"';
+    if ($row["id_event"]==$id_event) {
+        echo ' selected';
+    }
+    echo ">".$row["name_event"]." (".$row["date_event_start"].
+            " - ".$row["date_event_stop"].")</option>";
+}
+echo "</select></td></tr>";
+
 // Kingdom in which award was given out, defaults to home kingdom
 if (isset($_POST["id_kingdom"]) && is_numeric($_POST["id_kingdom"])) {
     $id_kingdom = $_POST["id_kingdom"];
@@ -118,7 +140,7 @@ while ($row= mysqli_fetch_array($kingdoms)) {
 echo '</select></td></tr>';
 
 echo "</table>";
-if (!isset($_POST["id"])) { // Alow submit button only if this is new.
+if (!isset($_POST["id"])) { // Allow submit button only if this is new.
     echo '<input type="submit" value="Add this award" class="btn btn-primary">';
 } else {
     echo "<a href='./add_person_award.php?id=$id_person'>Add another new award</a>";

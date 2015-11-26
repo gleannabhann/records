@@ -94,7 +94,7 @@ if ($matches > 0) {
 echo "<br>";
 
 /* query: select a person's awards in the database  */
-$query = "SELECT  name_award, date_award,name_kingdom from Persons, Persons_Awards, Awards, Kingdoms
+$query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom from Persons, Persons_Awards, Awards, Kingdoms
    WHERE Persons.id_person = Persons_Awards.id_person
          and Persons_Awards.id_award = Awards.id_award
          and Awards.id_kingdom = Kingdoms.id_kingdom
@@ -104,8 +104,9 @@ or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result))
   {extract($row);
 // echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
-  echo "<tr><td class='text-left'>$name_award</td>"
-          . "<td class='text-left'>$date_award</td>";
+  echo "<tr>"
+       . "<td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>"
+       . "<td class='text-left'>$date_award</td>";
   echo "</tr>";
 };
 echo "</table>";
