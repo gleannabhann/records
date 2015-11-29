@@ -114,8 +114,7 @@ else {
             AND Groups.id_kingdom = $k_id "
           . "ORDER BY name_group";
       };
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
+$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 $matches = $result->num_rows;
 echo "$matches award matches";
 while ($row = mysqli_fetch_assoc($result)) {

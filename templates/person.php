@@ -37,9 +37,6 @@ echo "
 <div class='row'>
 
   <div class='col-md-8 col-md-offset-2'>";
-echo "<table class='table table-condensed table-bordered'>
-<thead><td class='text-left'><strong>Award</strong></td>
-<td class='text-left'><strong>Date</strong></td></thead>";
 
 /* query: select a person's authorizations in the database */
 $query = "SELECT name_combat, name_auth, expire_auth
@@ -94,19 +91,31 @@ if ($matches > 0) {
 echo "<br>";
 
 /* query: select a person's awards in the database  */
-$query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom from Persons, Persons_Awards, Awards, Kingdoms
-   WHERE Persons.id_person = Persons_Awards.id_person
-         and Persons_Awards.id_award = Awards.id_award
-         and Awards.id_kingdom = Kingdoms.id_kingdom
-         and Persons.id_person = $id_person order by date_award";
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
+$query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_event, Events.id_event
+          FROM Persons, Persons_Awards, Awards, Kingdoms, Events
+          WHERE Persons.id_person = Persons_Awards.id_person
+         AND Persons_Awards.id_award = Awards.id_award
+         AND Awards.id_kingdom = Kingdoms.id_kingdom
+         AND Persons_Awards.id_event = Events.id_event 
+         AND Persons.id_person = $id_person order by date_award";
+$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
+echo "<table class='table table-condensed table-bordered'>
+<thead><td class='text-left'><strong>Award</strong></td>
+<td class='text-left'><strong>Event</strong></td>
+<td class='text-left'><strong>Date</strong></td></thead>";
 while ($row = mysqli_fetch_assoc($result))
   {extract($row);
 // echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
-  echo "<tr>"
-       . "<td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>"
-       . "<td class='text-left'>$date_award</td>";
+  echo "<tr>";
+  echo "<td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>";
+  if ($id_event > 0){
+      echo "<td class='text-left'>"
+      . "<a href='event.php?id=$id_event'>$name_event</a>"
+      . "</td>";
+  } else {
+      echo "<td></td>";
+  }
+  echo "<td class='text-left'>$date_award</td>";
   echo "</tr>";
 };
 echo "</table>";
