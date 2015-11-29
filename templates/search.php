@@ -42,8 +42,7 @@ else {
             AND name_person like '%$part_name%' "
           . "ORDER BY name_person";
       };
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
+$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 $matches = $result->num_rows;
 echo "$matches people matches";
 while ($row = mysqli_fetch_assoc($result)) {
@@ -154,7 +153,7 @@ else {
       };
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute events query");
 $matches = $result->num_rows;
-echo "$matches award matches";
+echo "$matches events matches";
 while ($row = mysqli_fetch_assoc($result)) {
     extract($row);
     $link = "<li class='list-group-item text-left'>"

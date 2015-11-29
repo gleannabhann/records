@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<?php if (isset($_SESSION['initiated'])) validate_session();?>
 
 <html>
 
@@ -80,7 +81,6 @@
     </head>
 
     <body>
-      <?php if (isset($_SESSION['initiated'])) validate_session();?>
 
 <div class="container-fluid">
   <!-- begin page -->

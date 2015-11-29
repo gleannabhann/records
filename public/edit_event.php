@@ -4,6 +4,6 @@
     require("../includes/config.php");
 
     // render portfolio
-    render("add_event.php", ["title" => "Events"]);
+    render("edit_event.php", ["title" => "Events"]);
 
 ?>
