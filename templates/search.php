@@ -20,7 +20,8 @@ include "warning.php"; // includes the warning text about paper precedence
 echo "</small></div>"; //Customize the page header
 echo "<div class='container'>";
 echo "(<small><a href='#awards'>Skip to awards</a></small>)</br>";
-echo "(<small><a href='#groups'>Skip to groups</a></small>)";
+echo "(<small><a href='#groups'>Skip to groups</a></small>)</br>";
+echo "(<small><a href='#events'>Skip to events</a></small>)</br>";
 echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 /*#######################################################################################*/
 echo form_title("People matching <i>$part_name</i>");
@@ -58,7 +59,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 //    $link = "<li> $Name </li>";
     echo "$link";
 }
-echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
+echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 /*#######################################################################################*/
 echo "<a name='awards'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
 echo form_title("Awards matching <i>$part_name</i>");
@@ -94,7 +95,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 //    $link = "<li> $Name </li>";
     echo "$link";
 }
-echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
+echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 /*#######################################################################################*/
 echo "<a name='groups'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
 echo form_title("Groups matching <i>$part_name</i>");
@@ -113,8 +114,7 @@ else {
             AND Groups.id_kingdom = $k_id "
           . "ORDER BY name_group";
       };
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
+$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 $matches = $result->num_rows;
 echo "$matches award matches";
 while ($row = mysqli_fetch_assoc($result)) {
@@ -123,6 +123,45 @@ while ($row = mysqli_fetch_assoc($result)) {
     $ID = $row['id_group'];
     $KName = $row['name_kingdom'];
     $link = "<li class='list-group-item text-left'><a href='./list.php?group=$ID'>$Name - $KName</a></li>";
+//    $link = "<li> $Name </li>";
+    echo "$link";
+}
+echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
+/*#######################################################################################*/
+echo "<a name='events'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
+echo form_title("Events matching <i>$part_name</i>");
+if (permissions("Any")>=3){
+    echo button_link("./add_event.php", "Add A New Event");
+}
+echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
+if ($k_id == -1)
+{
+  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom 
+            FROM Events, Groups, Kingdoms
+            WHERE name_event like '%$part_name%' 
+            AND Events.id_group = Groups.id_group 
+            AND Groups.id_kingdom = Kingdoms.id_kingdom "
+          . "ORDER BY name_event";
+}
+else {
+  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom 
+            FROM Events, Groups, Kingdoms
+            WHERE name_event like '%$part_name%' 
+            AND Events.id_group = Groups.id_group 
+            AND Groups.id_kingdom = Kingdoms.id_kingdom "
+          . "AND Groups.id_kingdom = $k_id "
+          . "ORDER BY name_group";
+      };
+$result = mysqli_query ($cxn, $query) or die ("Couldn't execute events query");
+$matches = $result->num_rows;
+echo "$matches award matches";
+while ($row = mysqli_fetch_assoc($result)) {
+    extract($row);
+    $link = "<li class='list-group-item text-left'>"
+            . "<a href='./event.php?id=$id_event'>"
+            . "$name_event</a> hosted by $name_group ($name_kingdom) "
+               . "$date_event_start -- $date_event_stop"
+            . "</li>";
 //    $link = "<li> $Name </li>";
     echo "$link";
 }
