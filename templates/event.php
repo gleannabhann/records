@@ -22,7 +22,7 @@ if (DEBUG){
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute event_info query");
 $event_info=mysqli_fetch_assoc($result);  
 extract($event_info);
-if (is_null($id_site)) {
+if ($id_site<0) {
     if (DEBUG) {echo "No Known Site<p>";}
     $name_site="Unknown";
 } else {
@@ -40,7 +40,9 @@ echo form_subtitle("Hosted by $name_group from $date_event_start to $date_event_
 if (!is_null($id_site)){
     echo form_subtitle("Held at $name_site");
 }
-
+if (permissions("Herald")>=3 ){
+    echo button_link("edit_event.php?id=$id_event", "Edit Event Information");
+}
 /* Display Known Award Recipients at this event */
 $query = "SELECT Persons.id_person, Awards.id_award, name_person, name_award "
         . "FROM Persons, Awards, Persons_Awards "

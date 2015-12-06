@@ -190,7 +190,7 @@ echo "<table class='table table-condensed table-bordered'>\n
          and Awards.id_kingdom = Kingdoms.id_kingdom
          and Persons_Awards.id_event = Events.id_event 
          and Persons.id_person = $id_person order by date_award";
- // echo "Query to list awards is: ".$query."<br>";
+if (DEBUG) { echo "Query to list awards is: ".$query."<br>";}
 $awards = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($awards))
   {extract($row);

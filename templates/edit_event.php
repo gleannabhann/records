@@ -24,10 +24,26 @@ if (permissions("Herald")>=  3) {
     } else {
         exit_with_footer();
     }
+    
+    $query= "SELECT id_group, name_group, name_kingdom,"
+            . "Groups.id_kingdom =".HOST_KINGDOM_ID." as In_Kingdom "
+            . "FROM Groups, Kingdoms "
+            . "WHERE id_group > -1 "
+            . "AND Groups.id_kingdom = Kingdoms.id_kingdom "
+            . "ORDER BY In_Kingdom DESC, name_group;";
+    $groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query to find groups info");
+    
+    $query= "SELECT id_site, name_site "
+            . "FROM Sites WHERE id_site > -1 "
+            . "AND active_site=1";
+    $sites = mysqli_query ($cxn, $query) or die ("Couldn't execute query to find sites info");
+    
     echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
     // Build the form, populating fields based on the post variable or database variable
     echo form_title("Editing Event Information")."\n";
-    echo '<form action="edit_person.event" method="post">';
+    echo button_link("event.php?id=$id_event", "Return to Event Overview");
+    echo button_link("list_events.php","Return to List of Events");
+    echo '<form action="edit_event.php" method="post">';
     echo '<input type="hidden" name="id" value="'.$id_event.'"'.">\n";
 
     /*****************************************************************************/
@@ -62,7 +78,49 @@ if (permissions("Herald")>=  3) {
     echo "<div class='form-group'><label for='$varname'>Event Ends:</label>"
          . "<input type='date' class='date' name='$varname'  value='$date_event_stop'></div>";
          
+    /*****************************************************************************/
+    $varname="id_group";
+    if (isset($_POST[$varname]) && is_numeric($_POST[$varname])) {
+        $id_group=$_POST[$varname];
+    } else {
+        $id_group=$event[$varname];
+    }
+    echo "<div class='form-group'><label for='$varname'>Hosted by:</label>"
+            . "<select name='id_group'>";
+    echo "<option value='-1'> Unknown</option>";
+    while ($row= mysqli_fetch_array($groups)) {
+        echo '<option value="'.$row["id_group"].'"';
+        if ($row["id_group"]==$id_group) {
+            echo ' selected';
+        }
+        echo ">".$row["name_group"];
+        if (!$row["In_Kingdom"]) {
+            echo " (".$row["name_kingdom"].")";
+        }
+                
+        echo " </option>";
+    }
+    echo "</select>";
 
+    /*****************************************************************************/
+    $varname="id_site";
+    if (isset($_POST[$varname]) && is_numeric($_POST[$varname])) {
+        $id_site=$_POST[$varname];
+    } else {
+        $id_site=$event[$varname];
+    }
+    echo "<div class='form-group'><label for='$varname'>Hosted by:</label>"
+            . "<select name='id_site'>";
+    echo "<option value='-1'> Unknown</option>";
+    while ($row= mysqli_fetch_array($sites)) {
+        echo '<option value="'.$row["id_site"].'"';
+        if ($row["id_site"]==$id_site) {
+            echo ' selected';
+        }
+        echo ">".$row["name_site"];
+        echo " </option>";
+    }
+    echo "</select>";
     echo '<input type="submit" value="Update Event Information">';
     //echo '<button type="reset" value="Reset">Reset</button>';
     echo '</form>';
@@ -72,7 +130,32 @@ if (permissions("Herald")>=  3) {
     if ($_SERVER['REQUEST_METHOD'] == 'POST'){
         // First, update local variables
         // Build Update Query
-        
+        $update = "UPDATE Events SET name_event='"
+                .mysqli_real_escape_string($cxn,$name_event)."'";
+        if ($date_event_start != $event["date_event_start"]) {
+            $update = $update . ", date_event_start = '"
+                      .mysqli_real_escape_string($cxn,$date_event_start)."'";
+        }
+        if ($date_event_stop != $event["date_event_stop"]) {
+            $update = $update . ", date_event_stop = '"
+                      .mysqli_real_escape_string($cxn,$date_event_stop)."'";
+        }
+        if ($id_group != $event["id_group"]) {
+            $update = $update . ", id_group="
+                    . mysqli_real_escape_string($cxn,$id_group);
+        }
+        if ($id_site != $event["id_site"]) {
+            $update = $update . ", id_site="
+                    . mysqli_real_escape_string($cxn,$id_site);
+        }
+        $update = $update." WHERE id_event=$id_event";
+        if (DEBUG){
+            echo "Update Query is:<p>$update";
+        }
+        $result=update_query($cxn, $update);
+        if ($result !== 1) {
+            echo "Error updating record: " . mysqli_error($cxn);
+        }
     }
     
     mysqli_close ($cxn); /* close the db connection */

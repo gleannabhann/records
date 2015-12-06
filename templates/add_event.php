@@ -24,18 +24,19 @@ if (permissions("Herald")>=  3) {
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) 
                && is_numeric($_POST[$varname])) {
             $id_group = $_POST[$varname];
-            $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",$id_group";
-       }
+        } else {$id_group=-1;}
+        $query_head = $query_head.",$varname";
+        $query_tail = $query_tail.",$id_group";
 
        $varname = "id_site";
        if (isset($_POST[$varname])
                && is_numeric($_POST[$varname])
                && ($_POST[$varname] > 0)) {
             $id_site = $_POST[$varname];
-            $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",$id_site";
-       }
+        } else { $id_site=-1;}
+        $query_head = $query_head.",$varname";
+        $query_tail = $query_tail.",$id_site";
+
        
        $varname = "date_event_start";
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) 
@@ -69,10 +70,10 @@ if (permissions("Herald")>=  3) {
 
     // Queries needed to build the form
     $query = "SELECT Groups.id_group, name_group, name_kingdom, "
-            . "Groups.id_kingdom !=".HOST_KINGDOM_ID." as In_Kingdom "
+            . "Groups.id_kingdom =".HOST_KINGDOM_ID." as In_Kingdom "
             . "FROM Groups, Kingdoms "
             . "WHERE Groups.id_kingdom = Kingdoms.id_kingdom "
-            . "ORDER BY In_Kingdom, name_group";
+            . "ORDER BY In_Kingdom DESC, name_group";
     if (DEBUG) {
         echo "<p>Groups query is:<br>$query<br>";
     }
@@ -98,7 +99,9 @@ if (permissions("Herald")>=  3) {
 
 <div class='row'><div class='col-md-8 col-md-offset-2'>
 <form action="add_event.php" method="post">
-  <?php echo form_title("Adding a New Event"); ?>
+  <?php echo form_title("Adding a New Event"); 
+    echo button_link("list_events.php", "List of Events")."</p>";
+  ?>
   <table class='table table-condensed table-bordered'>
       <tr>
           <td class="text-right">Name of Event<br>(Required)</td>
@@ -124,7 +127,7 @@ if (permissions("Herald")>=  3) {
                   while ($row= mysqli_fetch_array($groups)) {
                     echo '<option value="'.$row["id_group"].'"';
                     echo '>'.$row["name_group"]
-                            .'('.$row["name_kingdom"].')'.'</option>';
+                            .' ('.$row["name_kingdom"].')'.'</option>';
                   }
                   ?>
               </select>              

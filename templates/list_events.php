@@ -20,6 +20,7 @@ echo form_title("A List of All Known Events");
 if (permissions("Herald")>= 3){
     echo button_link("add_event.php","Add A New Event");
 }
+echo "</p>";
 echo "<table class='table table-condensed table-bordered'>
 <thead>
 <td ><strong>Event</strong></td>
@@ -29,13 +30,17 @@ echo "<table class='table table-condensed table-bordered'>
 while ($row = mysqli_fetch_assoc($result)){
     extract($row);
     echo "<tr>";
-    echo "<td ><a href='event.php?id=$id_event'>$name_event</a></td>";
+    echo "<td ><a href='event.php?id=$id_event'>$name_event";
+    echo "</a></td>";
     echo "<td >$name_group</td>";
     echo "<td >".date("d-M-Y", strtotime($date_event_start));
     if ($date_event_start != $date_event_stop) {
         echo " --  ".date("d-M-Y", strtotime($date_event_stop));
     }
     echo "</td>";
+    if (permissions("Herald")>= 3){
+        echo "<td>".button_link("edit_event.php?id=$id_event", "Edit Event")."</td>";
+    }
     echo "</tr>";
 }
 echo "</table>";
