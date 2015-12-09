@@ -62,11 +62,12 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         echo "<tr>";
 
-        echo "<td class='text-left'><a name='$id_site'> $row_number</a></td>";
+        echo "<td class='text-left'><a name='$id_site'>$row_number</a></td>";
         if ($active_site) {
-                echo "<td class='text-left'>$name_site";}
+                echo "<td class='text-left'><a href='/public/site.php?id=" . $id_site . "'>" . $name_site . "</a></td>";}
+
             else {
-                echo "<td class='text-left'>$name_site (INACTIVE)";
+                echo "<td class='text-left'><a href='/public/site.php?id=" . $id_site . "'>" . $name_site . " (INACTIVE)</a></td>";
             }
         if ($url_site !="") echo "<a href=\"$url_site\">Link</a>";
         echo "</td>";
@@ -161,10 +162,10 @@ function populate() {
     if (!name) {name = "unknown"};
     if (!lat) {lat = "unknown"};
     if (!lng) {lng = "unknown"};
-    var urlStr = 'Website Not Available';
+    var urlStr = "Website Not Available";
     if (url) {
-      urlStr = '<a href="' + url + '"><strong>Visit this Campground\'s Web Site</strong></a><br/>'
-    };
+      urlStr = '<a href="' + url + '"><strong>Visit ' + name + '\'s Web Site</strong></a><br/>'
+    }
     if (!facilities) {facilities = "unknown"};
     if (!capacity) {capacity = "unknown"};
     if (!rates) {rates = "unknown"};
@@ -185,11 +186,11 @@ function populate() {
         '<strong>Rates: </strong>' + rates + '<br/>' +
         '<strong>Address: </strong>' + address + '<br/>' +
         '<strong>Phone Number: </strong>' + contact + '<br/>' +
-        //The below linked page doesn't exist yet
-    /*  '<a href="/site.php?id=' + id + '"><strong>Hall of Records Page</strong></a><br/>' +  */
-        // in the mean time, we'll link to an anchor within the page.
-        '<a href="#' + id + '"><strong>Go to location in the list</strong></a><br/>' +
-        urlStr + '</p></div></div>';
+        '<a href="/public/site.php?id=' + id + '"><strong>Hall of Records Page</strong></a><br/>' +
+         urlStr + '</p></div></div>';
+
+console.log(url);
+console.log(urlStr);
 
     var marker = new google.maps.Marker({
       position: new google.maps.LatLng(lat, lng),
