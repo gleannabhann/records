@@ -2,9 +2,9 @@
 
 <?php
 
-if ($_GET["id"] > 0)
+if (is_numeric($_GET["id"]) && $_GET["id"] > 0)
   {
-    $id_site=$_GET["id"];
+    $id_site=intval($_GET["id"]);
   } else {
     echo "Invalid argument supplied. The url for this page should include ?id=, followed by a positive integer.";
     exit_with_footer();
