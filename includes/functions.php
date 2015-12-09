@@ -313,7 +313,7 @@
 
     }
 
-    // Produces string output in header format.  
+    // Produces string output in header format.
     // Useful for synchronizing across web pages
     function form_title($label)
     {
@@ -324,3 +324,5 @@
     {
         return '<h3>'.$label.'</h3>';
     }
+
+?>
