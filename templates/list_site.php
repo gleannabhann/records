@@ -30,12 +30,12 @@ echo "<table class='table table-bordered'>
 <thead>
 <td class='text-left'><strong>Site</strong></td>
 <td class='text-left'><strong>Name</strong></td>
-<td class='text-left'><strong>Facilities</strong></td>
+<!-- <td class='text-left'><strong>Facilities</strong></td> -->
 <td class='text-left'><strong>Capacity</strong></td>
-<td class='text-left'><strong>Cost</strong></td>
-<td class='text-left'><strong>Area</strong></td>
-<td class='text-left'><strong>Address</strong></td>
-<td class='text-left'><strong>Contact</strong></td>";
+<!-- <td class='text-left'><strong>Cost</strong></td>
+<td class='text-left'><strong>Area</strong></td> -->
+<td class='text-left'><strong>Location</strong></td>
+<!--<td class='text-left'><strong>Contact</strong></td> -->";
 // TODO: replace is_logged_in() with is_site_admin() permissions check
 if (permissions("Sites") >= 3){
   echo  "<td class='text-left'><strong> </strong></td>";
@@ -50,7 +50,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         {
           $address = $street_site . "<br/>" . $city_site . ", " . $state_site . " " . $zip_site;
         } else {
-          $address = "Address Not on File";
+          $address = "Address Not on File<br/>" . $area_site;
         }
         // add a row to the array to hand to JS, only if coords are available
         if ($lat_site && $long_site) {
@@ -71,10 +71,10 @@ while ($row = mysqli_fetch_assoc($result)) {
             }
         if ($url_site !="") echo "<a href=\"$url_site\">Link</a>";
         echo "</td>";
-        echo "<td class='text-left'>$facilities_site</td>";
+        //echo "<td class='text-left'>$facilities_site</td>";
         echo "<td class='text-left'> $capacity_site</td>";
-        echo "<td class='text-left'>$rates_site</td>";
-        echo "<td class='text-left'>$area_site</td>";
+        //echo "<td class='text-left'>$rates_site</td>";
+        //echo "<td class='text-left'>$area_site</td>";
         if ($street_site != NULL)
         {
           echo "<td class='text-left'>$address</td>";
@@ -82,7 +82,7 @@ while ($row = mysqli_fetch_assoc($result)) {
           echo "<td class='danger text-left'>$address</td>";
         }
 
-        echo "<td class='text-left'>$contact_site</td>";
+        //echo "<td class='text-left'>$contact_site</td>";
         if (permissions("Sites") >= 3){
             echo "<td class='text-left'>
             <a href=\"./edit_site.php?id=$id_site\">Edit</a>
