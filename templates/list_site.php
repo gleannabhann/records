@@ -21,7 +21,7 @@ echo "<div id='row'><div id='map' class='col-md-10 col-md-offset-1'></div></div>
 
 
 
-echo "<div class='row'><div class='col-md-10 col-md-offset-1'>";
+echo "<div class='row'><div class='col-md-10 col-md-offset-1'><hr/>";
 
   if (permissions("Sites") >= 3){
       echo "<p><strong><a href='./add_site.php'>Add a New Site</a></strong></p>";
@@ -29,7 +29,7 @@ echo "<div class='row'><div class='col-md-10 col-md-offset-1'>";
 echo "<table class='table table-bordered'>
 <thead>
 <td class='text-left'><strong>Site</strong></td>
-<td class='text-left'><strong>Name</strong></td>
+<td class='text-left'><strong>Name (Click name for more information)</strong></td>
 <!-- <td class='text-left'><strong>Facilities</strong></td> -->
 <td class='text-left'><strong>Capacity</strong></td>
 <!-- <td class='text-left'><strong>Cost</strong></td>
@@ -69,7 +69,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             else {
                 echo "<td class='text-left'><a href='/public/site.php?id=" . $id_site . "'>" . $name_site . " (INACTIVE)</a></td>";
             }
-        if ($url_site !="") echo "<a href=\"$url_site\">Link</a>";
+        //if ($url_site !="") echo "<a href=\"$url_site\"> (Website)</a>";
         echo "</td>";
         //echo "<td class='text-left'>$facilities_site</td>";
         echo "<td class='text-left'> $capacity_site</td>";
