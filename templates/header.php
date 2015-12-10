@@ -67,9 +67,9 @@
             </style>
 
             <?php if (isset($title)): ?>
-                <title>Gleann Abhann Heraldry Database: <?= htmlspecialchars($title) ?></title>
+                <title>Gleann Abhann Hall of Records: <?= htmlspecialchars($title) ?></title>
             <?php else: ?>
-                <title>Gleann Abhann Heraldry Database</title>
+                <title>Gleann Abhann Hall of Records</title>
             <?php endif ?>
 
             <script src="/js/jquery-1.10.2.min.js"></script>
