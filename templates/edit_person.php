@@ -39,7 +39,7 @@ echo "
 <div class='row'>
   <div class='col-md-8 col-md-offset-2'>";
 
-$query = "SELECT * from Persons where id_person = $id_person;";
+$query = "SELECT * FROM Persons WHERE id_person = $id_person;";
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 if (mysqli_num_rows($result)==1) {
    $person=  mysqli_fetch_array($result);

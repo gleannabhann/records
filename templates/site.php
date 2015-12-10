@@ -11,7 +11,11 @@ if (is_numeric($_GET["id"]) && $_GET["id"] > 0)
   }
 /* connect to the database */
 $cxn = open_db_browse();
-$query = "Select * from sites where id_site= $id_site";
+$query = "SELECT id_site, name_site, street_site, city_site, state_site, zip_site,"
+        . "facilities_site, capacity_site, rates_site, contact_site, "
+        . "url_site, lat_site, long_site, area_site, active_site "
+        . "FROM Sites "
+        . "WHERE id_site= $id_site";
 
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query. Query was: ". $query);

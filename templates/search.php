@@ -62,6 +62,9 @@ echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and
 /*#######################################################################################*/
 echo "<a name='awards'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
 echo form_title("Awards matching <i>$part_name</i>");
+if (permissions("Herald")>=3){
+    echo button_link("./add_award.php?part_name=".$part_name, "Add A New Award");
+}
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1)
 {
