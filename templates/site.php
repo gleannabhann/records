@@ -2,9 +2,9 @@
 
 <?php
 
-if ($_GET["id"] > 0)
+if (is_numeric($_GET["id"]) && $_GET["id"] > 0)
   {
-    $id_site=$_GET["id"];
+    $id_site=intval($_GET["id"]);
   } else {
     echo "Invalid argument supplied. The url for this page should include ?id=, followed by a positive integer.";
     exit_with_footer();
@@ -150,10 +150,102 @@ echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
 
 
 echo "</div><!-- ./col-md-6 --></div><!-- ./row -->"; //close out list and open divs
+
+
+// If the submit button was pressed, handle the email.
+if (isset($_POST["msgSubmit"])) {
+    //TODO: Need to filter these fields carefully.
+  $name = $_POST['name'];
+  $email = $_POST['email'];
+  $msgBody = wordwrap($_POST['msgBody']);
+  $from = 'forms@oopgleannabhann.net';
+  $to = 'webminister@gleannabhann.net';
+//  $to = 'webminister@gleannabhann.net' . ', ';
+//  $to .= 'obsidian@gleannabhann.net';
+  $subject = $_POST['subject'];
+  $body = "From: $name\n Email: $email\n Message:\n $msgBody";
+
+  // check for name
+  if (!$_POST['name']) {
+    $errName = "Please enter your name";
+  } else {$errName = false;}
+  if (!$_POST['email']) {
+    $errEmail = "Please enter your email address";
+  } else {$errEmail = false;}
+  if (!$_POST['msgBody']) {
+    $errMessage = "Please enter information about the discrepancy or error";
+  } else {$errMessage = false;}
+  if (!$errName && !$errEmail && !$errMessage) {
+     if (mail ($to, $subject, $body, $from)) {
+       $emailresult = '<div class="alert alert-success">Thank you! We appreciate your feedback.</div>';
+     } else {
+       $emailresult ='<div class="alert alert-danger">I was unable to send your message. Please try again.</div>';
+     }
+   } else {
+       echo "Error with setting up email.";
+   }
+}
+
+
+
+
+
+
 #######################################################################################*/
 mysqli_close ($cxn); /* close the db connection */
 
 ?>
+<!-- end of php -->
+<div class="row">
+  <?php echo form_title("Report a problem with this record") ?>
+  <form class="form-horizontal" role="form" method="post" action="site.php">
+    <div class="form-group">
+      <label for="name" class="col-sm-2 col-md-3 control-label">Name:</label>
+      <div class="input-group col-sm-10 col-md-6">
+        <span style="display: block; width: 100%"><input size="60" type="text" width="100%" class="form-control" id="name" name="name" placeholder="Your Name" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['name']);} ?>"></span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="email" class="col-sm-2 col-md-3 control-label">Email:</label>
+      <div class="input-group col-sm-10 col-md-6">
+  <input size="60" type="text" width="100%" class="form-control" id="email" name="email" placeholder="example@domain.com" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['email']);} ?>">
+
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="subject" class="col-sm-2 col-md-3 control-label">Subject:</label>
+      <div class="input-group col-sm-10 col-md-6">
+        <input size="60" type="text" class="form-control" id="subject" name="subject"
+             value="<?php
+                         echo "Record correction for $name_site (ID $id_site)";
+                    ?>">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="msgBody" class="col-sm-2 col-md-3 control-label">Details:</label>
+      <div class="input-group col-sm-10 col-md-6">
+          <textarea cols="62" class="form form-control" rows="4" name="msgBody" placeholder="Tell us what's incorrect about this record." id="msgBody" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['msgBody']);} ?>">
+        </textarea>
+
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="input-group col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
+          <input id="msgSubmit" name="msgSubmit" type="submit" value="Send Report">
+        <input type="hidden" name="id"
+             value="<?php
+                         echo "$id_site";
+                    ?>">
+         </div>
+    </div>
+    <div class="form-group">
+      <div class="input-group col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <?php if(isset($emailresult)) {echo $emailresult;} ?>
+      </div>
+    </div>
+  </form>
+</div>
 
 <script>
 var oldWindow;
@@ -184,40 +276,43 @@ function attachContent(marker, content) {
     oldWindow = infowindow;
   });
 };
+var siteData = <?php echo json_encode($sites) ?>;
+
+var mylat = siteData[0][1];
+var mylng = siteData[0][2];
+
+
 
 function initMap() {
-map = new google.maps.Map(document.getElementById('map'), {
-center: {lat: 33.535442, lng: -90.603519},
-zoom: 6
-});
+
+  map = new google.maps.Map(document.getElementById('map'), {
+  zoom: 8
+  });
 }
 var map;
 
-var siteData = <?php echo json_encode($sites) ?>;
+
 function populate() {
 
 
-  for (i = 0; i < siteData.length; i++)
-  {
 
     /* store all siteData into individual variables for ease of use
     $name_site = 0, $lat_site = 1, $long_site = 2, $url_site = 3,
     $facilities_site = 4, $capacity_site = 5, $rates_site = 6, $address = 7,
     $contact_site = 8, $id_site = 9 */
 
-    var name = siteData[i][0];
-    var lat = siteData[i][1];
-    var lng = siteData[i][2];
-    var url = siteData[i][3];
-    var facilities = siteData[i][4];
-    var capacity = siteData[i][5];
-    var rates = siteData[i][6];
-    var address = siteData[i][7];
-    var contact = siteData[i][8];
-    var id = siteData[i][9];
+    var name = siteData[0][0];
+
+    var url = siteData[0][3];
+    var facilities = siteData[0][4];
+    var capacity = siteData[0][5];
+    var rates = siteData[0][6];
+    var address = siteData[0][7];
+    var contact = siteData[0][8];
+    var id = siteData[0][9];
     if (!name) {name = "unknown"};
-    if (!lat) {lat = "unknown"};
-    if (!lng) {lng = "unknown"};
+    if (!mylat) {mylat = "unknown"};
+    if (!mylng) {mylng = "unknown"};
     var urlStr = 'Website Not Available';
     if (url) {
       urlStr = '<a href="' + url + '"><strong>Visit ' + name + '\'s Web Site</strong></a><br/>'
@@ -244,15 +339,16 @@ function populate() {
         '<strong>Phone Number: </strong>' + contact + '<br/>'
          + urlStr + '</p></div></div>';
 
+         map.setCenter(new google.maps.LatLng(mylat, mylng));
     var marker = new google.maps.Marker({
-      position: new google.maps.LatLng(lat, lng),
+      position: new google.maps.LatLng(mylat, mylng),
       title: name,
       map: map,
     });
 
     attachContent(marker, contentString);
 
-  }
+
 }
 
 

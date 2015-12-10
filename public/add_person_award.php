@@ -6,6 +6,6 @@
 
     // Note: can't use ROOTDIR here because ROOTDIR is set in constants.php
     // render portfolio
-    render("add_person_award.php", ["title" => "Names"]);
+    render("add_person_award.php", ["title" => "Add an Award"]);
 
 ?>
