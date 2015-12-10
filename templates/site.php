@@ -276,40 +276,43 @@ function attachContent(marker, content) {
     oldWindow = infowindow;
   });
 };
+var siteData = <?php echo json_encode($sites) ?>;
+
+var mylat = siteData[0][1];
+var mylng = siteData[0][2];
+
+
 
 function initMap() {
-map = new google.maps.Map(document.getElementById('map'), {
-center: {lat: 33.535442, lng: -90.603519},
-zoom: 6
-});
+
+  map = new google.maps.Map(document.getElementById('map'), {
+  zoom: 8
+  });
 }
 var map;
 
-var siteData = <?php echo json_encode($sites) ?>;
+
 function populate() {
 
 
-  for (i = 0; i < siteData.length; i++)
-  {
 
     /* store all siteData into individual variables for ease of use
     $name_site = 0, $lat_site = 1, $long_site = 2, $url_site = 3,
     $facilities_site = 4, $capacity_site = 5, $rates_site = 6, $address = 7,
     $contact_site = 8, $id_site = 9 */
 
-    var name = siteData[i][0];
-    var lat = siteData[i][1];
-    var lng = siteData[i][2];
-    var url = siteData[i][3];
-    var facilities = siteData[i][4];
-    var capacity = siteData[i][5];
-    var rates = siteData[i][6];
-    var address = siteData[i][7];
-    var contact = siteData[i][8];
-    var id = siteData[i][9];
+    var name = siteData[0][0];
+
+    var url = siteData[0][3];
+    var facilities = siteData[0][4];
+    var capacity = siteData[0][5];
+    var rates = siteData[0][6];
+    var address = siteData[0][7];
+    var contact = siteData[0][8];
+    var id = siteData[0][9];
     if (!name) {name = "unknown"};
-    if (!lat) {lat = "unknown"};
-    if (!lng) {lng = "unknown"};
+    if (!mylat) {mylat = "unknown"};
+    if (!mylng) {mylng = "unknown"};
     var urlStr = 'Website Not Available';
     if (url) {
       urlStr = '<a href="' + url + '"><strong>Visit ' + name + '\'s Web Site</strong></a><br/>'
@@ -336,15 +339,16 @@ function populate() {
         '<strong>Phone Number: </strong>' + contact + '<br/>'
          + urlStr + '</p></div></div>';
 
+         map.setCenter(new google.maps.LatLng(mylat, mylng));
     var marker = new google.maps.Marker({
-      position: new google.maps.LatLng(lat, lng),
+      position: new google.maps.LatLng(mylat, mylng),
       title: name,
       map: map,
     });
 
     attachContent(marker, contentString);
 
-  }
+
 }
 
 
