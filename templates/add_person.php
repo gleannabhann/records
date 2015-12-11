@@ -1,7 +1,7 @@
 <?php
 // Purpose: to enter data for a new site,
 // Privileges needed: permissions("Any")>= 3
-if (permissions("Any")< 3) {
+if ((!permissions("Herald")>=3) && (!permissions("Marshal")>=3)) {
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();    
 }

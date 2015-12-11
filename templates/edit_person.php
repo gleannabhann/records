@@ -14,7 +14,7 @@
 
 // Checks for privs is conducted by code in config.php.
 
-if (permissions("Any")<3){
+if ((!permissions("Herald")>=3) && (!permissions("Marshal")>=3)) {
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();
 }

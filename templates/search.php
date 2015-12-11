@@ -25,7 +25,7 @@ echo "(<small><a href='#events'>Skip to events</a></small>)</br>";
 echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 /*#######################################################################################*/
 echo form_title("People matching <i>$part_name</i>");
-if (permissions("Any")>=3){
+if ((permissions("Herald")>=3) || (permissions("Marshal")>=3)) {
     echo button_link("./add_person.php?part_name=".$part_name, "Add A New Person");
 }
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
@@ -50,7 +50,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     $Name = $row['name_person'];
     $ID = $row['id_person'];
     $Group = $row['name_group'];
-    if (permissions("Any")>= 3){
+    if ((permissions("Herald")>=3) || (permissions("Marshal")>=3)) {
         $link = "<li class='list-group-item text-left'><a href='./edit_person.php?id=$ID'>$Name</a>&nbsp-&nbsp$Group</li>";
     } else {
         $link = "<li class='list-group-item text-left'><a href='./person.php?id=$ID'>$Name</a>&nbsp-&nbsp$Group</li>";
@@ -132,7 +132,7 @@ echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and
 /*#######################################################################################*/
 echo "<a name='events'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
 echo form_title("Events matching <i>$part_name</i>");
-if (permissions("Any")>=3){
+if (permissions("Herald")>=3){
     echo button_link("./add_event.php", "Add A New Event");
 }
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
@@ -159,11 +159,19 @@ $matches = $result->num_rows;
 echo "$matches events matches";
 while ($row = mysqli_fetch_assoc($result)) {
     extract($row);
-    $link = "<li class='list-group-item text-left'>"
+    if (permissions("Herald")>=3){
+        $link = "<li class='list-group-item text-left'>"
+                . "<a href='./edit_event.php?id=$id_event'>"
+            . "$name_event</a> hosted by $name_group ($name_kingdom) "
+            . "$date_event_start -- $date_event_stop"
+            . "</li>";                
+    } else {
+        $link = "<li class='list-group-item text-left'>"
             . "<a href='./event.php?id=$id_event'>"
             . "$name_event</a> hosted by $name_group ($name_kingdom) "
-               . "$date_event_start -- $date_event_stop"
+            . "$date_event_start -- $date_event_stop"
             . "</li>";
+    }
 //    $link = "<li> $Name </li>";
     echo "$link";
 }
