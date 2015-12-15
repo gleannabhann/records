@@ -275,7 +275,7 @@
           echo "Time since update". $time_updated. "(7200)<br/>";
           echo "Time since refresh". $time_refreshed. "(1800)<br/>";
        }
-       if ((time() - $_SESSION['CREATED'] > 604800) || (isset($_SESSION['UPDATED']) && (time() - $_SESSION['UPDATED'] > 7200 ))) {
+       if ((time() - $_SESSION['CREATED'] > MAX_SESSION) || (isset($_SESSION['UPDATED']) && (time() - $_SESSION['UPDATED'] > MAX_INACTIVE ))) {
          // log out current user, if any
          logout();
          // redirect user
@@ -285,7 +285,7 @@
        else {
          $_SESSION['UPDATED'] = time(); // update last activity time stamp
        }
-       if (time() - $_SESSION['REFRESHED'] > 1800) {
+       if (time() - $_SESSION['REFRESHED'] > SESSION_REFRESH) {
          // session last refreshed more than 30 minutes ago
          session_regenerate_id(true);    // change session ID for the current session and invalidate old session ID
          $_SESSION['REFRESHED'] = time();  // update creation time

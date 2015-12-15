@@ -13,15 +13,15 @@ if (ISSET($_GET["k_id"])) {
 } else {
 //   $k_id = 13;
 //   $k_id = HOST_KINGDOM_ID;
-   $k_id=-1; 
+   $k_id=-1;
 }
 echo "<div class='page-header'><h1>Search results for <i>$part_name</i></h1><small>";
 include "warning.php"; // includes the warning text about paper precedence
 echo "</small></div>"; //Customize the page header
 echo "<div class='container'>";
-echo "(<small><a href='#awards'>Skip to awards</a></small>)</br>";
-echo "(<small><a href='#groups'>Skip to groups</a></small>)</br>";
-echo "(<small><a href='#events'>Skip to events</a></small>)</br>";
+echo "<small><a href='#awards'>Skip to Awards</a></small> | ";
+echo "<small><a href='#groups'>Skip to Groups</a></small> | ";
+echo "<small><a href='#events'>Skip to Events</a></small>";
 echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 /*#######################################################################################*/
 echo form_title("People matching <i>$part_name</i>");
@@ -118,7 +118,7 @@ else {
       };
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 $matches = $result->num_rows;
-echo "$matches award matches";
+echo "$matches group matches";
 while ($row = mysqli_fetch_assoc($result)) {
 //    extract($row);
     $Name = $row['name_group'];
@@ -138,18 +138,18 @@ if (permissions("Herald")>=3){
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1)
 {
-  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom 
+  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom
             FROM Events, Groups, Kingdoms
-            WHERE name_event like '%$part_name%' 
-            AND Events.id_group = Groups.id_group 
+            WHERE name_event like '%$part_name%'
+            AND Events.id_group = Groups.id_group
             AND Groups.id_kingdom = Kingdoms.id_kingdom "
           . "ORDER BY name_event";
 }
 else {
-  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom 
+  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom
             FROM Events, Groups, Kingdoms
-            WHERE name_event like '%$part_name%' 
-            AND Events.id_group = Groups.id_group 
+            WHERE name_event like '%$part_name%'
+            AND Events.id_group = Groups.id_group
             AND Groups.id_kingdom = Kingdoms.id_kingdom "
           . "AND Groups.id_kingdom = $k_id "
           . "ORDER BY name_group";
@@ -164,7 +164,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                 . "<a href='./edit_event.php?id=$id_event'>"
             . "$name_event</a> hosted by $name_group ($name_kingdom) "
             . "$date_event_start -- $date_event_stop"
-            . "</li>";                
+            . "</li>";
     } else {
         $link = "<li class='list-group-item text-left'>"
             . "<a href='./event.php?id=$id_event'>"
@@ -180,5 +180,3 @@ echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-
 mysqli_close ($cxn); /* close the db connection */
 ?>
 </div>
-
-
