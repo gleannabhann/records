@@ -5,7 +5,14 @@
 if (is_numeric($_GET["id"]) && $_GET["id"] > 0)
   {
     $id_site=intval($_GET["id"]);
-  } else {
+  } else if ($_GET["id"] == -1) {
+    echo "The system does not have any information about this site. "
+    . "If you believe you reached this page in error, please report it to the "
+    . "webminister.";
+    exit_with_footer();
+  }
+
+  else {
     echo "Invalid argument supplied. The url for this page should include ?id=, followed by a positive integer.";
     exit_with_footer();
   }
