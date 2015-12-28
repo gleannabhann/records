@@ -12,13 +12,13 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
 /* connect to the database */
 $cxn = open_db_browse();
 
-$query = "SELECT name_event, date_event_start, date_event_stop, name_group, id_site, events.id_group "
+$query = "SELECT name_event, date_event_start, date_event_stop, name_group, id_site, Events.id_group "
         . "FROM Events, Groups "
         . "WHERE id_event=$id_event "
         . "AND Events.id_group= Groups.id_group;";
-//if (DEBUG){
-//    echo "Event Information Query is:<p>$query<p>";
-//}
+if (DEBUG){
+    echo "Event Information Query is:<p>$query<p>";
+}
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute event_info query");
 $event_info=mysqli_fetch_assoc($result);
 extract($event_info);
