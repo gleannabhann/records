@@ -15,7 +15,7 @@ if (ISSET($_GET["k_id"])) {
 //   $k_id = HOST_KINGDOM_ID;
    $k_id=-1;
 }
-echo "<div class='page-header'><h1>Search results for <i>$part_name</i></h1><small>";
+echo "<div class='page-header'><h1><a name='top'>Search results for <i>$part_name</i></a></h1><small>";
 include "warning.php"; // includes the warning text about paper precedence
 echo "</small></div>"; //Customize the page header
 echo "<div class='container'>";
@@ -60,8 +60,8 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 /*#######################################################################################*/
-echo "<a name='awards'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
-echo form_title("Awards matching <i>$part_name</i>");
+echo "<div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
+echo form_title("<a name='awards'>Awards matching <i>$part_name</i></a><small><a href='#top'> (Return to Top)</a></small>");
 if (permissions("Herald")>=3){
     echo button_link("./add_award.php?part_name=".$part_name, "Add A New Award");
 }
@@ -99,8 +99,8 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 /*#######################################################################################*/
-echo "<a name='groups'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
-echo form_title("Groups matching <i>$part_name</i>");
+echo " <div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
+echo form_title("<a name='groups'>Groups matching <i>$part_name</i></a><small><a href='#top'> (Return to Top)</a></small>");
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1)
 {
@@ -130,8 +130,8 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 /*#######################################################################################*/
-echo "<a name='events'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
-echo form_title("Events matching <i>$part_name</i>");
+echo "<div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
+echo form_title("<a name='events'>Events matching <i>$part_name</i></a><small><a href='#top'> (Return to Top)</a></small>");
 if (permissions("Herald")>=3){
     echo button_link("./add_event.php", "Add A New Event");
 }
@@ -175,7 +175,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 //    $link = "<li> $Name </li>";
     echo "$link";
 }
-echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
+echo "</ul></div><small><a href='#top'>Return to Top</a></small><!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
 /*#######################################################################################*/
 mysqli_close ($cxn); /* close the db connection */
 ?>
