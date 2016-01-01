@@ -22,8 +22,10 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 $id_person = $_POST["id"];
 $name_person = $_POST["name_person"];
 $cxn = open_db_browse();
-$query_comb = "SELECT id_combat, name_combat, cn, ea, ipcc FROM Combat LEFT JOIN "
-        . "(SELECT  id_person_combat_card as ipcc, card_authorize as cn, expire_authorize as ea, id_combat as ic "
+$query_comb = "SELECT id_combat, name_combat, cn, ea, ipcc, note "
+        . "FROM Combat LEFT JOIN "
+        . "(SELECT  id_person_combat_card as ipcc, card_authorize as cn, "
+        . "expire_authorize as ea, id_combat as ic, note_authorize as note "
         . "FROM  Persons_CombatCards "
         . "WHERE id_person=$id_person) AS PA "
         . "ON Combat.id_combat = PA.ic ORDER BY name_combat ";
@@ -49,6 +51,7 @@ echo form_title("Now updated Authorizations as follows.");
 $dyncombat=$_POST['dyncombat'];
 $dyndate=$_POST['dyndate'];
 $dyncard=$_POST['dyncard'];
+$dynnote=$_POST['dynnote'];
 if (isset($_POST['dynidauth'])) { // Need to account for case where no checkmarks at all.
     $dynidauth=$_POST['dynidauth'];
 } 
@@ -57,6 +60,7 @@ if (DEBUG) {
     print_r($dyncombat); echo "<p>";
     print_r($dyndate); echo "<p>";
     print_r($dyncard); echo "<p>";
+    print_r($dynnote); echo "<p>";
 }
 
 // First we update expiry dates and card_numbers for each type of combat
@@ -64,25 +68,49 @@ if (DEBUG) {
 $i=0;
 while ($row = mysqli_fetch_assoc($combats)){
     extract($row);
-    // print_r($row);
-    if (($dyndate[$i] != $ea) || ($dyncard[$i] != $cn)){// if there are changes
+    //print_r($row);
+    if (($dyndate[$i] != $ea) // change in expiry date
+            || ($dyncard[$i] != $cn) // change in card number
+            || (strcmp($dynnote[$i],$note)!=0)){ // change in note
         if ($ipcc != NULL){// record exists; update if changed
             $update="UPDATE Persons_CombatCards "
                     . "SET expire_authorize='$dyndate[$i]'";
             if ($dyncard[$i]!= NULL) {
                 $update=$update.", card_authorize=$dyncard[$i] ";
             }
+            if ($dynnote[$i]!=$note){
+                $update=$update.",note_authorize='".sanitize_mysql($dynnote[$i])."'";
+            }
             $update = $update. " WHERE id_person_combat_card=$ipcc;";
         } else { // record doesn't exist; insert if new data added
-            $update="INSERT INTO Persons_CombatCards "
-                    . "(id_person, id_combat, card_authorize,expire_authorize) "
-                    . "VALUES ($id_person, $id_combat,$dyncard[$i] , '$dyndate[$i]')";
+//            $update="INSERT INTO Persons_CombatCards "
+//                    . "(id_person, id_combat, card_authorize,expire_authorize,note_authorize) "
+//                    . "VALUES ($id_person, $id_combat,$dyncard[$i] , '$dyndate[$i]','"
+//                    . sanitize_mysql($dynnote[$i])."')";
+            $update_head="INSERT INTO Persons_CombatCards "
+                    . "(id_person, id_combat ";
+            $update_tail="VALUES ($id_person, $id_combat";
+            if ($dyncard[$i]!= NULL) {
+                $update_head=$update_head.", card_authorize";
+                $update_tail=$update_tail.", $dyncard[$i]";
+            }
+            if ($dyndate[$i]!= NULL) {
+                $update_head=$update_head.", expire_authorize";
+                $update_tail=$update_tail.", '$dyndate[$i]'";
+            }
+            if ($dynnote[$i]!= NULL) {
+                $update_head=$update_head.", note_authorize";
+                $update_tail=$update_tail.", '".sanitize_mysql($dynnote[$i])."'";
+            }
+            $update=$update_head.") ".$update_tail.")";
+            
         }
         if (DEBUG) {
             echo "Update query for $name_combat is:$update<p>";
         }
         echo form_subtitle("Updated $name_combat authorization: "
-                          . "expires on $dyndate[$i], card number $dyncard[$i]");
+                          . "expires on $dyndate[$i], card number $dyncard[$i], with note '"
+                . sanitize_mysql($dynnote[$i])."'");
         $result=update_query($cxn, $update);
         if ($result !== 1) {echo "Error updating authorization date/card number: " . mysqli_error($cxn);}
         
@@ -106,7 +134,7 @@ if (!isset($dynidauth)) {
     $i=0;
     while ($row = mysqli_fetch_assoc($auths)){
         extract($row);
-        //echo "$dyncombat[$i] == $id_combat:";
+        if (DEBUG) {echo "$dyncombat[$i] == $id_combat:";}
         if ($id_combat != $dyncombat[$i]) {
             $i++;
         }
@@ -131,9 +159,22 @@ if (!isset($dynidauth)) {
                     // echo "Both expiration date and card number match<p>";
                 }
             } else {
-                $update="INSERT INTO Persons_Authorizations "
-                        . "(id_person, id_auth, expire_auth, card_number) "
-                        . "VALUES ($id_person, $id_auth, '$dyndate[$i]', $dyncard[$i])";
+//                $update="INSERT INTO Persons_Authorizations "
+//                        . "(id_person, id_auth, expire_auth, card_number) "
+//                        . "VALUES ($id_person, $id_auth, '$dyndate[$i]', $dyncard[$i])";
+                $update_head="INSERT INTO Persons_CombatCards "
+                        . "(id_person, id_combat ";
+                $update_tail="VALUES ($id_person, $id_combat";
+                if ($dyncard[$i]!= NULL) {
+                    $update_head=$update_head.", card_authorize";
+                    $update_tail=$update_tail.", $dyncard[$i]";
+                }
+                if ($dyndate[$i]!= NULL) {
+                    $update_head=$update_head.", expire_authorize";
+                    $update_tail=$update_tail.", '$dyndate[$i]'";
+                }
+                $update=$update_head.") ".$update_tail.")";
+                
                 $result=update_query($cxn, $update);
                 if ($result !== 1) {
                     echo "Error adding authorizations: ".mysqli_error($cxn);

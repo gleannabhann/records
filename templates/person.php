@@ -45,13 +45,17 @@ echo "
 
   <div class='col-md-8 col-md-offset-2'>";
 
-/* query: select a person's authorizations in the database */
+/* query: select a person's (non-expired) authorizations in the database */
 $query = "SELECT name_combat, name_auth, expire_auth
           FROM Persons_Authorizations, Authorizations, Combat
           WHERE Persons_Authorizations.id_auth = Authorizations.id_auth
           AND Authorizations.id_combat = Combat.id_combat
           AND id_person = $id_person
+          AND curdate()<= expire_auth 
           ORDER by name_combat, Authorizations.id_auth";
+if (DEBUG) {
+    echo "Authorization query is:$query<p>";
+}
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 $matches = $result->num_rows;
@@ -76,8 +80,12 @@ $query = "SELECT name_combat, name_marshal, expire_marshal
           FROM Persons_Marshals, Marshals, Combat
           WHERE Persons_Marshals.id_marshal = Marshals.id_marshal
           AND Marshals.id_combat = Combat.id_combat
-          AND id_person = $id_person
+          AND id_person = $id_person 
+          AND curdate()<= expire_marshal 
           ORDER by name_combat, Marshals.id_marshal";
+if (DEBUG) {
+    echo "Marshal Warrants query is:$query<p>";
+}
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 $matches = $result->num_rows;

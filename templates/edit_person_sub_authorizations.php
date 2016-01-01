@@ -9,8 +9,9 @@
 
 // This query will return a list of all known authorizations, 
 // with the person's data filled in if known and NULL otherwise
-$query_comb = "SELECT id_combat, name_combat, cn, ea FROM Combat LEFT JOIN"
-        . "(SELECT  card_authorize as cn, expire_authorize as ea, id_combat as ic "
+$query_comb = "SELECT id_combat, name_combat, cn, ea, note FROM Combat LEFT JOIN"
+        . "(SELECT  card_authorize as cn, expire_authorize as ea, id_combat as ic, "
+        . "note_authorize as note "
         . "FROM  Persons_CombatCards "
         . "WHERE id_person=$id_person) AS PA "
         . "ON Combat.id_combat = PA.ic ORDER BY name_combat";
@@ -49,12 +50,13 @@ while ($row = mysqli_fetch_assoc($auths)){
         $curr_id_combat=$id_combat;
         $combat = mysqli_fetch_assoc($combats);
         echo "<input type='hidden' name='dyncombat[]' value='$id_combat'>";
-        echo "<tr><td class='text-center'><strong>$name_combat</strong><br>"
+        echo "<tr><td class='text-center' width='25%'><strong>$name_combat</strong><br>"
                 . "expires:<input type='date' class='date' id='expire_auth_$id_combat' "
                 . "name='dyndate[]' value ='".$combat["ea"]."'><br>"
                 . "card number:<input type='number' name='dyncard[]' value='"
-                . $combat["cn"]."'id='card_number_$id_combat' ></td>"
-                . "";
+                . $combat["cn"]."'id='card_number_$id_combat' >"
+                . "Note:<br><textarea name='dynnote[]' rows='2' cols='10'>".$combat["note"]."</textarea>"
+                . "</td>";
     }
     echo "<td class='text-center'>$name_auth"
        . "<input type='checkbox' name='dynidauth[$id_auth]' value='1'";

@@ -44,9 +44,10 @@ if ((permissions("Marshal")>=3) || (permissions("Herald")>=3)){
 // Edit authorization and warrant stuffs for person
 if (permissions("Marshal")>= 3) {
     
-        form_subtitle("Now heading to Marshal territory");
+    //    form_subtitle("Now heading to Marshal territory");
     
     include 'edit_person_sub_authorizations.php';
+    include 'edit_person_sub_marshals.php';
 }
 // Edit awards for person
 if ((permissions("Herald")>= 3) && (permissions("Obsidian")>=3)){
