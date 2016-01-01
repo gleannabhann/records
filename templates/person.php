@@ -18,12 +18,19 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
     exit_with_footer();
 }
 
-$query = "SELECT name_person from Persons WHERE Persons.id_person = $id_person";
+$query = "SELECT name_person, name_group, Groups.id_group "
+        . "FROM Persons, Groups "
+        . "WHERE Persons.id_person = $id_person "
+        . "AND Persons.id_group=Groups.id_group";
+if (DEBUG) {
+    echo "Query to database is: $query<p>";
+}
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 while ($row = mysqli_fetch_assoc($result))
   {extract($row);
-  echo "<div class='page-header'><h1>$name_person</h1><small>";
+  echo "<div class='page-header'>".form_title($name_person);
+  echo form_subtitle("Member of ".live_link("list.php?group=$id_group", "$name_group"));
   include("../templates/warning.php"); // includes the warning text about paper precedence
   echo "</small>";
   if ((permissions("Herald")>= 3) or (permissions("Marshal")>=3)) {

@@ -313,6 +313,11 @@
 
     }
 
+    function live_link($link,$label)
+    {
+        return "<a href='$link'>$label</a>";
+    }
+
     // Produces string output in header format.
     // Useful for synchronizing across web pages
     function form_title($label)
