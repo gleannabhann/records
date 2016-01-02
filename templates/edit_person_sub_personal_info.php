@@ -151,7 +151,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
         $update=$update.", membership_expire_person='$mem_exp'";        
     }
     if ($id_group!=$person["id_group"]) {
-        $update=$update.", id_group_person='$id_group'";        
+        $update=$update.", id_group='$id_group'";        
     }
     if ($email!=$person["email_person"]) {
         $update=$update.", email_person='$email'";        
@@ -175,7 +175,10 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
     $update=$update. " WHERE id_person=" .$id_person;
     // echo "<p>Query is " . $update . "<p>";
     $result=update_query($cxn, $update);
-    if ($result !== 1) {echo "Error updating record: " . mysqli_error($cxn);}
+    if ($result !== 1) {
+        echo "Error updating record: " . mysqli_error($cxn);
+        if (DEBUG) { echo "<P>Query was $update<p>";}
+    }
 }
 
 
