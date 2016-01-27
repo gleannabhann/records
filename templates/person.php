@@ -146,7 +146,7 @@ if (isset($_POST["msgSubmit"])) {
   $name = $_POST['name'];
   $email = $_POST['email'];
   $msgBody = wordwrap($_POST['msgBody']);
-  $from = 'forms@oopgleannabhann.net';
+  $from = 'forms@records.gleannabhann.net';
   $to = 'webminister@gleannabhann.net';
 //  $to = 'webminister@gleannabhann.net' . ', ';
 //  $to .= 'obsidian@gleannabhann.net';
@@ -177,56 +177,13 @@ if (isset($_POST["msgSubmit"])) {
 
 ?>
 <!-- end of php -->
-
-<div class="row">
-  <?php echo form_title("Report a problem with this record") ?>
-  <form class="form-horizontal" role="form" method="post" action="person.php">
-    <div class="form-group">
-      <label for="name" class="col-sm-2 col-md-3 control-label">Name:</label>
-      <div class="input-group col-sm-10 col-md-6">
-        <span style="display: block; width: 100%"><input size="60" type="text" width="100%" class="form-control" id="name" name="name" placeholder="Your Name" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['name']);} ?>"></span>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="email" class="col-sm-2 col-md-3 control-label">Email:</label>
-      <div class="input-group col-sm-10 col-md-6">
-  <input size="60" type="text" width="100%" class="form-control" id="email" name="email" placeholder="example@domain.com" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['email']);} ?>">
-
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="subject" class="col-sm-2 col-md-3 control-label">Subject:</label>
-      <div class="input-group col-sm-10 col-md-6">
-        <input size="60" type="text" class="form-control" id="subject" name="subject"
-             value="<?php
-                         echo "Record correction for $name_person (ID $id_person)";
-                    ?>">
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="msgBody" class="col-sm-2 col-md-3 control-label">Details:</label>
-      <div class="input-group col-sm-10 col-md-6">
-          <textarea cols="62" class="form form-control" rows="4" name="msgBody" placeholder="Tell us what's incorrect about this record." id="msgBody" value="<?php if (isset($_POST['msgSubmit'])) {echo htmlspecialchars($_POST['msgBody']);} ?>">
-        </textarea>
-
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="input-group col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
-          <input id="msgSubmit" name="msgSubmit" type="submit" value="Send Report">
-        <input type="hidden" name="id"
-             value="<?php
-                         echo "$id_person";
-                    ?>">
-         </div>
-    </div>
-    <div class="form-group">
-      <div class="input-group col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
-        <?php if(isset($emailresult)) {echo $emailresult;} ?>
-      </div>
-    </div>
-  </form>
-
-
-</div>
+<!-- Problem report form hosted on forms.gleannabhann.net -->
+<!-- element_3 is the email subject and is initialized with current record's name and id # -->
+<script type="text/javascript">
+var __machform_url = 'http://forms.gleannabhann.net/embed.php?id=10117&element_3=Records%20Correction%20for%20<?php echo "$name_person ($id_person)"?>';
+var __machform_height = 751;
+</script>
+<div id="mf_placeholder"></div>
+<script type="text/javascript" src="http://forms.gleannabhann.net/js/jquery.min.js"></script>
+<script type="text/javascript" src="http://forms.gleannabhann.net/js/jquery.ba-postmessage.min.js"></script>
+<script type="text/javascript" src="http://forms.gleannabhann.net/js/machform_loader.js"></script>
