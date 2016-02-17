@@ -3,6 +3,7 @@ echo "
 <div class='row'>
   <div class='col-md-8 col-md-offset-2'>";
 
+// TODO Clean up the SELECT * query
 $query = "SELECT * FROM Persons WHERE id_person = $id_person;";
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 if (mysqli_num_rows($result)==1) {
@@ -59,6 +60,7 @@ if (isset($_POST["mem_exp"]) && is_string($_POST["mem_exp"])) {
 }
 echo '<tr><td class="text-right">expires:</td><td> <input type="date" class="date" name="mem_exp" value="'
     . $mem_exp . '"> (format if no datepicker: yyyy-mm-dd)</td></tr>';
+
 // SCA Group (add all the possible groups to a selection box, current group is selected)
 if (isset($_POST["id_group"]) && is_numeric($_POST["id_group"])) {
     $id_group = $_POST["id_group"];
@@ -127,9 +129,52 @@ echo '<tr><td class="text-right">Zip:</td>'
     .'<td><input type="text" name="zip" value="'.$zip.'"size="5" maxlength="45"></td>'
     .'</tr>';
 
+// waiver_person
+if (isset($_POST["waiver_person"]) && is_string($_POST["waiver_person"])) {
+    $waiver_person = $_POST["waiver_person"];
+} else {
+    $waiver_person = $person["waiver_person"];
+}
+echo '<tr><td class="text-right">Waiver on File with Sheriff:</td><td>';
+echo '<select name="waiver_person" >';
+$waivers = array ('Yes', 'No', 'Parent' );
+foreach ($waivers as $value ) {
+    echo '<option value="'.$value.'"';
+    if ($waiver_person==$value) echo ' selected';
+    echo '>'.$value.'</option>';
+}
+echo '</td></tr>';
+
+// youth_person
+if (isset($_POST["youth_person"]) && is_string($_POST["youth_person"])) {
+    $youth_person = $_POST["youth_person"];
+} else {
+    $youth_person = $person["youth_person"];
+}
+echo '<tr><td class="text-right">Youth Fighter:</td><td>';
+echo '<select name="youth_person" >';
+$youths = array ('Yes', 'No' );
+foreach ($youths as $value ) {
+    echo '<option value="'.$value.'"';
+    if ($youth_person==$value) echo ' selected';
+    echo '>'.$value.'</option>';
+}
+echo '</td></tr>';
+
+// birthdate_person
+if (isset($_POST["birthdate_person"]) && is_string($_POST["birthdate_person"])) {
+    $birthdate_person = $_POST["birthdate_person"];
+} else {
+    $birthdate_person = $person["membership_expire_person"];
+}
+echo '<tr><td class="text-right">Birthdate (required for youth fighters):</td><td> <input type="date" class="date" name="birthdate_person" value="'
+    . $birthdate_person . '"> (format if no datepicker: yyyy-mm-dd)</td></tr>';
+
+
 echo "</table>";
 echo '<input type="submit" value="Update Personal Information">';
 echo '</form>';
+
 
 echo "<p>";
 echo "</div></div>";
@@ -172,6 +217,17 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
         $update=$update.", postcode_person='$zip'";        
     }
 
+    if ($waiver_person!=$person["waiver_person"]) {
+        $update=$update.", waiver_person='$waiver_person'";
+    }
+    
+    if ($youth_person!=$person["youth_person"]) {
+        $update=$update.", youth_person='$youth_person'";
+    }
+    
+    if ($birthdate_person!= $person["birthdate_person"]) {
+            $update=$update.", birthdate_person='$birthdate_person'";
+    }
     $update=$update. " WHERE id_person=" .$id_person;
     // echo "<p>Query is " . $update . "<p>";
     $result=update_query($cxn, $update);

@@ -9,12 +9,14 @@
 
 // This query will return a list of all known authorizations, 
 // with the person's data filled in if known and NULL otherwise
-$query_comb = "SELECT id_combat, name_combat, cn, ea, note FROM Combat LEFT JOIN"
-        . "(SELECT  card_authorize as cn, expire_authorize as ea, id_combat as ic, "
-        . "note_authorize as note "
+$query_comb = "SELECT id_combat, name_combat, cn, ea, ipcc, note, active "
+        . "FROM Combat LEFT JOIN "
+        . "(SELECT  id_person_combat_card as ipcc, card_authorize as cn, "
+        . "expire_authorize as ea, id_combat as ic, note_authorize as note, "
+        . "active_authorize as active "
         . "FROM  Persons_CombatCards "
         . "WHERE id_person=$id_person) AS PA "
-        . "ON Combat.id_combat = PA.ic ORDER BY name_combat";
+        . "ON Combat.id_combat = PA.ic ORDER BY name_combat ";
 $query_auths = "SELECT * FROM "
         . "(SELECT id_auth, name_auth, Combat.id_combat, name_combat "
         . "FROM Authorizations, Combat "
@@ -49,13 +51,25 @@ while ($row = mysqli_fetch_assoc($auths)){
         }
         $curr_id_combat=$id_combat;
         $combat = mysqli_fetch_assoc($combats);
-        echo "<input type='hidden' name='dyncombat[]' value='$id_combat'>";
-        echo "<tr><td class='text-center' width='25%'><strong>$name_combat</strong><br>"
-                . "expires:<input type='date' class='date' id='expire_auth_$id_combat' "
-                . "name='dyndate[]' value ='".$combat["ea"]."'><br>"
-                . "card number:<input type='number' name='dyncard[]' value='"
+        echo "<input type='hidden' name='dyncombat[$id_combat]' value='$id_combat'>";
+        echo "<tr><td class='text-center' width='25%'><strong>$name_combat</strong><br>";
+        
+        if ($combat["ipcc"] != NULL) {
+            $active_status = array ('Yes', 'No' );
+            if ($combat["active"]==NULL) { $combat["active"]='No';}
+            echo "Currently Active: <select name='dynact[$id_combat]' >";
+            foreach ($active_status as $value ) {
+                echo '<option value="'.$value.'"';
+                if ($combat["active"]==$value) { echo ' selected'; }
+                echo '>'.$value.'</option>';
+            }
+            echo "</select>";
+        }
+        echo "expires:<input type='date' class='date' id='expire_auth_$id_combat' "
+                . "name='dyndate[$id_combat]' value ='".$combat["ea"]."'><br>"
+                . "card number:<input type='number' name='dyncard[$id_combat]' value='"
                 . $combat["cn"]."'id='card_number_$id_combat' >"
-                . "Note:<br><textarea name='dynnote[]' rows='2' cols='10'>".$combat["note"]."</textarea>"
+                . "Note:<br><textarea name='dynnote[$id_combat]' rows='2' cols='10'>".$combat["note"]."</textarea>"
                 . "</td>";
     }
     echo "<td class='text-center'>$name_auth"
