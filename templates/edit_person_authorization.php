@@ -32,21 +32,22 @@ $query_comb = "SELECT id_combat, name_combat, cn, ea, ipcc, note, active "
         . "FROM  Persons_CombatCards "
         . "WHERE id_person=$id_person) AS PA "
         . "ON Combat.id_combat = PA.ic ORDER BY name_combat ";
-$query_auths = "SELECT * FROM "
-        . "(SELECT id_auth, name_auth, Combat.id_combat, name_combat "
-        . "FROM Authorizations, Combat "
-        . "WHERE Authorizations.id_combat = Combat.id_combat "
-        . "ORDER BY name_combat, name_auth) AS AC "
-        . "LEFT JOIN "
-        . "(SELECT id_auth as ia, id_person_auth, expire_auth, card_number "
-        . "FROM Persons_Authorizations where id_person=$id_person) AS PA "
-        . "on AC.id_auth = PA.ia";
+// NOTE: We move the authorizations query to after the Persons_CombatCards has been updated.
+//$query_auths = "SELECT * FROM "
+//        . "(SELECT id_auth, name_auth, Combat.id_combat, name_combat "
+//        . "FROM Authorizations, Combat "
+//        . "WHERE Authorizations.id_combat = Combat.id_combat "
+//        . "ORDER BY name_combat, name_auth) AS AC "
+//        . "LEFT JOIN "
+//        . "(SELECT id_auth as ia, id_person_auth, expire_auth, card_number "
+//        . "FROM Persons_Authorizations where id_person=$id_person) AS PA "
+//        . "on AC.id_auth = PA.ia";
 if (DEBUG) {
     echo "Per Category known facts:<br>$query_comb<p>";
-    echo "Known authorizations: <br>$query_auths<p>";
+//    echo "Known authorizations: <br>$query_auths<p>";
 }        
-$auths = mysqli_query ($cxn, $query_auths) 
-        or die ("Couldn't execute query to find known/current authorizations.");
+//$auths = mysqli_query ($cxn, $query_auths) 
+//        or die ("Couldn't execute query to find known/current authorizations.");
 $combats = mysqli_query ($cxn, $query_comb) 
         or die ("Couldn't execute query to find known/current date/card numbers.");
 
@@ -72,6 +73,7 @@ if (DEBUG) {
     print_r($dyndate); echo " = dyndate<p>";
     print_r($dyncard); echo " = dyncard<p>";
     print_r($dynnote); echo " = dynnote<p>";
+    print_r($dynidauth); echo " = dynidauth<p>";
 }
 
 // First we update expiry dates and card_numbers for each type of combat
@@ -140,6 +142,26 @@ while ($row = mysqli_fetch_assoc($combats)){
 
 // Now we update based on check marks.  Note that these entries *can* get deleted.
 // if dynidauth is not set, then no boxes were checked and all entries can be deleted in one mass update
+// NEED TO ADD CHECKING SO THAT Persons_CombatCard has to have entry before we update
+// NOTE: We delay query to here, so Persons_CombatCards table is already update
+$query_auths = "SELECT * FROM 
+    (SELECT id_auth, name_auth, Combat.id_combat, name_combat 
+     FROM Authorizations, Combat WHERE Authorizations.id_combat = Combat.id_combat 
+     ORDER BY name_combat, name_auth) AS AC 
+LEFT JOIN 
+    (SELECT id_auth as ia, id_person_auth, expire_auth, id_combat as ic,
+       Persons_CombatCards.id_person_combat_card as ipcc 
+     FROM Persons_Authorizations, Persons_CombatCards 
+     WHERE Persons_Authorizations.id_person=$id_person
+     AND Persons_Authorizations.id_person = Persons_CombatCards.id_person ) AS PA 
+ON AC.id_auth = PA.ia 
+AND AC.id_combat = PA.ic;";
+if (DEBUG) {
+    echo "Known authorizations: <br>$query_auths<p>";
+}        
+$auths = mysqli_query ($cxn, $query_auths) 
+        or die ("Couldn't execute query to find known/current authorizations.");
+
 if (!isset($dynidauth)) {
     echo form_subtitle("No checkboxes ticked: deleting all authorizations");
     $update="DELETE FROM Persons_Authorizations "
@@ -148,12 +170,13 @@ if (!isset($dynidauth)) {
     if ($result !== 1) {
         echo "Error deleting authorizations: ".mysqli_error($cxn);
     }
-} else {
+} else { // Now we need to check every authorization against the known tickmarks
     $i=0;
     while ($row = mysqli_fetch_assoc($auths)){
         extract($row);
-        if (DEBUG) {echo "$dyncombat[$id_combat] == $id_combat:";}
-        if ($id_combat != $dyncombat[$id_combat]) {
+        // NOte: for each authorization $id_auth if there is an authorization $ia != NULL
+        if (DEBUG) {echo "$dyncombat[$i] == $id_combat:";}
+        if ($id_combat != $dyncombat[$i]) {
             $i++;
         }
         if (isset($dynidauth[$id_auth])) {
