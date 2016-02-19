@@ -74,7 +74,7 @@ while ($row = mysqli_fetch_assoc($auths)){
     }
     echo "<td class='text-center'>$name_auth"
        . "<input type='checkbox' name='dynidauth[$id_auth]' value='1'";
-    if ($expire_auth!=""){
+    if ($id_person_auth!=""){
         echo " checked ";
     }
     echo "></td>";
