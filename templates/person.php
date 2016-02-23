@@ -110,7 +110,7 @@ or die ("Couldn't execute query");
 $matches = $result->num_rows;
 if ($matches > 0) {
    $ocombat = "";
-   echo "<b> Marshal's Warrants on file:</b>";
+   echo form_subsubtitle("Marshal's Warrants on file:");
    while ($row = mysqli_fetch_assoc($result))
      {extract($row);
      if ($ocombat != $name_combat) {
