@@ -45,27 +45,46 @@ echo "
 
   <div class='col-md-8 col-md-offset-2'>";
 
+$query = "SELECT waiver_person, youth_person, birthdate_person
+            FROM Persons
+            WHERE id_person=$id_person";
+if (DEBUG) {
+    echo "Waiver query is:$query<p>";
+}
+$result = mysqli_query ($cxn, $query)
+or die ("Couldn't execute waiver query");
+$matches = $result->num_rows;
+if ($matches > 0) {
+    $row=mysqli_fetch_assoc($result);
+    extract($row);
+    echo form_subsubtitle("Combat waiver on file: $waiver_person");
+    if ($waiver_person=='Parent') {
+        echo form_subsubtitle("Parent or Legal Guardian's waiver on file:$youth_person");
+    }
+}
 /* query: select a person's (non-expired) authorizations in the database */
-$query = "SELECT name_combat, name_auth, expire_auth
-          FROM Persons_Authorizations, Authorizations, Combat
-          WHERE Persons_Authorizations.id_auth = Authorizations.id_auth
-          AND Authorizations.id_combat = Combat.id_combat
-          AND id_person = $id_person
-          AND curdate()<= expire_auth 
-          ORDER by name_combat, Authorizations.id_auth";
+$query = "SELECT name_combat, name_auth, expire_authorize 
+            FROM Persons_Authorizations, Authorizations, Combat, Persons_CombatCards
+            WHERE Persons_CombatCards.id_person=$id_person 
+            AND Persons_Authorizations.id_person=$id_person
+            AND curdate()<= expire_authorize
+            AND Authorizations.id_combat=Combat.id_combat
+            AND Persons_Authorizations.id_auth=Authorizations.id_auth
+            AND Persons_CombatCards.id_combat = Combat.id_combat
+            ORDER by name_combat, Authorizations.id_auth";
 if (DEBUG) {
     echo "Authorization query is:$query<p>";
 }
 $result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
+or die ("Couldn't execute authorization query");
 $matches = $result->num_rows;
 if ($matches > 0) {
    $ocombat = "";
-   echo "<b> Authorizations on file:</b>";
+   echo form_subsubtitle("Authorizations on file:");
    while ($row = mysqli_fetch_assoc($result))
      {extract($row);
      if ($ocombat != $name_combat) {
-        echo "<br><b>$name_combat (expires $expire_auth)</b>: $name_auth";
+        echo "<br><b>$name_combat (expires $expire_authorize)</b>: $name_auth";
      } else {
      	echo ",&nbsp $name_auth";
      };

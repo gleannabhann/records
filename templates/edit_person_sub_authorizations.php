@@ -23,7 +23,7 @@ $query_auths = "SELECT * FROM "
         . "WHERE Authorizations.id_combat = Combat.id_combat "
         . "ORDER BY name_combat, name_auth) AS AC "
         . "LEFT JOIN "
-        . "(SELECT id_auth as ia, id_person_auth, expire_auth, card_number "
+        . "(SELECT id_auth as ia, id_person_auth "
         . "FROM Persons_Authorizations where id_person=$id_person) AS PA "
         . "on AC.id_auth = PA.ia";
 if (DEBUG) {
@@ -63,7 +63,7 @@ while ($row = mysqli_fetch_assoc($auths)){
                 if ($combat["active"]==$value) { echo ' selected'; }
                 echo '>'.$value.'</option>';
             }
-            echo "</select>";
+            echo "</select></br>";
         }
         echo "expires:<input type='date' class='date' id='expire_auth_$id_combat' "
                 . "name='dyndate[$id_combat]' value ='".$combat["ea"]."'><br>"

@@ -19,8 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 // Since we have the right permissions and arrived here via post, 
 // we will now update the database
-// NOTE: if combats has null value for ipcc will insert IF AND ONLY IF dynnew is checked
-
 $id_person = $_POST["id"];
 $name_person = $_POST["name_person"];
 $cxn = open_db_browse();
@@ -34,19 +32,13 @@ $query_comb = "SELECT id_combat, name_combat, cn, ea, ipcc, note, active "
         . "ON Combat.id_combat = PA.ic ORDER BY name_combat ";
 if (DEBUG) {
     echo "Per Category known facts:<br>$query_comb<p>";
-//    echo "Known authorizations: <br>$query_auths<p>";
 }        
-//$auths = mysqli_query ($cxn, $query_auths) 
-//        or die ("Couldn't execute query to find known/current authorizations.");
 $combats = mysqli_query ($cxn, $query_comb) 
         or die ("Couldn't execute query to find known/current date/card numbers.");
 
 echo form_title("Now updated Authorizations as follows:");
 if (isset($_POST['dynact'])) {
     $dynact=$_POST['dynact'];
-}
-if (isset($_POST['dynnew'])) {
-    $dynnew=$_POST['dynnew'];
 }
 $dyncombat=$_POST['dyncombat'];
 $dyndate=$_POST['dyndate'];
@@ -58,7 +50,6 @@ if (isset($_POST['dynidauth'])) { // Need to account for case where no checkmark
 
 if (DEBUG) {
     if (isset($_POST['dynact'])) { print_r($dynact); echo " = dynact<p>"; }
-    if (isset($_POST['dynnew'])) { print_r($dynnew); echo " = dynnew<p>"; }
     print_r($dyncombat); echo " = dyncombat<p>";
     print_r($dyndate); echo " = dyndate<p>";
     print_r($dyncard); echo " = dyncard<p>";
@@ -73,7 +64,6 @@ while ($row = mysqli_fetch_assoc($combats)){
     extract($row);
     // If the record exists in Person_Combatcards i.e. $ipcc != NULL
     //print_r($row);
-
     if (($dyndate[$id_combat] != $ea) // change in expiry date
             || (isset($dynact[$id_combat]) && ($dynact[$id_combat] != $active)) // change in active status
             || ($dyncard[$id_combat] != $cn) // change in card number
@@ -89,12 +79,7 @@ while ($row = mysqli_fetch_assoc($combats)){
             }
             $update = $update.", active_authorize='$dynact[$id_combat]' ";
             $update = $update. " WHERE id_person_combat_card=$ipcc;";
-        } else {
-// record doesn't exist; insert if new data added
-//            $update="INSERT INTO Persons_CombatCards "
-//                    . "(id_person, id_combat, card_authorize,expire_authorize,note_authorize) "
-//                    . "VALUES ($id_person, $id_combat,$dyncard[$id_combat] , '$dyndate[$id_combat]','"
-//                    . sanitize_mysql($dynnote[$id_combat])."')";
+        } else {// record doesn't exist; insert if new data added
             $dynact[$id_combat]='Yes';
             $update_head="INSERT INTO Persons_CombatCards "
                     . "(id_person, id_combat, active_authorize ";
@@ -112,9 +97,7 @@ while ($row = mysqli_fetch_assoc($combats)){
                 $update_tail=$update_tail.", '".sanitize_mysql($dynnote[$id_combat])."'";
             }
             $update=$update_head.") ".$update_tail.")";
-
         }
-        
         if (DEBUG) {
             echo "Update query for $name_combat is:$update<p>";
         }
@@ -124,14 +107,13 @@ while ($row = mysqli_fetch_assoc($combats)){
                 . sanitize_mysql($dynnote[$id_combat])."'");
         $result=update_query($cxn, $update);
         if ($result !== 1) {echo "Error updating authorization date/card number: " . mysqli_error($cxn);}
-
-    }
-    // If $ipcc == NULL but dynnew[$id_combat] is checked INSERT a new record
-    $i++;
+   } // Else data wasn't changed so do nothing
+   $i++;
 }
 
 // Now we update based on check marks.  Note that these entries *can* get deleted.
-// if dynidauth is not set, then no boxes were checked and all entries can be deleted in one mass update
+// if dynidauth is not set, then no boxes were checked and all entries can be deleted 
+// in one mass update
 // NEED TO ADD CHECKING SO THAT Persons_CombatCard has to have entry before we update
 // NOTE: We delay query to here, so Persons_CombatCards table is already update
 $query_auths = "SELECT * FROM
@@ -147,7 +129,7 @@ $query_auths = "SELECT * FROM
         WHERE id_person=$id_person) AS PCC
    ON AC.id_combat=PCC.ic) AS ACPCC
 LEFT JOIN
-   ( SELECT id_auth as ia, expire_auth as ea, card_number as cn, id_person as idp
+   ( SELECT id_auth as ia, id_person as idp
      FROM Persons_Authorizations
      WHERE id_person=$id_person) AS AU
 ON ACPCC.ip=AU.idp AND ACPCC.id_auth=AU.ia;";
@@ -177,7 +159,7 @@ while ($row = mysqli_fetch_assoc($auths)) {
        }
        echo "<p>";
    }
-   if ($ipcc == NULL){
+   if ($ipcc == NULL){// No combat card info means no authorizations
        if (isset($dynidauth[$id_auth])) {
            echo form_subtitle("Cannot authorize $name_auth "
                                 . "until the card information for $name_combat combat "

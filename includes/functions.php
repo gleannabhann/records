@@ -330,4 +330,9 @@
         return '<h3>'.$label.'</h3>';
     }
 
+    function form_subsubtitle($label)
+    {
+        return '<br><b>'.$label.'</b></br>';
+    }
+
 ?>
