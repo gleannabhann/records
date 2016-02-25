@@ -95,6 +95,13 @@
             <li><a class="navbar-brand"  href="/public/awards.php">Awards</a></li>
             <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
             <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
+            <?php
+            if (isset($_SESSION["id"]))
+            {
+               echo '<li><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
+            }
+            ?>      
+
           <!-- (disabled until needed) <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
             <ul class="dropdown-menu">
