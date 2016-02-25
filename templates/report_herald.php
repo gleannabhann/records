@@ -49,9 +49,12 @@ if (isset($_POST["get_file"])) {
     // build file and offer for download
 } else {
     // Display data
+
+    
     echo form_title($report_name);
     $fields = mysqli_fetch_fields($data);
-    echo "<table class='table table-condensed table-bordered' id=\"sortedtable\">";
+//    echo "<table class='table table-condensed table-bordered'>";
+    echo '<table class="sortable table table-condensed table-bordered">';
     echo '<thead>';
         foreach ($fields as $field) {
             echo '<th>'.$field->name.'</th>';

@@ -42,8 +42,11 @@ if (!isset($_GET["initial"]) && isset($_GET["award"])){
     $query = "select Persons.id_person as ip, name_person, date_award "
             . "from Persons, Persons_Awards "
             . "where Persons.id_person = Persons_Awards.id_person "
-            . "and Persons_Awards.id_award=$award";
-    $result = mysqli_query ($cxn, $query)
+            . "and Persons_Awards.id_award=$award "
+            . "order by name_person";
+    if (DEBUG) {
+        echo "Group Query is: $query<p>";
+    }    $result = mysqli_query ($cxn, $query)
     or die ("Couldn't execute query");
     while ($row = mysqli_fetch_assoc($result)) {
         $Name = $row['name_person'];
@@ -77,7 +80,10 @@ if (!isset($_GET["initial"]) && !isset($_GET["award"]) && isset($_GET["group"]))
     include "warning.php"; // includes the warning text about paper precedence
     echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
     $query = "SELECT Persons.id_person as ip, name_person, id_group FROM Persons
-              WHERE  Persons.id_group = $group";
+              WHERE  Persons.id_group = $group ORDER BY name_person";
+    if (DEBUG) {
+        echo "Group Query is: $query<p>";
+    }
     $result = mysqli_query ($cxn, $query)
     or die ("Couldn't execute query");
     while ($row = mysqli_fetch_assoc($result)) {

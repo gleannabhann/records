@@ -75,7 +75,7 @@
             <script src="/js/jquery-1.10.2.min.js"></script>
             <script src="/js/bootstrap.min.js"></script>
             <script src="/js/scripts.js"></script>
-
+            <script src="/js/sorttable.js"></script>
         <!-- END OF BOOTSTRAP SECTION -->
 
     </head>
@@ -106,13 +106,7 @@
       <li><a class="navbar-brand"  href="/public/awards.php">Awards</a></li>
       <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
       <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
-      <?php
-      if (isset($_SESSION["id"]))
-      {
-        echo '<li><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
-      }
-      ?>      
-      <!--
+          <!--
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
             <ul class="dropdown-menu">
