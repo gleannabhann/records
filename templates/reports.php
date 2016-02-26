@@ -6,18 +6,18 @@
 
 
 
-if ((!permissions("Herald")>=3) && (!permissions("Marshal")>=3)) {
-    echo '<p class="error"> This page has been accessed in error.</p>';
+if ((!permissions("Herald")>=1) && (!permissions("Marshal")>=1)) {
+    echo '<p class="error"> This page has been accessed in error...</p>';
     exit_with_footer();
 }
 $cxn = open_db_browse(); // Open the db connection which is now live for the subforms
 
 // If a herald is logged in, they see the herald reports.
-if (permissions("Herald")>= 3){
+if (permissions("Herald")>= 1){
    include 'report_sub_herald.php';
 }
 
-if (permissions("Marshal")>= 3){
+if (permissions("Marshal")>= 1){
    include 'report_sub_marshal.php';
 }
 

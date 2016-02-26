@@ -120,8 +120,8 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
         
     
     
-    $query_head=$query_head.",active_person)";
-    $query_tail=$query_tail.",1);";
+    $query_head=$query_head.")";
+    $query_tail=$query_tail.");";
     //echo "Query is:<br>".$query_head."<br>".$query_tail."</p>";
     $query = $query_head.$query_tail;
     $result=update_query($cxn, $query);

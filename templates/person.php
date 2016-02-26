@@ -62,68 +62,80 @@ if ($matches > 0) {
         echo form_subsubtitle("Parent or Legal Guardian's waiver on file:$youth_person");
     }
 }
+//if ($waiver_person != "No") { // No combat waiver?  No fight.
+// Person may be authorized as a marshal without a combat waiver.
 /* query: select a person's (non-expired) authorizations in the database */
-$query = "SELECT name_combat, name_auth, expire_authorize 
-            FROM Persons_Authorizations, Authorizations, Combat, Persons_CombatCards
-            WHERE Persons_CombatCards.id_person=$id_person 
-            AND Persons_Authorizations.id_person=$id_person
-            AND curdate()<= expire_authorize
-            AND Authorizations.id_combat=Combat.id_combat
-            AND Persons_Authorizations.id_auth=Authorizations.id_auth
-            AND Persons_CombatCards.id_combat = Combat.id_combat
-            ORDER by name_combat, Authorizations.id_auth";
-if (DEBUG) {
-    echo "Authorization query is:$query<p>";
-}
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute authorization query");
-$matches = $result->num_rows;
-if ($matches > 0) {
-   $ocombat = "";
-   echo form_subsubtitle("Authorizations on file:");
-   while ($row = mysqli_fetch_assoc($result))
-     {extract($row);
-     if ($ocombat != $name_combat) {
-        echo "<br><b>$name_combat (expires $expire_authorize)</b>: $name_auth";
-     } else {
-     	echo ",&nbsp $name_auth";
-     };
-     $ocombat = $name_combat;
-   }
-   echo "<br>";
-}
-echo "<br>";
+    $query = "SELECT name_combat, name_auth, expire_authorize 
+                FROM Persons_Authorizations, Authorizations, Combat, Persons_CombatCards
+                WHERE Persons_CombatCards.id_person=$id_person 
+                AND Persons_Authorizations.id_person=$id_person
+                AND curdate()<= expire_authorize
+                AND Authorizations.id_combat=Combat.id_combat
+                AND Persons_Authorizations.id_auth=Authorizations.id_auth
+                AND Persons_CombatCards.id_combat = Combat.id_combat
+                ORDER by name_combat, Authorizations.id_auth";
+    if (DEBUG) {
+        echo "Authorization query is:$query<p>";
+    }
+    $result = mysqli_query ($cxn, $query)
+    or die ("Couldn't execute authorization query");
+    $matches = $result->num_rows;
+    if ($matches > 0) {
+       $ocombat = "";
+       echo form_subsubtitle("Authorizations on file:");
+       while ($row = mysqli_fetch_assoc($result))
+         {extract($row);
+         if ($ocombat != $name_combat) {
+            echo "<br><b>$name_combat (expires $expire_authorize)</b>: $name_auth";
+         } else {
+            echo ",&nbsp $name_auth";
+         };
+         $ocombat = $name_combat;
+       }
+       echo "<br>";
+    }
+    echo "<br>";
 
-/* query: select a person's marshal warrants in the database */
-$query = "SELECT name_combat, name_marshal, expire_marshal
-          FROM Persons_Marshals, Marshals, Combat
-          WHERE Persons_Marshals.id_marshal = Marshals.id_marshal
-          AND Marshals.id_combat = Combat.id_combat
-          AND id_person = $id_person 
-          AND curdate()<= expire_marshal 
-          ORDER by name_combat, Marshals.id_marshal";
-if (DEBUG) {
-    echo "Marshal Warrants query is:$query<p>";
-}
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
-$matches = $result->num_rows;
-if ($matches > 0) {
-   $ocombat = "";
-   echo form_subsubtitle("Marshal's Warrants on file:");
-   while ($row = mysqli_fetch_assoc($result))
-     {extract($row);
-     if ($ocombat != $name_combat) {
-        echo "<br><b>$name_combat (expires $expire_marshal)</b>: $name_marshal";
-     } else {
-        echo ",&nbsp $name_marshal";
-     };
-     $ocombat = $name_combat;
-   }
-   echo "<br>";
-}
-echo "<br>";
+    /* query: select a person's marshal warrants in the database */
+    $query = "SELECT name_combat, name_marshal, Persons_CombatCards.expire_marshal 
+                FROM Persons_Marshals, Marshals, Combat, Persons_CombatCards
+                WHERE Persons_CombatCards.id_person=$id_person 
+                AND Persons_Marshals.id_person=$id_person
+                AND curdate()<= Persons_CombatCards.expire_marshal
+                AND Marshals.id_combat=Combat.id_combat
+                AND Persons_Marshals.id_marshal=Marshals.id_marshal
+                AND Persons_CombatCards.id_combat = Combat.id_combat
+                ORDER by name_combat, Marshals.id_marshal";
+    //$query = "SELECT name_combat, name_marshal, expire_marshal
+    //          FROM Persons_Marshals, Marshals, Combat
+    //          WHERE Persons_Marshals.id_marshal = Marshals.id_marshal
+    //          AND Marshals.id_combat = Combat.id_combat
+    //          AND id_person = $id_person 
+    //          AND curdate()<= expire_marshal 
+    //          ORDER by name_combat, Marshals.id_marshal";
+    if (DEBUG) {
+        echo "Marshal Warrants query is:$query<p>";
+    }
 
+    $result = mysqli_query ($cxn, $query)
+        or die ("Couldn't execute marshaling query");
+    $matches = $result->num_rows;
+    if ($matches > 0) {
+       $ocombat = "";
+       echo form_subsubtitle("Marshal's Warrants on file:");
+       while ($row = mysqli_fetch_assoc($result))
+         {extract($row);
+         if ($ocombat != $name_combat) {
+            echo "<br><b>$name_combat (expires $expire_marshal)</b>: $name_marshal";
+         } else {
+            echo ",&nbsp $name_marshal";
+         };
+         $ocombat = $name_combat;
+       }
+       echo "<br>";
+    }
+    echo "<br>";
+//}
 /* query: select a person's awards in the database  */
 $query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_event, Events.id_event
           FROM Persons, Persons_Awards, Awards, Kingdoms, Events
@@ -132,7 +144,7 @@ $query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_eve
          AND Awards.id_kingdom = Kingdoms.id_kingdom
          AND Persons_Awards.id_event = Events.id_event 
          AND Persons.id_person = $id_person order by date_award";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
+$result = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
 echo "<table class='table table-condensed table-bordered'>
 <thead><td class='text-left'><strong>Award</strong></td>
 <td class='text-left'><strong>Event</strong></td>

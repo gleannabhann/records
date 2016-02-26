@@ -6,7 +6,7 @@
 
 
 
-if (!permissions("Herald")>=3) { // User lacks the right permissions
+if (!permissions("Herald")>=1) { // User lacks the right permissions
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();
 }
@@ -24,8 +24,9 @@ $report=$_POST["id_report"];
 switch ($report) {
     case "1": // Obsidian report
         $report_name = "List of all Awards awarded";
-        $query = "select name_person as Name, name_award as Award, date_award as 'Date Awarded',
-                        name_group as 'Group', name_kingdom as Kingdom 
+        $query = "select concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') as Name, 
+                    name_award as Award, date_award as 'Date Awarded',
+                    name_group as 'Group', name_kingdom as Kingdom 
                     from Persons, Awards, Groups, Kingdoms, Persons_Awards
                     where Persons_Awards.id_person = Persons.id_person
                     and Persons_Awards.id_award = Awards.id_award
@@ -48,25 +49,7 @@ $data = mysqli_query ($cxn, $query)
 if (isset($_POST["get_file"])) {
     // build file and offer for download
 } else {
-    // Display data
-
-    
-    echo form_title($report_name);
-    $fields = mysqli_fetch_fields($data);
-//    echo "<table class='table table-condensed table-bordered'>";
-    echo '<table class="sortable table table-condensed table-bordered">';
-    echo '<thead>';
-        foreach ($fields as $field) {
-            echo '<th>'.$field->name.'</th>';
-        }
-        echo '</thead>';
-    while ($row = mysqli_fetch_assoc($data)) {
-        echo '<tr>';
-        foreach ($row as $field) {
-            echo '<td>'.$field.'</td>';
-        }
-        echo '</tr>';
-    }
-    echo '</table>';
+    // Display data in $data
+    include 'report_showtable.php';
 }
 mysqli_close ($cxn); // Close the db connection
