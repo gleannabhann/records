@@ -20,11 +20,13 @@ $cxn = open_db_browse(); // Open the db connection which is now live for the sub
 // Generate the report.
 
 // Build the query based on the parameters: this will be a massive if statement.
-$report=$_POST["id_report"];
-$combat=$_POST["id_combat"];
+$report =$_POST["id_report"];
+$combat =explode('|',$_POST["id_combat"]);
+$auth   =explode('|',$_POST["id_auth"]);
+$marshal=explode('|',$_POST["id_marshal"]);
 switch ($report) {
-    case "1": 
-        $report_name = "List of all Active Fighters";
+    case "1": // All active fighters of given combat type
+        $report_name = "List of all Active Fighters for $combat[1]";
         $query = "SELECT concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') "
                     . "as 'SCA Name', "
                 . "name_mundane_person as 'Legal Name', name_group as 'Group', "
@@ -32,13 +34,14 @@ switch ($report) {
                 . "waiver_person as 'Combat Waiver', card_authorize as 'Fighter Card',"
                 . "expire_authorize as 'Expire' "
                 . "FROM Persons, Persons_CombatCards, Groups "
-                . "WHERE Persons_CombatCards.id_combat=$combat "
+                . "WHERE Persons_CombatCards.id_combat=$combat[0] "
                 . "AND Persons_CombatCards.active_authorize='Yes' "
                 . "AND Persons.id_person=Persons_CombatCards.id_person "
-                . "AND Persons.id_group=Groups.id_group";
+                . "AND Persons.id_group=Groups.id_group "
+                . "ORDER BY Persons.name_person";
         break;
-    case "2": 
-        $report_name = "List of all Active Marshals";
+    case "2": // All active marshals of given combat type
+        $report_name = "List of all Active Marshals for $combat[1]";
         $query = "SELECT concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') "
                     . "as 'SCA Name', "
                 . "name_mundane_person as 'Legal Name', name_group as 'Group', "
@@ -46,10 +49,79 @@ switch ($report) {
                 . "waiver_person as 'Combat Waiver', card_marshal as 'Marshal Card',"
                 . "expire_marshal as 'Expire' "
                 . "FROM Persons, Persons_CombatCards, Groups "
-                . "WHERE Persons_CombatCards.id_combat=$combat "
+                . "WHERE Persons_CombatCards.id_combat=$combat[0] "
                 . "AND Persons_CombatCards.active_marshal='Yes' "
                 . "AND Persons.id_person=Persons_CombatCards.id_person "
-                . "AND Persons.id_group=Groups.id_group";
+                . "AND Persons.id_group=Groups.id_group "
+                . "ORDER BY Persons.name_person";
+        break;
+    case "3": // All fighters with specific authorization
+        $report_name = "List of all Active Fighters for $auth[1]";
+         $query = "SELECT concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') "
+                    . "as 'SCA Name', "
+                . "name_mundane_person as 'Legal Name', name_group as 'Group', "
+                . "membership_person as 'Mem #', membership_expire_person as 'Mem Date',"
+                . "waiver_person as 'Combat Waiver', card_authorize as 'Fighter Card',"
+                . "expire_authorize as 'Expire' "
+                . "FROM Persons, Persons_CombatCards, Groups, Persons_Authorizations, Authorizations "
+                . "WHERE Persons_CombatCards.id_combat=$combat[0] "
+                . "AND Persons_CombatCards.active_authorize='Yes' "
+                . "AND Persons.id_person=Persons_CombatCards.id_person "
+                . "AND Persons.id_person=Persons_Authorizations.id_Person "
+                . "AND Persons_Authorizations.id_auth=Authorizations.id_auth "
+                . "AND Authorizations.id_combat=$combat[0]";
+        if ($auth[0] > 0) {$query=$query."AND Persons_Authorizations.id_auth=$auth[0] "; }
+        $query=$query."AND Persons.id_group=Groups.id_group "
+                . "ORDER BY Persons.name_person";
+        break;
+    case "4": // All marshals of specif warrant type
+        $report_name = "List of all Active Marshals for $marshal[1]";
+        $query = "SELECT concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') "
+                    . "as 'SCA Name', "
+                . "name_mundane_person as 'Legal Name', name_group as 'Group', "
+                . "membership_person as 'Mem #', membership_expire_person as 'Mem Date',"
+                . "waiver_person as 'Combat Waiver', card_marshal as 'Marshal Card',"
+                . "expire_marshal as 'Expire' "
+                . "FROM Persons, Persons_CombatCards, Groups, Persons_Marshals, Marshals "
+                . "WHERE Persons_CombatCards.id_combat=$combat[0] "
+                . "AND Persons_CombatCards.active_marshal='Yes' "
+                . "AND Persons.id_person=Persons_CombatCards.id_person "
+                . "AND Persons.id_person=Persons_Marshals.id_person "
+                . "AND Persons_Marshals.id_marshal=Marshals.id_marshal "
+                . "AND Marshals.id_combat = $combat[0] ";
+        if ($marshal[0] > 0) {$query=$query."AND Persons_Marshals.id_marshal=$marshal[0] "; }
+        $query=$query."AND Persons.id_group=Groups.id_group "
+                . "ORDER BY Persons.name_person";
+        break;       
+    case "5": // All inactive fighters of given combat type
+        $report_name = "List of all Inactive Fighters for $combat[1]";
+        $query = "SELECT concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') "
+                    . "as 'SCA Name', "
+                . "name_mundane_person as 'Legal Name', name_group as 'Group', "
+                . "membership_person as 'Mem #', membership_expire_person as 'Mem Date',"
+                . "waiver_person as 'Combat Waiver', card_authorize as 'Fighter Card',"
+                . "expire_authorize as 'Expire' "
+                . "FROM Persons, Persons_CombatCards, Groups "
+                . "WHERE Persons_CombatCards.id_combat=$combat[0] "
+                . "AND Persons_CombatCards.active_authorize='No' "
+                . "AND Persons.id_person=Persons_CombatCards.id_person "
+                . "AND Persons.id_group=Groups.id_group "
+                . "ORDER BY Persons.name_person";
+        break;
+    case "6": // All inactive marshals of given combat type
+        $report_name = "List of all Inactive Marshals for $combat[1]";
+        $query = "SELECT concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') "
+                    . "as 'SCA Name', "
+                . "name_mundane_person as 'Legal Name', name_group as 'Group', "
+                . "membership_person as 'Mem #', membership_expire_person as 'Mem Date',"
+                . "waiver_person as 'Combat Waiver', card_marshal as 'Marshal Card',"
+                . "expire_marshal as 'Expire' "
+                . "FROM Persons, Persons_CombatCards, Groups "
+                . "WHERE Persons_CombatCards.id_combat=$combat[0] "
+                . "AND Persons_CombatCards.active_marshal='No' "
+                . "AND Persons.id_person=Persons_CombatCards.id_person "
+                . "AND Persons.id_group=Groups.id_group "
+                . "ORDER BY Persons.name_person";
         break;
     default:
         echo '<p class="error"> No report selected.</p>';
