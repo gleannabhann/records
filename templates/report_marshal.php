@@ -123,6 +123,43 @@ switch ($report) {
                 . "AND Persons.id_group=Groups.id_group "
                 . "ORDER BY Persons.name_person";
         break;
+    case "7": // All fighters with at least one authorization of given combat type
+        // This query has to be built dynamically based on Authorizations
+        $report_name = "List of all Fighters with at least one Valid Authorization for $combat[1]";
+        $q_auth = "SELECT id_auth, name_auth FROM Authorizations "
+            . "WHERE Authorizations.id_combat=$combat[0]";
+        if (DEBUG) {echo "Authorizations query: $q_auth<p>";}
+        $auths = mysqli_query ($cxn, $q_auth) 
+            or die ("Couldn't execute query to find authorizations to build report.");
+        $q_head = "SELECT concat('<a href=''edit_person.php?id=',PCC.id_person,'''>',name_person,'</a>')  as 'SCA Name', "
+                . "PCC.card_authorize as 'card number', "
+                . "PCC.expire_authorize as 'expiry date' ";
+        $q_body = "FROM 
+           (SELECT Persons.id_person, id_person_combat_card,  name_person, card_authorize, 
+                   expire_authorize  
+            FROM Persons_CombatCards, Persons 
+            WHERE Persons_CombatCards.id_person=Persons.id_person 
+            AND Persons_CombatCards.expire_authorize >= curdate() 
+            AND id_combat=$combat[0]) AS PCC
+           LEFT JOIN
+           (SELECT COUNT(*) as num_count, id_person 
+            FROM Persons_Authorizations, Authorizations
+            WHERE Persons_Authorizations.id_auth=Authorizations.id_auth
+            AND Authorizations.id_combat=$combat[0]
+            GROUP BY id_person) AS PCount
+            ON PCount.id_person = PCC.id_person ";
+        while ($auth=  mysqli_fetch_assoc($auths)) {
+            extract($auth);
+            $q_head = $q_head . ", if (PA$id_auth.id_person IS NULL,'No', 'Yes') as '$name_auth' ";
+            $q_body = $q_body . 
+                    "LEFT JOIN 
+                       (SELECT id_person
+                        FROM Persons_Authorizations
+                        WHERE Persons_Authorizations.id_auth=$id_auth) AS PA$id_auth
+                        ON PA$id_auth.id_person=PCC.id_person ";
+        }
+        $query = $q_head . $q_body . "WHERE num_count is not NULL";
+        break;
     default:
         echo '<p class="error"> No report selected.</p>';
         exit_with_footer();        

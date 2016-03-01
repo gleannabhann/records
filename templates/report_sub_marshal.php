@@ -17,6 +17,7 @@ echo "<table class='table table-condensed table-bordered'>";
 echo form_title("Please select a Marshal's report");
 echo '<tr><td class="text-right">Report:</td>';
     echo '<td><select name="id_report" >';
+    echo "<option value='7'>List of all Active Fighters with at least one Authorization for Choice of Combat</option>";
     echo '<option value="1">List of all Active Fighters for Choice of Combat</option>';
     echo '<option value="3">List of all Active Fighters for Choice of Authorization</option>';
     echo "<option value='5'>List of all Inactive Fighters for Choice of Combat</option>";
