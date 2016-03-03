@@ -46,6 +46,8 @@ $dyncard=$_POST['dyncard'];
 $dynnote=$_POST['dynnote'];
 if (isset($_POST['dynidauth'])) { // Need to account for case where no checkmarks at all.
     $dynidauth=$_POST['dynidauth'];
+} else {
+    $dynidauth=NULL;
 } 
 
 if (DEBUG) {

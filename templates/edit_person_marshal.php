@@ -46,7 +46,9 @@ $dynmcard=$_POST['dynmcard'];
 $dynmnote=$_POST['dynmnote'];
 if (isset($_POST['dynmidauth'])) { // Need to account for case where no checkmarks at all.
     $dynmidauth=$_POST['dynmidauth'];
-} 
+} else {
+    $dynmidauth=NULL;
+}
 
 if (DEBUG) {
     if (isset($_POST['dynmact'])) { print_r($dynmact); echo " = dynmact<p>"; }

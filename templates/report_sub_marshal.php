@@ -55,7 +55,10 @@ echo '<tr><td class="text-right">Type of Authorization:<br></td>';
         // Remember you will need to use explode function to separate combat
         //    name and id
     }    
-    echo '</select></td></tr>';
+ //echo '<tr><td>Download as a file?</td>';
+//    echo '<td><input type="checkbox" name="get_file" value="1">';
+//    echo '</td></tr>';   echo '</select></td></tr>';
+    
 echo '</table>';
 echo '<input type="submit" value="Get Report">';
 echo "</form>";

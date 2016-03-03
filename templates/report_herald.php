@@ -24,8 +24,11 @@ $report=$_POST["id_report"];
 switch ($report) {
     case "1": // Obsidian report
         $report_name = "List of all Awards awarded";
-        $query = "select concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') as Name, 
-                    name_award as Award, date_award as 'Date Awarded',
+        $filename = "data";
+        $qshow = "SELECT concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') "
+                    . "as 'SCA Name', ";
+        $qfile = "SELECT name_person as 'SCA Name', ";
+        $query = "   name_award as Award, date_award as 'Date Awarded',
                     name_group as 'Group', name_kingdom as Kingdom 
                     from Persons, Awards, Groups, Kingdoms, Persons_Awards
                     where Persons_Awards.id_person = Persons.id_person
@@ -38,18 +41,8 @@ switch ($report) {
         echo '<p class="error"> No report selected.</p>';
         exit_with_footer();        
 }
-// Query the database
-if (DEBUG) {
-    echo "Report query is: $query<p>";
-}
-$data = mysqli_query ($cxn, $query) 
-        or die ("Couldn't execute query to build report.");
 
-// If requested as a file, build the file, else display in a table with sortable columns
-if (isset($_POST["get_file"])) {
-    // build file and offer for download
-} else {
-    // Display data in $data
-    include 'report_showtable.php';
-}
+// Display data in $data
+include 'report_showtable.php';
+
 mysqli_close ($cxn); // Close the db connection
