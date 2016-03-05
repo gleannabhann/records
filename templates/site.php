@@ -126,8 +126,9 @@ echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
 
   //if the user has the proper permission level, give them an add and edit site links
   if (permissions("Sites") >= 3){
-      echo "<p><strong><a href='./add_site.php'>Add a New Site</a> | <a href=\"./edit_site.php?id=$id_site\">Edit this Site</a></strong>";
+      echo "<p><strong><a href='./add_site.php'>Add a New Site</a> | <a href=\"./edit_site.php?id=$id_site\">Edit this Site</a></strong> | ";
   };
+  echo '<strong><a href="./list_site.php">Return to List</a></strong></p>';
 
         //warn the user if the site is inactive
   if (!$active_site) {
