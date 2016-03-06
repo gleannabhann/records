@@ -66,6 +66,7 @@ if ($previous_item >= 1) {
 if ($next_item < $max_item) {
     echo button_link("./edit_site.php?id=".$next_item, "Next Site")."\n";
 }
+echo button_link("./site.php?id=".$id_site, "Return to Site Page")."\n";
 echo button_link("./list_site.php", "Return to List of Sites")."\n";
 echo "</div><!-- class btn-group -->\n";
 // NOTE: By building the site first, we've populated all the variables.
@@ -253,7 +254,7 @@ echo '<div class="form-group"><label for='.$varname.'>Longitude:</label><input t
 
 /*****************************************************************************/
   $varname="active_site";
-  // Note: $_POST["active_site" is *only* set if the checkbox is ticked.  
+  // Note: $_POST["active_site" is *only* set if the checkbox is ticked.
 if (isset($_POST['id'])) { // So check if this was a submission
     if (isset($_POST[$varname])) { $active_site=1;}
     else {$active_site=0;}
