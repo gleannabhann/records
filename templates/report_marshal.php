@@ -101,7 +101,7 @@ switch ($report) {
         $query=$query."AND Persons.id_group=Groups.id_group "
                 . "ORDER BY Persons.name_person";
         break;       
-    case "5": // All inactive fighters of given combat type
+    case "5": // All inactive fighters of given combat type with at least one authorization
         $report_name = "List of all Inactive Fighters for $combat[1]";
         $filename = "data";
         $qshow = "SELECT concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') "
@@ -111,12 +111,17 @@ switch ($report) {
                 . "membership_person as 'Mem #', membership_expire_person as 'Mem Date',"
                 . "waiver_person as 'Combat Waiver', card_authorize as 'Fighter Card',"
                 . "expire_authorize as 'Expire' "
-                . "FROM Persons, Persons_CombatCards, Groups "
+                . "FROM Persons, Persons_CombatCards, Groups, "
+                . "     Persons_Authorizations, Authorizations  "
                 . "WHERE Persons_CombatCards.id_combat=$combat[0] "
                 . "AND Persons_CombatCards.active_authorize='No' "
                 . "AND Persons.id_person=Persons_CombatCards.id_person "
                 . "AND Persons.id_group=Groups.id_group "
-                . "ORDER BY Persons.name_person";
+                . "AND Persons.id_person = Persons_Authorizations.id_person "
+                . "AND Persons_Authorizations.id_auth = Authorizations.id_auth "
+                . "AND Authorizations.id_combat = $combat[0] "
+                . "GROUP BY Persons.id_person "
+                . "ORDER BY Persons.name_person ";
         break;
     case "6": // All inactive marshals of given combat type
               // Note: to be an inactive marshal you need to be set inactive *and* have at 
