@@ -104,6 +104,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
       <li><a class="navbar-brand"  href="/public/awards.php">Awards</a></li>
+      <li><a class="navbar-brand"  href="/public/combat.php">Combat</a></li>
       <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
       <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
         <?php
