@@ -31,6 +31,7 @@ echo "<p>";
 ///////////////////////////////////////////////////////////////////////////////
 echo form_title("Show Combat Authorization Card");
 echo '<form action="/public/combat_auth.php" method="post">';
+//echo '<form action="/public/combat_auth_styled.php" method="post">';
 echo "<table class='table table-condensed table-bordered'>";
 echo '<tr><td class="text-right">Combat Type:</td><td> <select name="id_combat" >';
     $query="SELECT id_combat, name_combat FROM Combat ORDER BY name_combat";
@@ -78,7 +79,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     } else {
         echo "<li><a href='person.php?id=$id_person'>";
     }
-    echo "$name_person</a> has an expiring authorization for $name_combat on $expire_authorize"
+    echo "$name_person</a> has an expiring authorization for <b>$name_combat</b> on $expire_authorize"
             . "</li>";
 }
 

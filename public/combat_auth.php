@@ -52,7 +52,9 @@ $name_combat=$row["name_combat"];
 //$id_person=764;
 
 $query_fighter="SELECT name_person, name_mundane_person, membership_person, 
-    membership_expire_person, expire_authorize, expire_marshal
+    membership_expire_person, 
+    if(expire_authorize>=NOW(), expire_authorize,'NONE') as expire_authorize, 
+    if(expire_marshal>=NOW(), expire_marshal, 'NONE') as expire_marshal
     FROM Persons, Persons_CombatCards
     WHERE Persons.id_person = Persons_CombatCards.id_person
     AND id_combat=$id_combat
