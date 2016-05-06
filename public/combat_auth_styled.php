@@ -106,25 +106,25 @@ echo "<p style=\"text-align: center\"><b>The Society for Creative Anachronism</b
     Kingdom of Gleann Abhann</i><br /></p>";
 echo "<b>SCA Name: $SCA_name </b><br />"
         . "Mundane Name: $mundane_name <br />"
-        . "Auth Exp: $expire_authorize &nbsp; &nbsp; &nbsp; Marshal Exp: $expire_marshal"
+        . "Auth Exp: $expire_authorize &nbsp; &nbsp; Marshal Exp: $expire_marshal"
         . "<p class=\"spacing\">Signature: ______________________________ </p>";
-echo "<span class=\"small\"> This your authorization to participate on the field at SCA activities. It must be
+echo "<span class=\"small\"> This is your authorization to participate on the field at SCA activities. It must be
 presented to the List Officials at SCA events to register for participation and you may be
 requested to show it to the marshals at any time. </span>";
 echo "</section><section id=\"side2\">
   <div id=\"leftcol\"><b>Authorizations:</b><br/>"; // Authorizations
         while ($row = mysqli_fetch_assoc($result_auth)){
-            echo "<li>".$row["name_auth"].": ";
+            echo "- ".$row["name_auth"].": ";
             if ($row["id_person_auth"] == NULL) {
                 echo "NO<br />";
             } else {
                 echo "YES<br />";
             }
         }
-        echo "</div><div id=\"rightcol\">
-        <b>Warrants:</b> <br />"; // Marshals' Warrants
+        echo "</div><div id=\"rightcol\">";
+        echo "<b>Warrants:</b> <br />"; // Marshals' Warrants
         while ($row = mysqli_fetch_assoc($result_marshal)){
-            echo "<li>".$row["name_marshal"].": ";
+            echo "- ".$row["name_marshal"].": ";
             if ($row["id_person_marshal"] == NULL) {
                 echo "NO<br />";
             } else {

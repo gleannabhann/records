@@ -33,11 +33,11 @@ switch ($report) {
         $qfile = "SELECT name_person as 'SCA Name', ";
         $query = "name_mundane_person as 'Legal Name', name_group as 'Group', "
                 . "membership_person as 'Mem #', membership_expire_person as 'Mem Date',"
-                . "waiver_person as 'Combat Waiver', card_authorize as 'Fighter Card',"
-                . "expire_authorize as 'Expire' "
+                . "waiver_person as 'Combat Waiver', card_marshal as 'Fighter Card',"
+                . "expire_marshal as 'Expire' "
                 . "FROM Persons, Persons_CombatCards, Groups "
                 . "WHERE Persons_CombatCards.id_combat=$combat[0] "
-                . "AND Persons_CombatCards.active_authorize='Yes' "
+                . "AND Persons_CombatCards.active_marshal='Yes' "
                 . "AND Persons.id_person=Persons_CombatCards.id_person "
                 . "AND Persons.id_group=Groups.id_group "
                 . "ORDER BY Persons.name_person";
@@ -68,8 +68,11 @@ switch ($report) {
         $query = "name_mundane_person as 'Legal Name', name_group as 'Group', "
                 . "membership_person as 'Mem #', membership_expire_person as 'Mem Date',"
                 . "waiver_person as 'Combat Waiver', card_authorize as 'Fighter Card',"
-                . "expire_authorize as 'Expire' "
-                . "FROM Persons, Persons_CombatCards, Groups, Persons_Authorizations, Authorizations "
+                . "expire_authorize as 'Expire' ";
+        if ($auth[0]==-1) {
+            $query=$query.", name_auth as 'Authorization' ";
+        }
+        $query = $query. "FROM Persons, Persons_CombatCards, Groups, Persons_Authorizations, Authorizations "
                 . "WHERE Persons_CombatCards.id_combat=$combat[0] "
                 . "AND Persons_CombatCards.active_authorize='Yes' "
                 . "AND Persons.id_person=Persons_CombatCards.id_person "
@@ -89,8 +92,11 @@ switch ($report) {
         $query = "name_mundane_person as 'Legal Name', name_group as 'Group', "
                 . "membership_person as 'Mem #', membership_expire_person as 'Mem Date',"
                 . "waiver_person as 'Combat Waiver', card_marshal as 'Marshal Card',"
-                . "Persons_CombatCards.expire_marshal as 'Expire' "
-                . "FROM Persons, Persons_CombatCards, Groups, Persons_Marshals, Marshals "
+                . "Persons_CombatCards.expire_marshal as 'Expire' ";
+        if ($marshal[0] == -1) {
+            $query = $query . ", name_marshal as 'Warrant' ";
+        }
+        $query = $query . "FROM Persons, Persons_CombatCards, Groups, Persons_Marshals, Marshals "
                 . "WHERE Persons_CombatCards.id_combat=$combat[0] "
                 . "AND Persons_CombatCards.active_marshal='Yes' "
                 . "AND Persons.id_person=Persons_CombatCards.id_person "
@@ -184,6 +190,47 @@ switch ($report) {
                         FROM Persons_Authorizations
                         WHERE Persons_Authorizations.id_auth=$id_auth) AS PA$id_auth
                         ON PA$id_auth.id_person=PCC.id_person ";
+        }
+        $query = $q_head . $q_body . "WHERE num_count is not NULL ORDER BY name_person";
+        break;
+    case "8": // All marshals with at least one warrant of given combat type
+        // This query has to be built dynamically based on Marshals
+        $report_name = "List of all Marshals with at least one Valid Warrant for $combat[1]";
+        $filename = "data";
+        $q_marshal = "SELECT id_marshal, name_marshal FROM Marshals "
+            . "WHERE Marshals.id_combat=$combat[0]";
+        if (DEBUG) {echo "Marshals query: $q_marshal<p>";}
+        $marshals = mysqli_query ($cxn, $q_marshal) 
+            or die ("Couldn't execute query to find marshal warrants to build report.");
+        $qshow = "SELECT concat('<a href=''edit_person.php?id=',PCC.id_person,'''>',name_person,'</a>') "
+                    . "as 'SCA Name', ";
+        $qfile = "SELECT name_person as 'SCA Name', ";
+
+        $q_head = "PCC.card_marshal as 'card number', "
+                . "PCC.expire_marshal as 'expiry date' ";
+        $q_body = "FROM 
+           (SELECT Persons.id_person, id_person_combat_card,  name_person, card_marshal, 
+                   expire_marshal  
+            FROM Persons_CombatCards, Persons 
+            WHERE Persons_CombatCards.id_person=Persons.id_person 
+            AND Persons_CombatCards.expire_marshal >= curdate() 
+            AND id_combat=$combat[0]) AS PCC
+           LEFT JOIN
+           (SELECT COUNT(*) as num_count, id_person 
+            FROM Persons_Marshals, Marshals
+            WHERE Persons_Marshals.id_marshal=Marshals.id_marshal
+            AND Marshals.id_combat=$combat[0]
+            GROUP BY id_person) AS PCount
+            ON PCount.id_person = PCC.id_person ";
+        while ($marshal=  mysqli_fetch_assoc($marshals)) {
+            extract($marshal);
+            $q_head = $q_head . ", if (PA$id_marshal.id_person IS NULL,'No', 'Yes') as '$name_marshal' ";
+            $q_body = $q_body . 
+                    "LEFT JOIN 
+                       (SELECT id_person
+                        FROM Persons_Marshals
+                        WHERE Persons_Marshals.id_marshal=$id_marshal) AS PA$id_marshal
+                        ON PA$id_marshal.id_person=PCC.id_person ";
         }
         $query = $q_head . $q_body . "WHERE num_count is not NULL ORDER BY name_person";
         break;

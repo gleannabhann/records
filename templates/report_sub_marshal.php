@@ -21,6 +21,7 @@ echo '<tr><td class="text-right">Report:</td>';
     echo '<option value="1">List of all Active Fighters for Choice of Combat</option>';
     echo '<option value="3">List of all Active Fighters for Choice of Authorization</option>';
     echo "<option value='5'>List of all Inactive Fighters for Choice of Combat</option>";
+    echo "<option value='8'>List of all Active Marshals with at least one Marshal's Warrant for Choice of Combat</option>";
     echo '<option value="2">List of all Active Marshals for Choice of Combat</option>';
     echo "<option value='4'>List of all Active Marshals for Choice of Marshal's Warrant</option>";
     echo "<option value='6'>List of all Inactive Marshals for Choice of Combat</option>";
