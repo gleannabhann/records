@@ -38,29 +38,40 @@ if (!isset($_GET["initial"]) && isset($_GET["award"])){
     $name_award = $row['name_award'];
     echo "<div class='page-header'><h1>Persons who hold the award $name_award</h1></div>"; //Customize the page header
     echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
-    echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
-    $query = "select Persons.id_person as ip, name_person, date_award "
+    //echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
+    if (permissions("Herald")>= 3) {
+        $query = "SELECT concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') as 'SCA Name', ";
+    } else {
+        $query = "SELECT concat('<a href=''person.php?id=',Persons.id_person,'''>',name_person,'</a>') as 'SCA Name', ";        
+    }
+    $query = $query . " date_award as 'Date Awarded'"
             . "from Persons, Persons_Awards "
             . "where Persons.id_person = Persons_Awards.id_person "
             . "and Persons_Awards.id_award=$award "
             . "order by name_person";
     if (DEBUG) {
         echo "Group Query is: $query<p>";
-    }    $result = mysqli_query ($cxn, $query)
+    }    
+    $result = mysqli_query ($cxn, $query)
     or die ("Couldn't execute query");
-    while ($row = mysqli_fetch_assoc($result)) {
-        $Name = $row['name_person'];
-        $ID = $row['ip'];
-        $Date_award = $row['date_award'];
-        if (permissions("Herald")>= 3){
-            $link = "<li><a href='./edit_person.php?id=$ID'>$Name</a>&nbsp-&nbsp$Date_award</li>";
-        } else {
-            $link = "<li><a href='./person.php?id=$ID'>$Name</a>&nbsp-&nbsp$Date_award</li>";
+    $data = mysqli_query ($cxn, $query) 
+        or die ("Couldn't execute query to build report.");
+    $fields = mysqli_fetch_fields($data);
+     echo '<table class="sortable table table-condensed table-bordered">';
+    echo '<thead>';
+        foreach ($fields as $field) {
+            echo '<th>'.$field->name.'</th>';
         }
-    //    $link = "<li> $Name </li>";
-        echo "$link";
+        echo '</thead>';
+    while ($row = mysqli_fetch_assoc($data)) {
+        echo '<tr>';
+        foreach ($row as $field) {
+            echo '<td>'.$field.'</td>';
+        }
+        echo '</tr>';
     }
-    echo "</ul></div></div> <!-- ./col-md-8 --></div><!-- ./container-fluid -->"; //close out list and open divs
+    echo '</table>';
+    echo "</div></div> <!-- ./col-md-8 -->"; //close out open divs
     echo "<p>";
     include "alpha.php"; // includes the A-Z link list
     include "warning.php"; // includes the warning text about paper precedence
@@ -76,23 +87,41 @@ if (!isset($_GET["initial"]) && !isset($_GET["award"]) && isset($_GET["group"]))
     $name_group = $row['name_group'];
     echo "<div class='page-header'><h1>Persons who belong to $name_group</h1></div>"; //Customize the page header
     echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
-    include "alpha.php"; // includes the A-Z link list
-    include "warning.php"; // includes the warning text about paper precedence
-    echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
-    $query = "SELECT Persons.id_person as ip, name_person, id_group FROM Persons
-              WHERE  Persons.id_group = $group ORDER BY name_person";
+    if (permissions("Herald")>= 3) {
+        $query = "SELECT concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') as 'SCA Name' ";
+    } else {
+        $query = "SELECT concat('<a href=''person.php?id=',Persons.id_person,'''>',name_person,'</a>') as 'SCA Name' ";        
+    }
+    $query = $query. " FROM Persons
+              WHERE  Persons.id_group = $group ORDER BY 'SCA name'";
+    
     if (DEBUG) {
         echo "Group Query is: $query<p>";
     }
     $result = mysqli_query ($cxn, $query)
     or die ("Couldn't execute query");
-    while ($row = mysqli_fetch_assoc($result)) {
-        $Name = $row['name_person'];
-        $ID = $row['ip'];
-        $link = "<li class='list-group-item text-left'><a href='./person.php?id=$ID'>$Name</a> </li>";
-        echo "$link";
+    $data = mysqli_query ($cxn, $query) 
+        or die ("Couldn't execute query to build report.");
+    $fields = mysqli_fetch_fields($data);
+     echo '<table class="sortable table table-condensed table-bordered">';
+    echo '<thead>';
+        foreach ($fields as $field) {
+            echo '<th>'.$field->name.'</th>';
+        }
+        echo '</thead>';
+    while ($row = mysqli_fetch_assoc($data)) {
+        echo '<tr>';
+        foreach ($row as $field) {
+            echo '<td>'.$field.'</td>';
+        }
+        echo '</tr>';
     }
-    echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./container-fluid -->"; //close out list and open divs
+    echo '</table>';
+    echo "</div> <!-- ./col-md-8 -->"; //close out list and open divs
+    echo "<p>";
+    include "alpha.php"; // includes the A-Z link list
+    include "warning.php"; // includes the warning text about paper precedence
+    
 }
 /*#######################################################################################*/
 mysqli_close ($cxn); /* close the db connection */
