@@ -1,17 +1,21 @@
+<?php
+
+require("../includes/config.php");
+echo "
 <!doctype html>
-<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-<meta http-equiv="expires" content="0" />
-<html lang="en">
+<META HTTP-EQUIV=\"CACHE-CONTROL\" CONTENT=\"NO-CACHE\">
+<meta http-equiv=\"expires\" content=\"0\" />
+<html lang=\"en\">
 <head>
   <title>  </title>
-  <link rel="stylesheet" href="/css/auth.css">
+  <link rel=\"stylesheet\" href=\"/css/auth.css\">
 </head>
-<body>
-<?php
+<body>";
+
 // NOTE: DO NOT AT THIS POINT USE ANY CLASS REFERENCES
 // configuration
 
-require("../includes/config.php");
+
 echo form_title("Fighter Authorization Card");
 echo "<div><p><a href=\"combat.php\">Return to the Combat Page</a></p></div>";
 
