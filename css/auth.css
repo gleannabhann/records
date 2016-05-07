@@ -2,67 +2,98 @@
 
 section {
 
-	height: 2in;
+	height: 2.25in;
 
-	width: 3.5in; 
+	width: 4in;
 
-	border-color: black; 
+	border-color: black;
 
-	border-style: solid; 
+	border-style: solid;
 
-	border-width: 1px; 
+	border-width: 1px;
 
-	padding: 3px; 
+	padding: 3px;
 
-	font-size: 15px; 
-
-}
-
-​
-
-#side2 {
-
-	position: absolute; 
-
-	left: 8px; 
-
-	top: 2.25in; 
+	font-size: 15px;
 
 }
 
 ​
+
+#side1 {
+
+	position: absolute;
+
+	left: 8px;
+
+	top: 2.25in;
+
+}
+
+​#side2 {
+
+	position: absolute;
+
+	top: 4.5in;
+
+	left: 8px;
+
+
+
+}
+
+#leftcol {
+
+	display: inline-block;
+
+	width: 45%;
+
+	height: 2.25in;
+
+	vertical-align: top;
+}
+
+#rightcol {
+
+display: inline-block;
+
+
+	width: 55%;
+
+
+}
 
 #input {
 
 	width: 3.5in;
 
-	font-size: 15px; 
+	font-size: 15px;
 
 }
 
 .small {
 
-	display: inline-block; 
+	display: inline-block;
 
-	width: 100%; 
+	width: 100%;
 
-	font-size: 9px; 
+	font-size: 9px;
 
 	font-weight: bold;
 
-	text-align: center; 
+	text-align: center;
 
 }
 
 ​
 
-#spacing {
+.spacing {
 
-	display: inline-block; 
+	display: inline-block;
 
-	margin-top: 6px; 
+	margin-top: 8px;
 
-	margin-bottom: 8px; 
+	margin-bottom: 8px;
 
 }
 
@@ -72,9 +103,9 @@ section {
 
 .button {
 
-	float: right; 
+	float: right;
 
-	margin-top: 2px; 
+	margin-top: 2px;
 
 }
 
@@ -82,51 +113,27 @@ section {
 
 .italics {
 
-	display: inline-block; 
+	display: inline-block;
 
 	width: 100%;
 
 	font-style: italic;
 
-	text-align: center; 
+	text-align: center;
 
 }
 
 ​
-
-#rightcol {
-
-	position: absolute; 
-
-	top: 4px; 
-
-	left: 50%; 
-
-}
-
-​
-
-#back {
-
-	position: absolute;
-
-	top: 4.5in;
-
-	left: 8px; 
-
-}
-
 ​
 
 img {
 
-	position: absolute; 
+	position: absolute;
 
 	height: 48px;
 
-	width: 48px; 
+	width: 48px;
 
-	left: 3.1in; 
+	left: 3.1in;
 
 }
-
