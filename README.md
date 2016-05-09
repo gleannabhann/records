@@ -1,2 +1,4 @@
-# oop
-Order of Precedence site for GA Heralds
+# records
+- Order of Precedence for GA Heralds
+- Authorizations for GA Marshallate
+- Campground Listing for Autocrats

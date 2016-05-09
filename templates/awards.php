@@ -17,6 +17,7 @@ echo form_subtitle("Search on a Partial Name");
     echo  '<input type="text" class="form-control" '
     . 'placeholder="Search for Name or Award" name="name">';
     echo '<button type="submit" class="btn btn-default">Submit</button>';
+    echo "</form>";
     ///////////////////////////////////////////////////////////////////////////////
     // Include the most recent 5 events
     ///////////////////////////////////////////////////////////////////////////////
@@ -50,8 +51,33 @@ echo form_subtitle("Search on a Partial Name");
         echo "</tr>";
     }
     echo "</table>";
+    ///////////////////////////////////////////////////////////////////////////////
+    // Select Group Info
+    ///////////////////////////////////////////////////////////////////////////////
+    $query = "SELECT id_group, "
+        . "CONCAT(name_group,' (',name_kingdom,')') as Name_Group, "
+        . "Groups.id_kingdom!=".HOST_KINGDOM_ID." as In_Kingdom "
+        . "FROM Groups, Kingdoms "
+        . "WHERE Groups.id_kingdom = Kingdoms.id_kingdom "
+        . "Order By In_Kingdom, Name_Group;";
+    $groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
+    echo form_subtitle("Find all Awards awarded to Group Members Over a Time Period");
+    echo '<form action="awards_group.php" method="post">';
+    echo "<table class='table table-condensed table-bordered'>";
+    echo '<tr><td class="text-right">Start of Range</td><td> <input type="date" class="date" name="start_date" value=""> (format if no datepicker: yyyy-mm-dd)</td></tr>';
+    echo '<tr><td class="text-right">End of Range</td><td> <input type="date" class="date" name="end_date" value=""> (format if no datepicker: yyyy-mm-dd)</td></tr>';
+    echo '<tr><td class="text-right">SCA Group:</td><td>';
+    echo '<select name="id_group" ><option value="-1" selected>'.HOST_KINGDOM.'</option>';
+    while ($row= mysqli_fetch_array($groups)) {
+        echo '<option value="'.$row["id_group"].'">'.$row["Name_Group"].'</option>';
+    }
+    echo "</td></tr>";
+    echo "</table>";
+    echo '<input type="submit" value="Show Awards" class="btn btn-primary">';
     
+    echo '</form>';
 echo "</div>";
+
 echo "</div><!-- ./col-md-6 -->";
 
 ///////////////////////////////////////////////////////////////////////////////

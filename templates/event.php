@@ -12,7 +12,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
 /* connect to the database */
 $cxn = open_db_browse();
 
-$query = "SELECT name_event, date_event_start, date_event_stop, name_group, id_site "
+$query = "SELECT name_event, date_event_start, date_event_stop, name_group, id_site, Events.id_group "
         . "FROM Events, Groups "
         . "WHERE id_event=$id_event "
         . "AND Events.id_group= Groups.id_group;";
@@ -20,7 +20,7 @@ if (DEBUG){
     echo "Event Information Query is:<p>$query<p>";
 }
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute event_info query");
-$event_info=mysqli_fetch_assoc($result);  
+$event_info=mysqli_fetch_assoc($result);
 extract($event_info);
 if ($id_site<0) {
     if (DEBUG) {echo "No Known Site<p>";}
@@ -30,15 +30,16 @@ if ($id_site<0) {
     $result = mysqli_query ($cxn, $query) or die ("Couldn't execute site name query");
     $tmp=mysqli_fetch_assoc($result);
     $name_site = $tmp["name_site"];
+
 }
 
 /* Display the known information of the event */
 
 echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 echo form_title("$name_event");
-echo form_subtitle("Hosted by $name_group from $date_event_start to $date_event_stop");
+echo form_subtitle("Hosted by <a href='list.php?group=$id_group'>$name_group</a> from $date_event_start to $date_event_stop");
 if (!is_null($id_site)){
-    echo form_subtitle("Held at $name_site");
+    echo form_subtitle("Held at <a href='site.php?id=$id_site'>$name_site</a>");
 }
 if (permissions("Herald")>=3 ){
     echo button_link("edit_event.php?id=$id_event", "Edit Event Information");

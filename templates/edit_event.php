@@ -11,20 +11,20 @@ if (permissions("Herald")>=  3) {
     } else  {
         echo '<p class="error"> This page has been accessed in error.</p>';
         exit_with_footer();
-    }    
+    }
     $cxn = open_db_browse();
     // Let's find out what we know from the database
     $query = " SELECT name_event, date_event_start, date_event_stop, id_site, id_group "
             . "FROM Events "
             . "WHERE id_event=$id_event;";
     $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query to find site info");
-    if (DEBUG) { echo "Event info query is: $query";}
+    //if (DEBUG) { echo "Event info query is: $query";}
     if (mysqli_num_rows($result)==1) {
        $event= mysqli_fetch_assoc($result);
     } else {
         exit_with_footer();
     }
-    
+
     $query= "SELECT id_group, name_group, name_kingdom,"
             . "Groups.id_kingdom =".HOST_KINGDOM_ID." as In_Kingdom "
             . "FROM Groups, Kingdoms "
@@ -32,12 +32,14 @@ if (permissions("Herald")>=  3) {
             . "AND Groups.id_kingdom = Kingdoms.id_kingdom "
             . "ORDER BY In_Kingdom DESC, name_group;";
     $groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query to find groups info");
-    
+
     $query= "SELECT id_site, name_site "
             . "FROM Sites WHERE id_site > -1 "
-            . "AND active_site=1";
+            . "AND active_site=1 "
+            . "ORDER BY name_site;";
+            if (DEBUG) { echo "Sites info query is: $query</br>";}
     $sites = mysqli_query ($cxn, $query) or die ("Couldn't execute query to find sites info");
-    
+
     echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
     // Build the form, populating fields based on the post variable or database variable
     echo form_title("Editing Event Information")."\n";
@@ -57,7 +59,7 @@ if (permissions("Herald")>=  3) {
          . 'name="'.$varname.'" maxlength="128" value="'
          . $name_event.'" required>'
          . '<br/>This field is required</div>'."\n";
-    
+
     /*****************************************************************************/
     $varname="date_event_start";
     if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
@@ -77,7 +79,7 @@ if (permissions("Herald")>=  3) {
     }
     echo "<div class='form-group'><label for='$varname'>Event Ends:</label>"
          . "<input type='date' class='date' name='$varname'  value='$date_event_stop'></div>";
-         
+
     /*****************************************************************************/
     $varname="id_group";
     if (isset($_POST[$varname]) && is_numeric($_POST[$varname])) {
@@ -97,7 +99,7 @@ if (permissions("Herald")>=  3) {
         if (!$row["In_Kingdom"]) {
             echo " (".$row["name_kingdom"].")";
         }
-                
+
         echo " </option>";
     }
     echo "</select>";
@@ -157,7 +159,7 @@ if (permissions("Herald")>=  3) {
             echo "Error updating record: " . mysqli_error($cxn);
         }
     }
-    
+
     mysqli_close ($cxn); /* close the db connection */
 } else {
     // We don't have sufficient permissions for this page.

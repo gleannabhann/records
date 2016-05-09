@@ -13,19 +13,19 @@ if (ISSET($_GET["k_id"])) {
 } else {
 //   $k_id = 13;
 //   $k_id = HOST_KINGDOM_ID;
-   $k_id=-1; 
+   $k_id=-1;
 }
-echo "<div class='page-header'><h1>Search results for <i>$part_name</i></h1><small>";
+echo "<div class='page-header'><h1><a name='top'>Search results for <i>$part_name</i></a></h1><small>";
 include "warning.php"; // includes the warning text about paper precedence
 echo "</small></div>"; //Customize the page header
 echo "<div class='container'>";
-echo "(<small><a href='#awards'>Skip to awards</a></small>)</br>";
-echo "(<small><a href='#groups'>Skip to groups</a></small>)</br>";
-echo "(<small><a href='#events'>Skip to events</a></small>)</br>";
+echo "<small><a href='#awards'>Skip to Awards</a></small> | ";
+echo "<small><a href='#groups'>Skip to Groups</a></small> | ";
+echo "<small><a href='#events'>Skip to Events</a></small>";
 echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 /*#######################################################################################*/
 echo form_title("People matching <i>$part_name</i>");
-if (permissions("Any")>=3){
+if ((permissions("Herald")>=3) || (permissions("Marshal")>=3)) {
     echo button_link("./add_person.php?part_name=".$part_name, "Add A New Person");
 }
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
@@ -50,7 +50,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     $Name = $row['name_person'];
     $ID = $row['id_person'];
     $Group = $row['name_group'];
-    if (permissions("Any")>= 3){
+    if ((permissions("Herald")>=3) || (permissions("Marshal")>=3)) {
         $link = "<li class='list-group-item text-left'><a href='./edit_person.php?id=$ID'>$Name</a>&nbsp-&nbsp$Group</li>";
     } else {
         $link = "<li class='list-group-item text-left'><a href='./person.php?id=$ID'>$Name</a>&nbsp-&nbsp$Group</li>";
@@ -60,8 +60,11 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 /*#######################################################################################*/
-echo "<a name='awards'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
-echo form_title("Awards matching <i>$part_name</i>");
+echo "<div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
+echo form_title("<a name='awards'>Awards matching <i>$part_name</i></a><small><a href='#top'> (Return to Top)</a></small>");
+if (permissions("Herald")>=3){
+    echo button_link("./add_award.php?part_name=".$part_name, "Add A New Award");
+}
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1)
 {
@@ -96,8 +99,8 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 /*#######################################################################################*/
-echo "<a name='groups'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
-echo form_title("Groups matching <i>$part_name</i>");
+echo " <div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
+echo form_title("<a name='groups'>Groups matching <i>$part_name</i></a><small><a href='#top'> (Return to Top)</a></small>");
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1)
 {
@@ -115,7 +118,7 @@ else {
       };
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 $matches = $result->num_rows;
-echo "$matches award matches";
+echo "$matches group matches";
 while ($row = mysqli_fetch_assoc($result)) {
 //    extract($row);
     $Name = $row['name_group'];
@@ -127,26 +130,26 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 /*#######################################################################################*/
-echo "<a name='events'></a><div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
-echo form_title("Events matching <i>$part_name</i>");
-if (permissions("Any")>=3){
+echo "<div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
+echo form_title("<a name='events'>Events matching <i>$part_name</i></a><small><a href='#top'> (Return to Top)</a></small>");
+if (permissions("Herald")>=3){
     echo button_link("./add_event.php", "Add A New Event");
 }
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1)
 {
-  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom 
+  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom
             FROM Events, Groups, Kingdoms
-            WHERE name_event like '%$part_name%' 
-            AND Events.id_group = Groups.id_group 
+            WHERE name_event like '%$part_name%'
+            AND Events.id_group = Groups.id_group
             AND Groups.id_kingdom = Kingdoms.id_kingdom "
           . "ORDER BY name_event";
 }
 else {
-  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom 
+  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom
             FROM Events, Groups, Kingdoms
-            WHERE name_event like '%$part_name%' 
-            AND Events.id_group = Groups.id_group 
+            WHERE name_event like '%$part_name%'
+            AND Events.id_group = Groups.id_group
             AND Groups.id_kingdom = Kingdoms.id_kingdom "
           . "AND Groups.id_kingdom = $k_id "
           . "ORDER BY name_group";
@@ -156,18 +159,24 @@ $matches = $result->num_rows;
 echo "$matches events matches";
 while ($row = mysqli_fetch_assoc($result)) {
     extract($row);
-    $link = "<li class='list-group-item text-left'>"
+    if (permissions("Herald")>=3){
+        $link = "<li class='list-group-item text-left'>"
+                . "<a href='./edit_event.php?id=$id_event'>"
+            . "$name_event</a> hosted by $name_group ($name_kingdom) "
+            . "$date_event_start -- $date_event_stop"
+            . "</li>";
+    } else {
+        $link = "<li class='list-group-item text-left'>"
             . "<a href='./event.php?id=$id_event'>"
             . "$name_event</a> hosted by $name_group ($name_kingdom) "
-               . "$date_event_start -- $date_event_stop"
+            . "$date_event_start -- $date_event_stop"
             . "</li>";
+    }
 //    $link = "<li> $Name </li>";
     echo "$link";
 }
-echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
+echo "</ul></div><small><a href='#top'>Return to Top</a></small><!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
 /*#######################################################################################*/
 mysqli_close ($cxn); /* close the db connection */
 ?>
 </div>
-
-

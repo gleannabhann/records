@@ -63,7 +63,7 @@
               // with users browsing via TOR or via an IP pool/load balancer
               // in the mean time, a random number will do.
 
-              $query = "SELECT RoleTypes.id_roletype, name_roletype, expire_role, perm_role "
+              $query = "SELECT RoleTypes.id_roletype, name_roletype, name_role, expire_role, perm_role "
                       . "FROM Webusers_Roles, Roles, RoleTypes "
                       . "WHERE Webusers_Roles.id_role = Roles.id_role "
                       . "AND Roles.id_roletype = RoleTypes.id_roletype "
@@ -72,12 +72,14 @@
               // Set permissions in $_SESSION: indexed by name of role, value is level of permission
               // Note that only permissions that haven't expired yet are included.
               // In query, the expire_role and id_roletype were included for debugging only.
+              // TODO: make sure that Roletype occurs only once.
               $max_perm=0;
               $result = mysqli_query($cxn, $query) or die ("Couldn't execute query");
                 while ($row = mysqli_fetch_assoc($result)) {
                     extract($row);
                     //echo "Adding $perm_role to variable $name_roletype";
                     $_SESSION[$name_roletype] = $perm_role;
+                    $_SESSION[$name_role] = $perm_role;
                     $max_perm=max($max_perm, $perm_role);
                 }
                 $_SESSION["Any"]=$max_perm;

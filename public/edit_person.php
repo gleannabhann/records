@@ -4,6 +4,6 @@
     require("../includes/config.php");
 
     // render portfolio
-    render("edit_person.php", ["title" => "Individual"]);
+    render("edit_person.php", ["title" => "Edit an Individual"]);
 
 ?>

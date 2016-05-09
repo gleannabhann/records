@@ -21,21 +21,22 @@ echo "<div id='row'><div id='map' class='col-md-10 col-md-offset-1'></div></div>
 
 
 
-echo "<div class='row'><div class='col-md-10 col-md-offset-1'>";
+echo "<div class='row'><div class='col-md-10 col-md-offset-1'><hr/>";
 
   if (permissions("Sites") >= 3){
-      echo "<p><strong><a href='./add_site.php'>Add a New Site</a></strong></p>";
+
+      echo '<p>'.button_link("./add_site.php","Add a New Site").'</p>';
   };
 echo "<table class='table table-bordered'>
 <thead>
 <td class='text-left'><strong>Site</strong></td>
-<td class='text-left'><strong>Name</strong></td>
-<td class='text-left'><strong>Facilities</strong></td>
+<td class='text-left'><strong>Name (Click name for more information)</strong></td>
+<!-- <td class='text-left'><strong>Facilities</strong></td> -->
 <td class='text-left'><strong>Capacity</strong></td>
-<td class='text-left'><strong>Cost</strong></td>
-<td class='text-left'><strong>Area</strong></td>
-<td class='text-left'><strong>Address</strong></td>
-<td class='text-left'><strong>Contact</strong></td>";
+<!-- <td class='text-left'><strong>Cost</strong></td>
+<td class='text-left'><strong>Area</strong></td> -->
+<td class='text-left'><strong>Location</strong></td>
+<!--<td class='text-left'><strong>Contact</strong></td> -->";
 // TODO: replace is_logged_in() with is_site_admin() permissions check
 if (permissions("Sites") >= 3){
   echo  "<td class='text-left'><strong> </strong></td>";
@@ -50,7 +51,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         {
           $address = $street_site . "<br/>" . $city_site . ", " . $state_site . " " . $zip_site;
         } else {
-          $address = "Address Not on File";
+          $address = "Address Not on File<br/>" . $area_site;
         }
         // add a row to the array to hand to JS, only if coords are available
         if ($lat_site && $long_site) {
@@ -62,18 +63,19 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         echo "<tr>";
 
-        echo "<td class='text-left'><a name='$id_site'> $row_number</a></td>";
+        echo "<td class='text-left'><a name='$id_site'>$row_number</a></td>";
         if ($active_site) {
-                echo "<td class='text-left'>$name_site";}
+                echo "<td class='text-left'><a href='/public/site.php?id=" . $id_site . "'>" . $name_site . "</a></td>";}
+
             else {
-                echo "<td class='text-left'>$name_site (INACTIVE)";
+                echo "<td class='text-left'><a href='/public/site.php?id=" . $id_site . "'>" . $name_site . " (INACTIVE)</a></td>";
             }
-        if ($url_site !="") echo "<a href=\"$url_site\">Link</a>";
+        //if ($url_site !="") echo "<a href=\"$url_site\"> (Website)</a>";
         echo "</td>";
-        echo "<td class='text-left'>$facilities_site</td>";
+        //echo "<td class='text-left'>$facilities_site</td>";
         echo "<td class='text-left'> $capacity_site</td>";
-        echo "<td class='text-left'>$rates_site</td>";
-        echo "<td class='text-left'>$area_site</td>";
+        //echo "<td class='text-left'>$rates_site</td>";
+        //echo "<td class='text-left'>$area_site</td>";
         if ($street_site != NULL)
         {
           echo "<td class='text-left'>$address</td>";
@@ -81,11 +83,11 @@ while ($row = mysqli_fetch_assoc($result)) {
           echo "<td class='danger text-left'>$address</td>";
         }
 
-        echo "<td class='text-left'>$contact_site</td>";
+        //echo "<td class='text-left'>$contact_site</td>";
         if (permissions("Sites") >= 3){
-            echo "<td class='text-left'>
-            <a href=\"./edit_site.php?id=$id_site\">Edit</a>
-            </td>";
+
+
+            echo "<td class='text-left'>".button_link("./edit_site.php?id=$id_site", "Edit")."</td>";
         };
         echo "</tr>";
     }
@@ -161,10 +163,10 @@ function populate() {
     if (!name) {name = "unknown"};
     if (!lat) {lat = "unknown"};
     if (!lng) {lng = "unknown"};
-    var urlStr = 'Website Not Available';
+    var urlStr = "Website Not Available";
     if (url) {
-      urlStr = '<a href="' + url + '"><strong>Visit this Campground\'s Web Site</strong></a><br/>'
-    };
+      urlStr = '<a href="' + url + '"><strong>Visit ' + name + '\'s Web Site</strong></a><br/>'
+    }
     if (!facilities) {facilities = "unknown"};
     if (!capacity) {capacity = "unknown"};
     if (!rates) {rates = "unknown"};
@@ -185,11 +187,11 @@ function populate() {
         '<strong>Rates: </strong>' + rates + '<br/>' +
         '<strong>Address: </strong>' + address + '<br/>' +
         '<strong>Phone Number: </strong>' + contact + '<br/>' +
-        //The below linked page doesn't exist yet
-    /*  '<a href="/site.php?id=' + id + '"><strong>Hall of Records Page</strong></a><br/>' +  */
-        // in the mean time, we'll link to an anchor within the page.
-        '<a href="#' + id + '"><strong>Go to location in the list</strong></a><br/>' +
-        urlStr + '</p></div></div>';
+        '<a href="/public/site.php?id=' + id + '"><strong>Hall of Records Page</strong></a><br/>' +
+         urlStr + '</p></div></div>';
+
+console.log(url);
+console.log(urlStr);
 
     var marker = new google.maps.Marker({
       position: new google.maps.LatLng(lat, lng),
