@@ -43,6 +43,11 @@ if (permissions("Sites") >= 3){
 };
 echo " </thead>";
 $sites = array();
+if (permissions("Sites") >= 3) {
+    $websiteurl = "/public/edit_site.php";
+} else {
+    $websiteurl = "/public/site.php";
+}
 while ($row = mysqli_fetch_assoc($result)) {
     extract($row);
     if (($active_site > 0) || (permissions("Sites") >= 3)) {
@@ -65,11 +70,15 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         echo "<td class='text-left'><a name='$id_site'>$row_number</a></td>";
         if ($active_site) {
-                echo "<td class='text-left'><a href='/public/site.php?id=" . $id_site . "'>" . $name_site . "</a></td>";}
-
-            else {
-                echo "<td class='text-left'><a href='/public/site.php?id=" . $id_site . "'>" . $name_site . " (INACTIVE)</a></td>";
+            if ($kingdom_level_site == 'Yes') { 
+                $kle = " (KLE) ";
+            } else {
+                $kle = " ";
             }
+            echo "<td class='text-left'><a href='".$websiteurl."?id=" . $id_site . "'>" . $name_site . "$kle</a></td>";
+        } else {
+                echo "<td class='text-left'><a href='".$websiteurl."?id=" . $id_site . "'>" . $name_site . "$kle (INACTIVE)</a></td>";
+        }
         //if ($url_site !="") echo "<a href=\"$url_site\"> (Website)</a>";
         echo "</td>";
         //echo "<td class='text-left'>$facilities_site</td>";
