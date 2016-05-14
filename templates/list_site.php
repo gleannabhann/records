@@ -61,7 +61,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         // add a row to the array to hand to JS, only if coords are available
         if ($lat_site && $long_site) {
 
-          $site = array($name_site, $lat_site, $long_site, $url_site, $facilities_site, $capacity_site, $rates_site, $address, $contact_site, $id_site);
+          $site = array($name_site, $lat_site, $long_site, $url_site, $facilities_site, $capacity_site, $rates_site, $address, $contact_site, $id_site, $kingdom_level_site);
           $sites[] = $site;
 
         }
@@ -70,7 +70,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         echo "<td class='text-left'><a name='$id_site'>$row_number</a></td>";
         if ($active_site) {
-            if ($kingdom_level_site == 'Yes') { 
+            if ($kingdom_level_site == 'Yes') {
                 $kle = " (KLE) ";
             } else {
                 $kle = " ";
@@ -169,9 +169,13 @@ function populate() {
     var address = siteData[i][7];
     var contact = siteData[i][8];
     var id = siteData[i][9];
+    var kle = siteData[i][10];
+    console.log(kle);
+    var icon = "/img/google-red-36.png";
     if (!name) {name = "unknown"};
     if (!lat) {lat = "unknown"};
     if (!lng) {lng = "unknown"};
+    if (kle == "Yes") {icon = "/img/google-green-36.png"}
     var urlStr = "Website Not Available";
     if (url) {
       urlStr = '<a href="' + url + '"><strong>Visit ' + name + '\'s Web Site</strong></a><br/>'
@@ -199,13 +203,12 @@ function populate() {
         '<a href="/public/site.php?id=' + id + '"><strong>Hall of Records Page</strong></a><br/>' +
          urlStr + '</p></div></div>';
 
-console.log(url);
-console.log(urlStr);
 
     var marker = new google.maps.Marker({
       position: new google.maps.LatLng(lat, lng),
       title: name,
       map: map,
+      icon: icon,
     });
 
     attachContent(marker, contentString);
