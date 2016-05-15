@@ -117,7 +117,7 @@ if (!isset($_GET["initial"]) && !isset($_GET["award"]) && isset($_GET["group"]))
         echo '</tr>';
     }
     echo '</table>';
-    echo "</div> <!-- ./col-md-8 -->"; //close out list and open divs
+    echo "</div></div> <!-- ./col-md-8 -->"; //close out list and open divs
     echo "<p>";
     include "alpha.php"; // includes the A-Z link list
     include "warning.php"; // includes the warning text about paper precedence
