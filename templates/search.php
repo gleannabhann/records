@@ -8,6 +8,7 @@
 $cxn = open_db_browse();
 // Build links to the list beginning with the appropriate initial, which is returned as $Initial
 $part_name = $_GET["name"];
+$part_name = str_replace("'", "&#039;", $part_name);
 if (ISSET($_GET["k_id"])) {
    $k_id = $_GET["k_id"];
 } else {
@@ -42,6 +43,9 @@ else {
             AND name_person like '%$part_name%' "
           . "ORDER BY name_person";
       };
+if (DEBUG) {
+    echo "Person search query is:<br>$query<p>";
+}
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 $matches = $result->num_rows;
 echo "$matches people matches";

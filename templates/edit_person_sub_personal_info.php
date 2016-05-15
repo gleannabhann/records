@@ -183,10 +183,12 @@ echo "</div></div>";
 
 
 if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
+    $sca_name=  str_replace("'","&#039;",$sca_name);
 
     $update = "UPDATE Persons SET ";
     $update=$update." name_person='$sca_name'";
     if ($mundane_name!=$person["name_mundane_person"]) {
+        $mundane_name=  str_replace("'","&#039;",$mundane_name);
         $update=$update.", name_mundane_person='$mundane_name'";        
     }
     if ($mem_num!=$person["membership_person"]) {
@@ -230,6 +232,9 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
     }
     $update=$update. " WHERE id_person=" .$id_person;
     // echo "<p>Query is " . $update . "<p>";
+    if (DEBUG){
+        echo "Personal info update query is;<br>$update<p>";
+    }
     $result=update_query($cxn, $update);
     if ($result !== 1) {
         echo "Error updating record: " . mysqli_error($cxn);
