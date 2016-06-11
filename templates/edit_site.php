@@ -365,10 +365,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     if ($facilities_site!= $site["facilities_site"])
         {$update=$update . ", facilities_site='" . mysqli_real_escape_string($cxn,$facilities_site) ."' ";}
     if ($capacity_site !=$site["capacity_site"])
-        {if ($capacity_site > 0)
-            {$update=$update . ", capacity_site=" . $capacity_site ." ";}
-            else {$update=$update . ", capacity_site=NULL ";}
-        }
+        {$update=$update . ", capacity_site='" . mysqli_real_escape_string($cxn,$capacity_site) ."' ";}
     if ($rates_site != $site["rates_site"])
         {$update=$update . ", rates_site='" . mysqli_real_escape_string($cxn,$rates_site) ."' ";}
     if ($area_site != $site["area_site"])
