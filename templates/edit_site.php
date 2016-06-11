@@ -97,7 +97,7 @@ echo '<div class="form-group"><label for='.$varname.'>Name of Site:</label><inpu
      . '<br/>This field is required</div>'."\n";
 /*****************************************************************************/
 $varname="kingdom_level_site";
-if (isset($_POST['id'])) { // 
+if (isset($_POST['id'])) { //
     if (isset($_POST[$varname])) { $kingdom_level_site = 'Yes';}
     else {$kingdom_level_site='No';}
     //$active_site=$_POST[$varname];
@@ -110,7 +110,7 @@ if ($kingdom_level_site == 'Yes') { echo ' checked="checked" </div>';}
 
 /*****************************************************************************/
 $varname="verify_phone_site";
-if (isset($_POST['id'])) { // 
+if (isset($_POST['id'])) { //
     if (isset($_POST[$varname])) { $verify_phone_site = $_POST[$varname];}
     else {$verify_phone_site = NULL;}
 } else {
@@ -122,7 +122,7 @@ echo '<div class="form-group"><label for='.$varname.'>Verified by Phone?</label>
         . $verify_phone_site . '"> (format if no datepicker: yyyy-mm-dd)</div>';
 /*****************************************************************************/
 $varname="verify_web_site";
-if (isset($_POST['id'])) { // 
+if (isset($_POST['id'])) { //
     if (isset($_POST[$varname])) { $verify_web_site = $_POST[$varname];}
     else {$verify_web_site = NULL;}
 } else {
@@ -134,7 +134,7 @@ echo '<div class="form-group"><label for='.$varname.'>Verified the Website?</lab
         . $verify_web_site . '"> (format if no datepicker: yyyy-mm-dd)</div>';
 /*****************************************************************************/
 $varname="verify_visit_site";
-if (isset($_POST['id'])) { // 
+if (isset($_POST['id'])) { //
     if (isset($_POST[$varname])) { $verify_visit_site = $_POST[$varname];}
     else {$verify_visit_site = NULL;}
 } else {
@@ -176,7 +176,7 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $capacity_site=$site[$varname];
 }
-echo '<div class="form-group"><label for='.$varname.'>Capacity:</label><input type="number" '
+echo '<div class="form-group"><label for='.$varname.'>Capacity:</label><input type="text" '
      . 'name="'.$varname.'" value="'
      . $capacity_site.'"> <br/>Maximum number of people permitted</div>'."\n";
 /*****************************************************************************/
