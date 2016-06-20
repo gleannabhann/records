@@ -34,10 +34,10 @@ switch ($report) {
         $query = "name_mundane_person as 'Legal Name', name_group as 'Group', "
                 . "membership_person as 'Mem #', membership_expire_person as 'Mem Date',"
                 . "waiver_person as 'Combat Waiver', card_marshal as 'Fighter Card',"
-                . "expire_marshal as 'Expire' "
+                . "expire_authorize as 'Expire' "
                 . "FROM Persons, Persons_CombatCards, Groups "
                 . "WHERE Persons_CombatCards.id_combat=$combat[0] "
-                . "AND Persons_CombatCards.active_marshal='Yes' "
+                . "AND Persons_CombatCards.active_authorize='Yes' "
                 . "AND Persons.id_person=Persons_CombatCards.id_person "
                 . "AND Persons.id_group=Groups.id_group "
                 . "ORDER BY Persons.name_person";
