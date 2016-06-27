@@ -9,14 +9,17 @@
 
 // This query will return a list of all known authorizations, 
 // with the person's data filled in if known and NULL otherwise
-$query_comb = "SELECT id_combat, name_combat, cn, ea, ipcc, note, active "
-        . "FROM Combat LEFT JOIN "
+$query_comb = "SELECT Combat.id_combat, name_combat, cn, ea, ipcc, note, active "
+        . "FROM Combat, Authorizations LEFT JOIN "
         . "(SELECT  id_person_combat_card as ipcc, card_authorize as cn, "
         . "expire_authorize as ea, id_combat as ic, note_authorize as note, "
         . "active_authorize as active "
         . "FROM  Persons_CombatCards "
         . "WHERE id_person=$id_person) AS PA "
-        . "ON Combat.id_combat = PA.ic ORDER BY name_combat ";
+        . "ON id_combat = PA.ic "
+        . "WHERE Combat.id_combat=Authorizations.id_combat "
+        . "GROUP BY Combat.id_combat "
+        . "ORDER BY name_combat ";
 $query_auths = "SELECT * FROM "
         . "(SELECT id_auth, name_auth, Combat.id_combat, name_combat "
         . "FROM Authorizations, Combat "
