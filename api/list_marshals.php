@@ -33,6 +33,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
 
 // initialize the array
 $combat = array();
+$col_names = array();
 $warrants = array();
 
 $ic=$_GET['id'];
@@ -40,7 +41,7 @@ $ic=$_GET['id'];
 $q_warr = "SELECT id_marshal, name_marshal, name_combat FROM Marshals, Combat where "
         . "Marshals.id_combat=Combat.id_combat "
         . "AND Marshals.id_combat=$ic";
-if (DEBUG) {echo "Warrants query: $q_warr<p>";}
+//if (DEBUG) {echo "Warrants query: $q_warr<p>";}
 $warrs = mysqli_query ($cxn, $q_warr)
     or die ("Couldn't execute query to find warrants to build report.");
 // If the combat id does not return any warrants at all
@@ -49,9 +50,9 @@ if (mysqli_num_rows($warrs)<1) {
   return false;
 }
 
-$qlink = "SELECT concat('<a href=''person.php?id=',PCC.id_person,'''>',name_person,'</a>') "
+$qlink = "SELECT concat('<a href=''../public/person.php?id=',PCC.id_person,' ''>',name_person,'</a>') "
             . "as 'SCA Name', name_group as 'SCA Group',";
-$qnolink = "SELECT name_person "
+$qnolink = "SELECT PCC.id_person, name_person "
             . "as 'SCA Name', name_group as 'SCA Group',";
 
 $q_head = "PCC.card_marshal as 'card number', "
@@ -82,31 +83,32 @@ $q_body = "FROM
                     WHERE Persons_Marshals.id_marshal=$id_marshal) AS PA$id_marshal
                     ON PA$id_marshal.id_person=PCC.id_person ";
     }
-    $query = $qlink . $q_head . $q_body . "WHERE num_count is not NULL ORDER BY name_person";
-    if (DEBUG) { echo "Warrants Query is<p> $query";}
+$query = $qnolink . $q_head . $q_body . "WHERE num_count is not NULL ORDER BY name_person";
+//if (DEBUG) { echo "Warrants Query is<p> $query";}
 
-    // This part borrowed from report_showtable, minus ability to download file
-    $data = mysqli_query ($cxn, $query)
-        or die ("Couldn't execute query to build table.");
-    // Displays a table with sortable columns based on the data stored in $data.
+// This part borrowed from report_showtable, minus ability to download file
+$data = mysqli_query ($cxn, $query)
+    or die ("Couldn't execute query to build table.");
+// Displays a table with sortable columns based on the data stored in $data.
+
+// Setting the combat name
 $combat["type_combat"] = $name_combat;
 
-    $fields = mysqli_fetch_fields($data);
+// Setting the names of the columns
+//$fields = mysqli_fetch_fields($data);
+//foreach ($fields as $field) {
+//    $col_names[] = $field->name;    
+//}
+//$combat["col_names"] = $col_names;
 
-foreach ($fields as $field) {
-    array_fill_keys($warrants, $field->name);
-}
-
+// Setting the personal information
 while ($row = mysqli_fetch_assoc($data)) {
-
-    foreach ($row as $field) {
-
-  $warrants[] = $field;
-
-  }
+       $warrants[] = array($row);
 }
 
 $combat["warrants"] = $warrants;
+
+//print_r($combat);
 
 //output the data as JSON
 echo json_encode($combat);
