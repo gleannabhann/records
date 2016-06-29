@@ -121,7 +121,7 @@ else {
             AND Groups.id_kingdom = Kingdoms.id_kingdom
             AND Groups.id_kingdom = $k_id "
           . "ORDER BY name_group";
-      };
+      }
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 $matches = $result->num_rows;
 echo "$matches group matches";
@@ -136,7 +136,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                 . "$Name - $KName </a></li>";
     } else {
         $link = "<li class='list-group-item text-left'>"
-                . "<a href='./list.php?award=$ID'>$Name - $KName</a></li>";
+                . "<a href='./list.php?group=$ID'>$Name - $KName</a></li>";
     }
     echo "$link";
 }

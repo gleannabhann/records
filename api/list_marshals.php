@@ -23,9 +23,12 @@ $cxn = open_db_browse();
 
 // store the passed variable to a local variable after error checking
 if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
-    // We got here through a search link or directly link on person.php
-
+    // We got here through an api call 
     $ic = $_GET["id"];
+
+    if ((isset($_GET['group'])) && (is_numeric($_GET['group']))) {
+        $ig = $_GET["group"];  // If this is set then only marshals from one group are listed.
+    }
 } else {
     echo 'error';
     return false;
@@ -62,8 +65,11 @@ $q_body = "FROM
            card_marshal, expire_marshal
     FROM Persons_CombatCards, Persons, Groups
     WHERE Persons_CombatCards.id_person=Persons.id_person
-    AND Persons.id_group = Groups.id_group
-    AND Persons_CombatCards.expire_marshal >= curdate()
+    AND Persons.id_group = Groups.id_group ";
+if (isset($ig)) {
+    $q_body = $q_body . " AND Persons.id_group=$ig ";
+}
+$q_body = $q_body ."AND Persons_CombatCards.expire_marshal >= curdate()
     AND id_combat=$ic) AS PCC
            LEFT JOIN
     (SELECT COUNT(*) as num_count, id_person
@@ -94,21 +100,12 @@ $data = mysqli_query ($cxn, $query)
 // Setting the combat name
 $combat["type_combat"] = $name_combat;
 
-// Setting the names of the columns
-//$fields = mysqli_fetch_fields($data);
-//foreach ($fields as $field) {
-//    $col_names[] = $field->name;    
-//}
-//$combat["col_names"] = $col_names;
-
 // Setting the personal information
 while ($row = mysqli_fetch_assoc($data)) {
        $warrants[] = array($row);
 }
 
 $combat["warrants"] = $warrants;
-
-//print_r($combat);
 
 //output the data as JSON
 echo json_encode($combat);
