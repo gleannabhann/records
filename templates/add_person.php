@@ -133,7 +133,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
            $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
            $person=  mysqli_fetch_array($result);
            $id_person=$person["id_person"];
-           echo button_link("edit_person.php?id=$id_person", "Go To Edit Awards for $sca_name");
+           echo button_link("edit_person.php?id=$id_person", "Go To Edit Person for $sca_name");
            echo '<p>or continue adding new persons below:';
     }
 

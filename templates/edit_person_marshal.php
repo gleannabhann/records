@@ -86,17 +86,17 @@ while ($row = mysqli_fetch_assoc($combats)){
             $update_head="INSERT INTO Persons_CombatCards "
                     . "(id_person, id_combat, active_marshal ";
             $update_tail="VALUES ($id_person, $id_combat,'Yes'";
-            if ($dynmcard[$i]!= NULL) {
+            if ($dynmcard[$id_combat]!= NULL) {
                 $update_head=$update_head.", card_marshal";
-                $update_tail=$update_tail.", $dynmcard[$i]";
+                $update_tail=$update_tail.", $dynmcard[$id_combat]";
             }
-            if ($dynmdate[$i]!= NULL) {
+            if ($dynmdate[$id_combat]!= NULL) {
                 $update_head=$update_head.", expire_marshal";
-                $update_tail=$update_tail.", '$dynmdate[$i]'";
+                $update_tail=$update_tail.", '$dynmdate[$id_combat]'";
             }
-            if ($dynmnote[$i]!= NULL) {
+            if ($dynmnote[$id_combat]!= NULL) {
                 $update_head=$update_head.", note_marshal";
-                $update_tail=$update_tail.", '".sanitize_mysql($dynmnote[$i])."'";
+                $update_tail=$update_tail.", '".sanitize_mysql($dynmnote[$id_combat])."'";
             }
             $update=$update_head.") ".$update_tail.")";
         }
