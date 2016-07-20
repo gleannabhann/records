@@ -100,12 +100,21 @@ $data = mysqli_query ($cxn, $query)
 // Setting the combat name
 $combat["type_combat"] = $name_combat;
 
+// Setting the names of the columns
+//$fields = mysqli_fetch_fields($data);
+//foreach ($fields as $field) {
+//    $col_names[] = $field->name;    
+//}
+//$combat["col_names"] = $col_names;
+
 // Setting the personal information
 while ($row = mysqli_fetch_assoc($data)) {
        $warrants[] = array($row);
 }
 
 $combat["warrants"] = $warrants;
+
+//print_r($combat);
 
 //output the data as JSON
 echo json_encode($combat);

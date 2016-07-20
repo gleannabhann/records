@@ -1,12 +1,22 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+<!-- Bootstrap Overrides -->
+
+<!-- Bootstrap Stylesheet -->
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/bootstrap-theme.min.css" rel="stylesheet"/>
+<link href="/css/styles.css" rel="stylesheet"/>
+<script src="/js/sorttable.js"></script>
+<div class="container">
 <?php  // open our php code
 ini_set("display_errors", true);
 error_reporting(E_ALL);
-echo '<link href="/css/styles.css" rel="stylesheet"/>';
 // NOTE: This test file assumes that if a group is selected, there is at least one marshal for that group
 
 // In this section we construct the url for the API
 $url="http://records.gleannabhann.net/api/list_marshals.php?id=";
-echo $url;
 if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
     // We got here through an api call 
     $ic = $_GET["id"];
@@ -25,7 +35,7 @@ curl_setopt($ch, CURLOPT_HEADER, 0);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 $result = curl_exec($ch);
 if(!$result){
-    die('Error: "' . curl_error($ch) . '" - Code: ' . curl_errno($c));
+    die('Error: "' . curl_error($ch) . '" - Code: ' . curl_errno($ch));
 }
 curl_close($ch);
 $marshals = json_decode($result, TRUE);
@@ -59,3 +69,4 @@ for ($i=0; $i < count($persons); $i++) {
 }
 echo '</table>';
 ?>
+</div>
