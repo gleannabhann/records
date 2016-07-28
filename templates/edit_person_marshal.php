@@ -77,7 +77,7 @@ while ($row = mysqli_fetch_assoc($combats)){
                 $update=$update.", card_marshal=$dynmcard[$id_combat] ";
             }
             if ($dynmnote[$id_combat]!=$note){
-                $update=$update.",note_marshal='".sanitize_mysql($dynmarshal[$id_combat])."'";
+                $update=$update.",note_marshal='".sanitize_mysql($dynmnote[$id_combat])."'";
             }
             $update = $update.", active_marshal='$dynmact[$id_combat]' ";
             $update = $update. " WHERE id_person_combat_card=$ipcc;";

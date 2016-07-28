@@ -68,6 +68,7 @@ if ($matches > 0) {
     $query = "SELECT name_combat, name_auth, expire_authorize 
                 FROM Persons_Authorizations, Authorizations, Combat, Persons_CombatCards
                 WHERE Persons_CombatCards.id_person=$id_person 
+                AND Persons_CombatCards.active_authorize='Yes' 
                 AND Persons_Authorizations.id_person=$id_person
                 AND curdate()<= expire_authorize
                 AND Authorizations.id_combat=Combat.id_combat
@@ -100,6 +101,7 @@ if ($matches > 0) {
     $query = "SELECT name_combat, name_marshal, Persons_CombatCards.expire_marshal 
                 FROM Persons_Marshals, Marshals, Combat, Persons_CombatCards
                 WHERE Persons_CombatCards.id_person=$id_person 
+                AND Persons_CombatCards.active_marshal='Yes' 
                 AND Persons_Marshals.id_person=$id_person
                 AND curdate()<= Persons_CombatCards.expire_marshal
                 AND Marshals.id_combat=Combat.id_combat
