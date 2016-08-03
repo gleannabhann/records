@@ -1,16 +1,16 @@
 <?php
 
 
-if (permissions("Herald")<3){
+if (permissions("Ruby")<3){
     // We don't have permission to add images so let's just exit now.
-    echo '<p class="error"> This page has been accessed in error.</p>';
+    echo '<p class="error"> This page has been accessed in error; it is available only to Ruby Heralds</p>';
     exit_with_footer();
 }
 
 
 
 
-if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Herald")>=3)){ //portion commented out for testing
+if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Ruby")>=3)){ //portion commented out for testing
   $cxn = open_db_browse();
 
     // We have a form submission.
@@ -53,8 +53,10 @@ $image = NULL;
       $uploadOk = 0;
     }
     // Allow only certain file formats
-    if($ftype != "image/jpg" && $ftype != "image/png" && $ftype != "image/jpeg"
-    && $ftype != "image/gif" ) {
+    if($ftype != "image/jpg" 
+            && $ftype != "image/png" 
+            && $ftype != "image/jpeg" 
+            && $ftype != "image/gif" ) {
         echo "<p class='error'>Sorry, only JPG, JPEG, PNG & GIF files are allowed. The file you attempted to upload is " . var_dump($ftype) . "</p>";
         $uploadOk = 0;
     }
@@ -67,11 +69,10 @@ $image = NULL;
         echo "Sorry, your file was not uploaded.";
     // if everything is ok, try to upload file
     } else {
-
-
-
-    $query = "INSERT INTO armorials VALUES (NULL, '$blazon', '$image', '$fname', $fsize, '$ftype' )";
-
+        $query = "INSERT INTO Armorials"
+            . "(id_armorial,blazon_armorial,image_armorial,"
+                . "fname_armorial,fsize_armorial,ftype_armorial, timestamp_armorial) "
+            . "VALUES (NULL, '$blazon', '$image', '$fname', $fsize, '$ftype', NOW() )";
 
         $result = update_query($cxn, $query);
         if ($result !== 1) {

@@ -24,6 +24,7 @@ echo '<form action="edit_person.php" method="post">';
 echo form_title("Editing Personal Information");
 echo button_link("person.php?id=".$id_person, "To Personal Overview Page");
 echo '<input type="hidden" name="id" value="'.$person["id_person"].'">';
+echo '<input type="hidden" name="form_name" value="edit_personal_info">';
 echo "<table class='table table-condensed table-bordered'>";
 //<thead><td class='text-right'>Column</td><td class='text-left'>Value</td></thead>";
 
@@ -182,7 +183,12 @@ echo "</div></div>";
 //echo var_dump($_SESSION);
 
 
-if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
+if (($_SERVER['REQUEST_METHOD'] == 'POST') // we got here through a form
+        && (permissions("Any")>=3)         // and we have editorial permissions
+        && (isset($_POST["form_name"]))    // and the form name is set
+        && ($_POST["form_name"]=="edit_personal_info") // and we used *this* form
+        ){
+    
     $sca_name=  str_replace("'","&#039;",$sca_name);
 
     $update = "UPDATE Persons SET ";
