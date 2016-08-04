@@ -34,8 +34,8 @@ $q_exist = "SELECT id_person_armorial as ipa, id_person as ip, Armorials.id_armo
         . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial";
 if (DEBUG) {
     echo "Query to list existing links is: $q_exist</br>";
-}        
-$curr_links = mysqli_query ($cxn, $q_exist) 
+}
+$curr_links = mysqli_query ($cxn, $q_exist)
         or die ("Couldn't execute query to find existing links");
 
 echo "<table class='table table-condensed table-bordered'>";
@@ -50,41 +50,40 @@ while ($row = mysqli_fetch_assoc($curr_links)) {
     echo "<tr>";
     echo '<td>';
     // DISPLAY THUMBNAIL HERE: currently this code isn't working.
-    
-    /*
-    $im = imagecreatefromstring(base64_decode($image));
-    if ($im !== false) {
-        switch ($ftype) {
-            case "image/png"  : header('Content-type: image/png'); imagepng($im);
-                break;
-            case "image/gif"  : header('Content-type: image/gif'); imagegif($im);
-                break;
-            case "image/jpeg" : header('Content-type: image/jpeg'); imagejpeg($im);
-                break;
-            case "image/jpg"  : header('Content-type: image/jpeg'); imagejpeg($im);
-                break;
-            default:
-                echo "No image";
-        }
-        imagedestroy($im);
+
+
+
+if ($image !== false) {
+    switch ($ftype) {
+        case "image/png"  : echo '<img src="data:image/png;base64,' . $image  . '" />';
+            break;
+        case "image/gif"  : echo '<img src="data:image/gif;base64,' . $image  . '" />';
+            break;
+        case "image/jpeg" : echo '<img src="data:image/jpeg;base64,' . $image  . '" />';
+            break;
+        case "image/jpg"  : echo '<img src="data:image/jpg;base64,' . $image  . '" />';
+            break;
+        default:
+            echo "No image";
     }
-    */
+  }
+
     echo '</td>';
-    echo '<td>'.$fname.'</td>';   
-    echo '<td>'.$blazon.'</td>';   
+    echo '<td>'.$fname.'</td>';
+    echo '<td>'.$blazon.'</td>';
     echo '<td>';
-    if ($type != 'device') { 
+    if ($type != 'device') {
         echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='make_device", "Make device");
     }
-    if ($type != 'badge') { 
+    if ($type != 'badge') {
         echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='make_badge", "Make badge");
     }
-    if ($type != 'household') { 
+    if ($type != 'household') {
         echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='make_household", "Make household");
     }
     echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='delete", "Remove");
 
-    echo '</td>'; 
+    echo '</td>';
     echo "</tr>";
 }
 echo "</table>";
@@ -102,8 +101,59 @@ if ($search_filters=="") {
 }
 if (DEBUG) {
     echo "Query to list possible new links is: $q_new</br>";
-}        
-$new_links = mysqli_query ($cxn, $q_new) 
+}
+$new_links = mysqli_query ($cxn, $q_new)
         or die ("Couldn't execute query to find existing links");
-echo "</div> </div>"; // class=col-md-8, class=row, 
+
+        echo "<table class='table table-condensed table-bordered'>";
+        echo "<thead>"
+                . "<td>Thumbnail</td>"
+                . "<td>Filename</td>"
+                . "<td>Blazon</td>"
+                . "<td>Modifications</td>"
+                . "</thead>";
+        while ($row = mysqli_fetch_assoc($new_links)) {
+            extract($row);
+            echo "<tr>";
+            echo '<td>';
+
+        if ($image !== false) {
+            switch ($ftype) {
+                case "image/png"  : echo '<img src="data:image/png;base64,' . $image  . '" />';
+                    break;
+                case "image/gif"  : echo '<img src="data:image/gif;base64,' . $image  . '" />';
+                    break;
+                case "image/jpeg" : echo '<img src="data:image/jpeg;base64,' . $image  . '" />';
+                    break;
+                case "image/jpg"  : echo '<img src="data:image/jpg;base64,' . $image  . '" />';
+                    break;
+                default:
+                    echo "No image";
+            }
+          }
+
+            echo '</td>';
+            echo '<td>'.$fname.'</td>';
+            echo '<td>'.$blazon.'</td>';
+
+          echo '<td>';
+          echo "Link button goes here";
+          /*  this section does not work right
+            if ($type != 'device') {
+                echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='make_device", "Make device");
+            }
+            if ($type != 'badge') {
+                echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='make_badge", "Make badge");
+            }
+            if ($type != 'household') {
+                echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='make_household", "Make household");
+            }
+            echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='delete", "Remove");
+            */
+            echo '</td>';
+            echo "</tr>";
+
+        }
+        echo "</table>";
+echo "</div> </div>"; // class=col-md-8, class=row,
 ?>
