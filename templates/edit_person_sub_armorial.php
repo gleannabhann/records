@@ -8,6 +8,9 @@ echo '<form action="edit_person.php" method="post">';
 echo form_title("Adding Armorial Links");
 echo '<input type="hidden" name="id" value="'.$person["id_person"].'">';
 echo '<input type="hidden" name="form_name" value="edit_armorial">';
+
+echo "Please separate keywords with spaces";
+
 echo "<table class='table table-condensed table-bordered'>";
 if (isset($_POST["form_name"])
         && ($_POST["form_name"]=="edit_armorial")
@@ -52,21 +55,7 @@ while ($row = mysqli_fetch_assoc($curr_links)) {
     // DISPLAY THUMBNAIL HERE: currently this code isn't working.
 
 
-
-if ($image !== false) {
-    switch ($ftype) {
-        case "image/png"  : echo '<img src="data:image/png;base64,' . $image  . '" />';
-            break;
-        case "image/gif"  : echo '<img src="data:image/gif;base64,' . $image  . '" />';
-            break;
-        case "image/jpeg" : echo '<img src="data:image/jpeg;base64,' . $image  . '" />';
-            break;
-        case "image/jpg"  : echo '<img src="data:image/jpg;base64,' . $image  . '" />';
-            break;
-        default:
-            echo "No image";
-    }
-  }
+    display_image($image, $ftype, 100);
 
     echo '</td>';
     echo '<td>'.$fname.'</td>';
@@ -95,9 +84,19 @@ $q_new = "SELECT id_armorial as ia, blazon_armorial as blazon, image_armorial as
         . "FROM Armorials WHERE id_armorial NOT IN "
         . "(SELECT id_armorial FROM Persons_Armorials where id_person=$id_person) ";
 if ($search_filters=="") {
-    $q_new = $q_new . "ORDER BY timestamp_armorial ASC LIMIT 10";
+    $q_new = $q_new . "ORDER BY timestamp_armorial DESC LIMIT 10";
 } else {
     // need to explode the search filters
+    $filters=  explode(" ", $search_filters);
+    $q_new = $q_new . "AND ( ";
+    foreach ($filters as $filter) {
+        if (is_numeric($filter)) {
+            $q_new=$q_new. " id_armorial = $filter OR ";
+        } else {
+            $q_new = $q_new . " blazon_armorial like '%$filter%' OR ";
+        }
+    } 
+    $q_new = $q_new . " ABS(TIMESTAMPDIFF(MINUTE,NOW(),timestamp_armorial)) < 15) ";
 }
 if (DEBUG) {
     echo "Query to list possible new links is: $q_new</br>";
@@ -117,39 +116,15 @@ $new_links = mysqli_query ($cxn, $q_new)
             echo "<tr>";
             echo '<td>';
 
-        if ($image !== false) {
-            switch ($ftype) {
-                case "image/png"  : echo '<img src="data:image/png;base64,' . $image  . '" />';
-                    break;
-                case "image/gif"  : echo '<img src="data:image/gif;base64,' . $image  . '" />';
-                    break;
-                case "image/jpeg" : echo '<img src="data:image/jpeg;base64,' . $image  . '" />';
-                    break;
-                case "image/jpg"  : echo '<img src="data:image/jpg;base64,' . $image  . '" />';
-                    break;
-                default:
-                    echo "No image";
-            }
-          }
-
+            display_image($image, $ftype, 100);
             echo '</td>';
             echo '<td>'.$fname.'</td>';
             echo '<td>'.$blazon.'</td>';
 
-          echo '<td>';
-          echo "Link button goes here";
-          /*  this section does not work right
-            if ($type != 'device') {
-                echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='make_device", "Make device");
-            }
-            if ($type != 'badge') {
-                echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='make_badge", "Make badge");
-            }
-            if ($type != 'household') {
-                echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='make_household", "Make household");
-            }
-            echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='delete", "Remove");
-            */
+            echo '<td>';
+            echo button_link("edit_person_armorial_link.php?ip=$ip&ia=$ia&act='add_device", "Make device");
+            echo button_link("edit_person_armorial_link.php?ip=$ip&ia=$ia&act='add_badge", "Make badge");
+            echo button_link("edit_person_armorial_link.php?ip=$ip&ia=$ia&act='add_household", "Make household");
             echo '</td>';
             echo "</tr>";
 

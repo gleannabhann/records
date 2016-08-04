@@ -334,5 +334,22 @@
     {
         return '<br><b>'.$label.'</b></br>';
     }
+    
+    function display_image($image, $ftype, $width) {
+    if ($image !== false) {
+        switch ($ftype) {
+            case "image/png"  : echo '<img src="data:image/png;base64,' . $image  . '"  width='.$width.' />';
+                break;
+            case "image/gif"  : echo '<img src="data:image/gif;base64,' . $image  . '"  width='.$width.' />';
+                break;
+            case "image/jpeg" : echo '<img src="data:image/jpeg;base64,' . $image  . '"  width='.$width.' />';
+                break;
+            case "image/jpg"  : echo '<img src="data:image/jpg;base64,' . $image  . '"  width='.$width.' />';
+                break;
+            default:
+                echo "No image";
+        }
+      } 
+    }
 
 ?>
