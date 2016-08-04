@@ -7,7 +7,20 @@ if (permissions("Ruby")<3){
     exit_with_footer();
 }
 
-
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    if (isset($_GET["id"])) {
+        $id_person = $_GET["id"];
+    } else {
+        $id_person = -1;
+    }
+}
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST["id"])) {
+        $id_person = $_POST["id"];
+    } else {
+        $id_person = -1;
+    }
+}
 
 
 if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Ruby")>=3)){ //portion commented out for testing
@@ -89,8 +102,12 @@ mysqli_close ($cxn);
 ?>
 
 <div class='row'><div class='col-md-8 col-md-offset-2'>
+<?php if ($id_person > 0) {
+    echo button_link("edit_person.php?id=$id_person","Return to Edit Person Page");
+}   ?>     
 <form action="add_armorial.php" method="post" enctype="multipart/form-data">
   <?php echo form_title("Adding a New Device or Badge"); ?>
+  <?php echo  '<input type="hidden" name="id" value="'.$id_person.'">'; ?>
   <table class='table table-condensed table-bordered'>
       <tr>
           <td class="text-right">Blazon<br>(Required)</td>

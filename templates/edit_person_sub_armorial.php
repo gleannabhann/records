@@ -6,10 +6,11 @@ echo "<div class='row'>
 
 echo '<form action="edit_person.php" method="post">';
 echo form_title("Adding Armorial Links");
+echo button_link("add_armorial.php?id=$id_person", "Add Armorial Device");
 echo '<input type="hidden" name="id" value="'.$person["id_person"].'">';
 echo '<input type="hidden" name="form_name" value="edit_armorial">';
 
-echo "Please separate keywords with spaces";
+echo "</br>Please separate keywords with spaces";
 
 echo "<table class='table table-condensed table-bordered'>";
 if (isset($_POST["form_name"])
