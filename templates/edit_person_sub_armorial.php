@@ -63,15 +63,15 @@ while ($row = mysqli_fetch_assoc($curr_links)) {
     echo '<td>'.$blazon.'</td>';
     echo '<td>';
     if ($type != 'device') {
-        echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='make_device", "Make device");
+        echo button_link("edit_person_armorial_link.php?ipa=$ipa&ip=$ip&act=make_device", "Make device");
     }
     if ($type != 'badge') {
-        echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='make_badge", "Make badge");
+        echo button_link("edit_person_armorial_link.php?ipa=$ipa&ip=$ip&act=make_badge", "Make badge");
     }
     if ($type != 'household') {
-        echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='make_household", "Make household");
+        echo button_link("edit_person_armorial_link.php?ipa=$ipa&ip=$ip&act=make_household", "Make household");
     }
-    echo button_link("edit_person_armorial_link.php?ipa=$ipa&act='delete", "Remove");
+    echo button_link("edit_person_armorial_link.php?ipa=$ipa&ip=$ip&act=delete", "Remove");
 
     echo '</td>';
     echo "</tr>";
@@ -123,9 +123,9 @@ $new_links = mysqli_query ($cxn, $q_new)
             echo '<td>'.$blazon.'</td>';
 
             echo '<td>';
-            echo button_link("edit_person_armorial_link.php?ip=$ip&ia=$ia&act='add_device", "Make device");
-            echo button_link("edit_person_armorial_link.php?ip=$ip&ia=$ia&act='add_badge", "Make badge");
-            echo button_link("edit_person_armorial_link.php?ip=$ip&ia=$ia&act='add_household", "Make household");
+            echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_device", "Make device");
+            echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_badge", "Make badge");
+            echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_household", "Make household");
             echo '</td>';
             echo "</tr>";
 
