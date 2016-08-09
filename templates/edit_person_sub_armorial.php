@@ -41,7 +41,7 @@ if (DEBUG) {
 }
 $curr_links = mysqli_query ($cxn, $q_exist)
         or die ("Couldn't execute query to find existing links");
-
+echo "Linked Images";
 echo "<table class='table table-condensed table-bordered'>";
 echo "<thead>"
         . "<td>Thumbnail</td>"
@@ -96,7 +96,7 @@ if ($search_filters=="") {
         } else {
             $q_new = $q_new . " blazon_armorial like '%$filter%' OR ";
         }
-    } 
+    }
     $q_new = $q_new . " ABS(TIMESTAMPDIFF(MINUTE,NOW(),timestamp_armorial)) < 15) ";
 }
 if (DEBUG) {
@@ -104,7 +104,7 @@ if (DEBUG) {
 }
 $new_links = mysqli_query ($cxn, $q_new)
         or die ("Couldn't execute query to find existing links");
-
+        echo "Unlinked Images";
         echo "<table class='table table-condensed table-bordered'>";
         echo "<thead>"
                 . "<td>Thumbnail</td>"
