@@ -9,21 +9,21 @@
 if (permissions("Ruby")< 3) { // This page is only accessible to the Ruby Herald
     //echo var_dump($_SESSION);
     echo '<p class="error"> This page has been accessed in error by a non-Ruby Herald.</p>';
-    exit_with_footer();    
+    exit_with_footer();
 }
 
 if (isset($_GET["ip"])) { // Need person's id for return button
     $ip = $_GET["ip"];
 } else {
     echo '<p class="error"> This page has been accessed with incorrect parameters.</p>';
-    exit_with_footer();    
+    exit_with_footer();
 }
 
 if (isset($_GET["act"])){ // Need to know what to do
     $act = $_GET["act"];
 } else {
     echo '<p class="error"> This page has been accessed with incorrect parameters.</p>';
-    exit_with_footer();    
+    exit_with_footer();
 }
 
 if (isset($_GET["ipa"])) {
@@ -48,7 +48,7 @@ switch ($act) { // This will set the update/insert query, or exit the page if no
         $update = "Updated Record to change armorial to type household.";
         break;
     case "delete" : // Extra careful when deleting a link
-        if (isset($ipa) && is_numeric($ipa)) { 
+        if (isset($ipa) && is_numeric($ipa)) {
             $query = "DELETE FROM Persons_Armorials WHERE id_person_armorial=$ipa";
             $update = "Updated Record to delete this link.";
         } else {
@@ -70,9 +70,9 @@ switch ($act) { // This will set the update/insert query, or exit the page if no
             . "VALUES ($ip, $ia, 'household')";
         $update = "Added a new household link.";
         break;
-    default: 
+    default:
         echo '<p class="error">There is no specified valid action</p>';
-        exit_with_footer();        
+        exit_with_footer();
 }
 
 $cxn = open_db_browse();
