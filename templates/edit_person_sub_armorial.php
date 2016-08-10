@@ -35,13 +35,15 @@ $q_exist = "SELECT id_person_armorial as ipa, id_person as ip, Armorials.id_armo
         . "type_armorial as type, blazon_armorial as blazon, image_armorial as image, "
         . "fname_armorial as fname, ftype_armorial as ftype "
         . "FROM Persons_Armorials, Armorials "
-        . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial";
+        . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial "
+        . "AND id_person=$id_person";
 if (DEBUG) {
     echo "Query to list existing links is: $q_exist</br>";
 }
 $curr_links = mysqli_query ($cxn, $q_exist)
         or die ("Couldn't execute query to find existing links");
 
+echo form_subtitle("Existing Armorial");
 echo "<table class='table table-condensed table-bordered'>";
 echo "<thead>"
         . "<td>Thumbnail</td>"
@@ -63,15 +65,15 @@ while ($row = mysqli_fetch_assoc($curr_links)) {
     echo '<td>'.$blazon.'</td>';
     echo '<td>';
     if ($type != 'device') {
-        echo button_link("edit_person_armorial_link.php?ipa=$ipa&ip=$ip&act=make_device", "Make device");
+        echo button_link("edit_person_armorial_link.php?ipa=$ipa&ip=$id_person&act=make_device", "Make device");
     }
     if ($type != 'badge') {
-        echo button_link("edit_person_armorial_link.php?ipa=$ipa&ip=$ip&act=make_badge", "Make badge");
+        echo button_link("edit_person_armorial_link.php?ipa=$ipa&ip=$id_person&act=make_badge", "Make badge");
     }
     if ($type != 'household') {
-        echo button_link("edit_person_armorial_link.php?ipa=$ipa&ip=$ip&act=make_household", "Make household");
+        echo button_link("edit_person_armorial_link.php?ipa=$ipa&ip=$id_person&act=make_household", "Make household");
     }
-    echo button_link("edit_person_armorial_link.php?ipa=$ipa&ip=$ip&act=delete", "Remove");
+    echo button_link("edit_person_armorial_link.php?ipa=$ipa&ip=$id_person&act=delete", "Remove");
 
     echo '</td>';
     echo "</tr>";
@@ -105,31 +107,33 @@ if (DEBUG) {
 $new_links = mysqli_query ($cxn, $q_new)
         or die ("Couldn't execute query to find existing links");
 
-        echo "<table class='table table-condensed table-bordered'>";
-        echo "<thead>"
-                . "<td>Thumbnail</td>"
-                . "<td>Filename</td>"
-                . "<td>Blazon</td>"
-                . "<td>Modifications</td>"
-                . "</thead>";
-        while ($row = mysqli_fetch_assoc($new_links)) {
-            extract($row);
-            echo "<tr>";
-            echo '<td>';
+echo form_subtitle("New Armorial based on search filters");
 
-            display_image($image, $ftype, 100);
-            echo '</td>';
-            echo '<td>'.$fname.'</td>';
-            echo '<td>'.$blazon.'</td>';
+echo "<table class='table table-condensed table-bordered'>";
+echo "<thead>"
+        . "<td>Thumbnail</td>"
+        . "<td>Filename</td>"
+        . "<td>Blazon</td>"
+        . "<td>Modifications</td>"
+        . "</thead>";
+while ($row = mysqli_fetch_assoc($new_links)) {
+    extract($row);
+    echo "<tr>";
+    echo '<td>';
 
-            echo '<td>';
-            echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_device", "Make device");
-            echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_badge", "Make badge");
-            echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_household", "Make household");
-            echo '</td>';
-            echo "</tr>";
+    display_image($image, $ftype, 100);
+    echo '</td>';
+    echo '<td>'.$fname.'</td>';
+    echo '<td>'.$blazon.'</td>';
 
-        }
-        echo "</table>";
+    echo '<td>';
+    echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_device", "Make device");
+    echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_badge", "Make badge");
+    echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_household", "Make household");
+    echo '</td>';
+    echo "</tr>";
+
+}
+echo "</table>";
 echo "</div> </div>"; // class=col-md-8, class=row,
 ?>
