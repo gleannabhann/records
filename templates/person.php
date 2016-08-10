@@ -6,7 +6,7 @@ $cxn = open_db_browse();
 
 /* query: select a person's name for the header */
 if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
-    // We got here through a search link or direct link on person.php
+    // We got here through a search link or directly link on person.php
     // echo "Arrived from person.php";
     $id_person = $_GET["id"];
 } elseif ((isset($_POST['id'])) && (is_numeric($_POST['id']))) {
@@ -17,16 +17,6 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();
 }
-// Query for existing links (if any)
-$q_device = "SELECT id_person_armorial as ipa, id_person as ip, Armorials.id_armorial as ia, "
-        . "type_armorial as type, blazon_armorial as blazon, image_armorial as image, "
-        . "fname_armorial as fname, ftype_armorial as ftype "
-        . "FROM Persons_Armorials, Armorials "
-        . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial";
-if (DEBUG) {
-    echo "Query to list existing links is: $q_device</br>";
-}
-
 
 $query = "SELECT name_person, name_group, Groups.id_group "
         . "FROM Persons, Groups "
@@ -37,36 +27,50 @@ if (DEBUG) {
 }
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
-while ($row = mysqli_fetch_assoc($result))
-  {extract($row);
-  echo "<div class='page-header'>";
-
-  echo form_title($name_person);
-  echo form_subtitle("Member of ".live_link("list.php?group=$id_group", "$name_group"));
-  include("../templates/warning.php"); // includes the warning text about paper precedence
-  echo "</small>";
-  if ((permissions("Herald")>= 3) or (permissions("Marshal")>=3)) {
+while ($row = mysqli_fetch_assoc($result)) {
+    extract($row);
+    echo "<div class='page-header'>".form_title($name_person);
+    echo form_subtitle("Member of ".live_link("list.php?group=$id_group", "$name_group"));
+    include("../templates/warning.php"); // includes the warning text about paper precedence
+    echo "</small>";
+    if ((permissions("Herald")>= 3) or (permissions("Marshal")>=3)) {
       // TODO: Make this link more visible?
-    echo "<br>".button_link("./edit_person.php?id=$id_person",
+    echo "<br>".button_link("./edit_person.php?id=$id_person", 
                             "Edit $name_person's record");
-  }
-  echo "</div>";
+    }
+    echo "</div>";
 };
-
-echo "<div class='row'>";
-$devices = mysqli_query ($cxn, $q_device)
-    or die ("Couldn't execute query to find existing links");
-
-
-  while ($row = mysqli_fetch_assoc($devices)) {
-      extract($row);
-
-if ($image){
-  display_image($image, $ftype, 100, $blazon, $blazon);
+/////////////////////////////////////////////////////////////////////////////
+// Display Armorial Devices
+/////////////////////////////////////////////////////////////////////////////
+$q_device = "SELECT type_armorial, fname_armorial, ftype_armorial as ftype, image_armorial as image "
+        . "FROM Persons_Armorials, Armorials "
+        . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial "
+        . "AND Persons_Armorials.id_person = $id_person "
+        . "ORDER BY type_armorial;";
+if (DEBUG) {
+    echo "Device query is:$q_device<p>";
 }
+$result = mysqli_query($cxn, $q_device)
+    or die ("Couldn't execute device Query");
+while ($row = mysqli_fetch_assoc($result)) {
+    extract($row);
+    switch ($type_armorial) {
+        case "device" : 
+            display_image($image, $ftype, 300);
+            break;
+        case "badge" : 
+            display_image($image, $ftype, 200);
+            break;
+        case "household" : 
+            display_image($image, $ftype, 100);
+            break;
+    }
 }
-echo "</div>";
 
+/////////////////////////////////////////////////////////////////////////////
+// Display Combat information
+/////////////////////////////////////////////////////////////////////////////
 echo "
 <div class='row'>
 
@@ -92,10 +96,10 @@ if ($matches > 0) {
 //if ($waiver_person != "No") { // No combat waiver?  No fight.
 // Person may be authorized as a marshal without a combat waiver.
 /* query: select a person's (non-expired) authorizations in the database */
-    $query = "SELECT name_combat, name_auth, expire_authorize
+    $query = "SELECT name_combat, name_auth, expire_authorize 
                 FROM Persons_Authorizations, Authorizations, Combat, Persons_CombatCards
-                WHERE Persons_CombatCards.id_person=$id_person
-                AND Persons_CombatCards.active_authorize='Yes'
+                WHERE Persons_CombatCards.id_person=$id_person 
+                AND Persons_CombatCards.active_authorize='Yes' 
                 AND Persons_Authorizations.id_person=$id_person
                 AND curdate()<= expire_authorize
                 AND Authorizations.id_combat=Combat.id_combat
@@ -125,23 +129,16 @@ if ($matches > 0) {
     echo "<br>";
 
     /* query: select a person's marshal warrants in the database */
-    $query = "SELECT name_combat, name_marshal, Persons_CombatCards.expire_marshal
+    $query = "SELECT name_combat, name_marshal, Persons_CombatCards.expire_marshal 
                 FROM Persons_Marshals, Marshals, Combat, Persons_CombatCards
-                WHERE Persons_CombatCards.id_person=$id_person
-                AND Persons_CombatCards.active_marshal='Yes'
+                WHERE Persons_CombatCards.id_person=$id_person 
+                AND Persons_CombatCards.active_marshal='Yes' 
                 AND Persons_Marshals.id_person=$id_person
                 AND curdate()<= Persons_CombatCards.expire_marshal
                 AND Marshals.id_combat=Combat.id_combat
                 AND Persons_Marshals.id_marshal=Marshals.id_marshal
                 AND Persons_CombatCards.id_combat = Combat.id_combat
                 ORDER by name_combat, Marshals.id_marshal";
-    //$query = "SELECT name_combat, name_marshal, expire_marshal
-    //          FROM Persons_Marshals, Marshals, Combat
-    //          WHERE Persons_Marshals.id_marshal = Marshals.id_marshal
-    //          AND Marshals.id_combat = Combat.id_combat
-    //          AND id_person = $id_person
-    //          AND curdate()<= expire_marshal
-    //          ORDER by name_combat, Marshals.id_marshal";
     if (DEBUG) {
         echo "Marshal Warrants query is:$query<p>";
     }
@@ -165,13 +162,15 @@ if ($matches > 0) {
     }
     echo "<br>";
 //}
-/* query: select a person's awards in the database  */
+/////////////////////////////////////////////////////////////////////////////
+// Display Awards information 
+/////////////////////////////////////////////////////////////////////////////
 $query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_event, Events.id_event
           FROM Persons, Persons_Awards, Awards, Kingdoms, Events
           WHERE Persons.id_person = Persons_Awards.id_person
          AND Persons_Awards.id_award = Awards.id_award
          AND Awards.id_kingdom = Kingdoms.id_kingdom
-         AND Persons_Awards.id_event = Events.id_event
+         AND Persons_Awards.id_event = Events.id_event 
          AND Persons.id_person = $id_person order by date_award";
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
 echo "<table class='table table-condensed table-bordered'>

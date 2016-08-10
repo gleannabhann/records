@@ -36,18 +36,15 @@ $q_exist = "SELECT id_person_armorial as ipa, id_person as ip, Armorials.id_armo
         . "fname_armorial as fname, ftype_armorial as ftype "
         . "FROM Persons_Armorials, Armorials "
         . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial "
-        . "AND id_person=$id_person";
+        . "AND id_person = $id_person";
+
 if (DEBUG) {
     echo "Query to list existing links is: $q_exist</br>";
 }
 $curr_links = mysqli_query ($cxn, $q_exist)
         or die ("Couldn't execute query to find existing links");
-<<<<<<< HEAD
 
-echo form_subtitle("Existing Armorial");
-=======
-echo "Linked Images";
->>>>>>> 9b3c5ad6a0cb7ee932c80f502e6597b39812068e
+echo form_subtitle("Existing links:");
 echo "<table class='table table-condensed table-bordered'>";
 echo "<thead>"
         . "<td>Thumbnail</td>"
@@ -67,7 +64,7 @@ while ($row = mysqli_fetch_assoc($curr_links)) {
     echo '</td>';
     echo '<td>'.$fname.'</td>';
     echo '<td>'.$blazon.'</td>';
-    echo '<td>';
+    echo '<td> Currently '.$type.':</br>';
     if ($type != 'device') {
         echo button_link("edit_person_armorial_link.php?ipa=$ipa&ip=$id_person&act=make_device", "Make device");
     }
@@ -102,7 +99,7 @@ if ($search_filters=="") {
         } else {
             $q_new = $q_new . " blazon_armorial like '%$filter%' OR ";
         }
-    }
+    } 
     $q_new = $q_new . " ABS(TIMESTAMPDIFF(MINUTE,NOW(),timestamp_armorial)) < 15) ";
 }
 if (DEBUG) {
@@ -110,36 +107,8 @@ if (DEBUG) {
 }
 $new_links = mysqli_query ($cxn, $q_new)
         or die ("Couldn't execute query to find existing links");
-<<<<<<< HEAD
 
-echo form_subtitle("New Armorial based on search filters");
-=======
-        echo "Unlinked Images";
-        echo "<table class='table table-condensed table-bordered'>";
-        echo "<thead>"
-                . "<td>Thumbnail</td>"
-                . "<td>Filename</td>"
-                . "<td>Blazon</td>"
-                . "<td>Modifications</td>"
-                . "</thead>";
-        while ($row = mysqli_fetch_assoc($new_links)) {
-            extract($row);
-            echo "<tr>";
-            echo '<td>';
-
-            display_image($image, $ftype, 100);
-            echo '</td>';
-            echo '<td>'.$fname.'</td>';
-            echo '<td>'.$blazon.'</td>';
-
-            echo '<td>';
-            echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_device", "Make device");
-            echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_badge", "Make badge");
-            echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_household", "Make household");
-            echo '</td>';
-            echo "</tr>";
->>>>>>> 9b3c5ad6a0cb7ee932c80f502e6597b39812068e
-
+echo form_subtitle("Potential new links based on seach filters:");
 echo "<table class='table table-condensed table-bordered'>";
 echo "<thead>"
         . "<td>Thumbnail</td>"
