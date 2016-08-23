@@ -35,14 +35,18 @@ while ($row = mysqli_fetch_assoc($result)) {
     echo "</small>";
     if ((permissions("Herald")>= 3) or (permissions("Marshal")>=3)) {
       // TODO: Make this link more visible?
-    echo "<br>".button_link("./edit_person.php?id=$id_person", 
+    echo "<br>".button_link("./edit_person.php?id=$id_person",
                             "Edit $name_person's record");
     }
-    echo "</div>";
+    echo "<br/><a href='#awards'>Skip to Awards</a>";
+    echo "</div>"; //close page header div
 };
+
 /////////////////////////////////////////////////////////////////////////////
 // Display Armorial Devices
 /////////////////////////////////////////////////////////////////////////////
+
+echo "<div class='row'>"; //open new row for this content
 $q_device = "SELECT type_armorial, fname_armorial, ftype_armorial as ftype, image_armorial as image "
         . "FROM Persons_Armorials, Armorials "
         . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial "
@@ -53,28 +57,84 @@ if (DEBUG) {
 }
 $result = mysqli_query($cxn, $q_device)
     or die ("Couldn't execute device Query");
+  $num_rows = mysqli_num_rows($result);
 while ($row = mysqli_fetch_assoc($result)) {
     extract($row);
     switch ($type_armorial) {
-        case "device" : 
-            display_image($image, $ftype, 300);
+        case "device" :
+            if ($num_rows == 1) {
+              echo "<div class='col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4'>";
+            }
+            elseif ($num_rows == 2) {
+              echo "<div class='col-md-3 col-md-offset-4 col-sm-3 col-sm-offset-4'>";
+            }
+            elseif ($num_rows == 3) {
+              echo "<div class='col-md-3 col-md-offset-3 col-sm-3 col-sm-offset-3'>";
+            }
+            elseif ($num_rows == 4) {
+              echo "<div class='col-md-3 col-md-offset-2 col-sm-3 col-sm-offset-2'>";
+            }
+            else {
+              echo "<div class='col-md-3 col-md-offset-1 col-sm-3 col-sm-offset-1'>";}
+            display_image($image, $ftype, 150);
+            echo "</div>";
             break;
-        case "badge" : 
-            display_image($image, $ftype, 200);
-            break;
-        case "household" : 
+        case "badge" :
+            echo "<div class='col-md-2'>";
             display_image($image, $ftype, 100);
+            echo "</div>";
+            break;
+        case "household" :
+            echo "<div class='col-md-2'>";
+            display_image($image, $ftype, 75);
+            echo "</div>";
             break;
     }
 }
+echo "</div>"; //close row div
+// insert horizontal rule to break up sections
+echo "<div class='row'><hr width='75%'/></div>";
+echo "<div class='row'>";
+echo "<div class='col-md-6'>";
+/////////////////////////////////////////////////////////////////////////////
+// Display Awards information
+/////////////////////////////////////////////////////////////////////////////
+$query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_event, Events.id_event
+          FROM Persons, Persons_Awards, Awards, Kingdoms, Events
+          WHERE Persons.id_person = Persons_Awards.id_person
+         AND Persons_Awards.id_award = Awards.id_award
+         AND Awards.id_kingdom = Kingdoms.id_kingdom
+         AND Persons_Awards.id_event = Events.id_event
+         AND Persons.id_person = $id_person order by date_award";
+$result = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
+echo "<table class='table table-condensed table-bordered'>
+<thead><td class='text-left'><strong><a name='awards'>Award</a></strong></td>
+<td class='text-left'><strong>Event</strong></td>
+<td class='text-left'><strong>Date</strong></td></thead>";
+while ($row = mysqli_fetch_assoc($result))
+  {extract($row);
+// echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
+  echo "<tr>";
+  echo "<td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>";
+  if ($id_event > 0){
+      echo "<td class='text-left'>"
+      . "<a href='event.php?id=$id_event'>$name_event</a>"
+      . "</td>";
+  } else {
+      echo "<td></td>";
+  }
+  echo "<td class='text-left'>$date_award</td>";
+  echo "</tr>";
+};
+echo "</table>";
+echo "</div>"; //close the column div
 
 /////////////////////////////////////////////////////////////////////////////
 // Display Combat information
 /////////////////////////////////////////////////////////////////////////////
-echo "
-<div class='row'>
 
-  <div class='col-md-8 col-md-offset-2'>";
+
+  echo "<div class='col-md-6'>";
 
 $query = "SELECT waiver_person, youth_person, birthdate_person
             FROM Persons
@@ -96,10 +156,10 @@ if ($matches > 0) {
 //if ($waiver_person != "No") { // No combat waiver?  No fight.
 // Person may be authorized as a marshal without a combat waiver.
 /* query: select a person's (non-expired) authorizations in the database */
-    $query = "SELECT name_combat, name_auth, expire_authorize 
+    $query = "SELECT name_combat, name_auth, expire_authorize
                 FROM Persons_Authorizations, Authorizations, Combat, Persons_CombatCards
-                WHERE Persons_CombatCards.id_person=$id_person 
-                AND Persons_CombatCards.active_authorize='Yes' 
+                WHERE Persons_CombatCards.id_person=$id_person
+                AND Persons_CombatCards.active_authorize='Yes'
                 AND Persons_Authorizations.id_person=$id_person
                 AND curdate()<= expire_authorize
                 AND Authorizations.id_combat=Combat.id_combat
@@ -129,10 +189,10 @@ if ($matches > 0) {
     echo "<br>";
 
     /* query: select a person's marshal warrants in the database */
-    $query = "SELECT name_combat, name_marshal, Persons_CombatCards.expire_marshal 
+    $query = "SELECT name_combat, name_marshal, Persons_CombatCards.expire_marshal
                 FROM Persons_Marshals, Marshals, Combat, Persons_CombatCards
-                WHERE Persons_CombatCards.id_person=$id_person 
-                AND Persons_CombatCards.active_marshal='Yes' 
+                WHERE Persons_CombatCards.id_person=$id_person
+                AND Persons_CombatCards.active_marshal='Yes'
                 AND Persons_Marshals.id_person=$id_person
                 AND curdate()<= Persons_CombatCards.expire_marshal
                 AND Marshals.id_combat=Combat.id_combat
@@ -161,44 +221,17 @@ if ($matches > 0) {
        echo "<br>";
     }
     echo "<br>";
-//}
-/////////////////////////////////////////////////////////////////////////////
-// Display Awards information 
-/////////////////////////////////////////////////////////////////////////////
-$query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_event, Events.id_event
-          FROM Persons, Persons_Awards, Awards, Kingdoms, Events
-          WHERE Persons.id_person = Persons_Awards.id_person
-         AND Persons_Awards.id_award = Awards.id_award
-         AND Awards.id_kingdom = Kingdoms.id_kingdom
-         AND Persons_Awards.id_event = Events.id_event 
-         AND Persons.id_person = $id_person order by date_award";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
-echo "<table class='table table-condensed table-bordered'>
-<thead><td class='text-left'><strong>Award</strong></td>
-<td class='text-left'><strong>Event</strong></td>
-<td class='text-left'><strong>Date</strong></td></thead>";
-while ($row = mysqli_fetch_assoc($result))
-  {extract($row);
-// echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
-  echo "<tr>";
-  echo "<td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>";
-  if ($id_event > 0){
-      echo "<td class='text-left'>"
-      . "<a href='event.php?id=$id_event'>$name_event</a>"
-      . "</td>";
-  } else {
-      echo "<td></td>";
-  }
-  echo "<td class='text-left'>$date_award</td>";
-  echo "</tr>";
-};
-echo "</table>";
-echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
+
+echo "</div></div>"; //close both column and row divs
+echo "<div class='row'>";
+echo "<div class='col-md-12'>";
 echo "<hr><p>Browse by Name:</p><p>";
 include "alpha.php"; // includes the A-Z link list
 mysqli_close ($cxn); /* close the db connection */
 echo "<hr/>";
-
+echo "</div>";
+echo "<div class='row'>";
+echo "<div class='col-md-12'>";
 // If the submit button was pressed, handle the email.
 if (isset($_POST["msgSubmit"])) {
     //TODO: Need to filter these fields carefully.
@@ -232,6 +265,7 @@ if (isset($_POST["msgSubmit"])) {
        echo "Error with setting up email.";
    }
 }
+echo "</div></div>"; //close row and col divs
 
 
 ?>
