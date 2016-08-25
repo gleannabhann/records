@@ -38,7 +38,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     echo "<br>".button_link("./edit_person.php?id=$id_person",
                             "Edit $name_person's record");
     }
-    echo "<br/><a href='#awards'>Skip to Awards</a>";
+    echo "<br/><a href='#combat'>Skip to Combat</a> | <a href='#awards'>Skip to Awards</a>";
     echo "</div>"; //close page header div
 };
 
@@ -47,6 +47,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 /////////////////////////////////////////////////////////////////////////////
 
 echo "<div class='row'>"; //open new row for this content
+echo "<div class='col-md-12'>";
 $q_device = "SELECT type_armorial, fname_armorial, ftype_armorial as ftype, image_armorial as image "
         . "FROM Persons_Armorials, Armorials "
         . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial "
@@ -58,6 +59,11 @@ if (DEBUG) {
 $result = mysqli_query($cxn, $q_device)
     or die ("Couldn't execute device Query");
   $num_rows = mysqli_num_rows($result);
+  if ($num_rows > 0) {
+    echo "<div class='panel panel-default' height='100%'>";
+    echo "<div class='panel-heading'>Device and Badges</div>";
+    echo "<div class='panel-body'>";
+  }
 while ($row = mysqli_fetch_assoc($result)) {
     extract($row);
     switch ($type_armorial) {
@@ -91,43 +97,16 @@ while ($row = mysqli_fetch_assoc($result)) {
             break;
     }
 }
-echo "</div>"; //close row div
-// insert horizontal rule to break up sections
-echo "<div class='row'><hr width='75%'/></div>";
-echo "<div class='row'>";
-echo "<div class='col-md-6'>";
-/////////////////////////////////////////////////////////////////////////////
-// Display Awards information
-/////////////////////////////////////////////////////////////////////////////
-$query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_event, Events.id_event
-          FROM Persons, Persons_Awards, Awards, Kingdoms, Events
-          WHERE Persons.id_person = Persons_Awards.id_person
-         AND Persons_Awards.id_award = Awards.id_award
-         AND Awards.id_kingdom = Kingdoms.id_kingdom
-         AND Persons_Awards.id_event = Events.id_event
-         AND Persons.id_person = $id_person order by date_award";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
-echo "<table class='table table-condensed table-bordered'>
-<thead><td class='text-left'><strong><a name='awards'>Award</a></strong></td>
-<td class='text-left'><strong>Event</strong></td>
-<td class='text-left'><strong>Date</strong></td></thead>";
-while ($row = mysqli_fetch_assoc($result))
-  {extract($row);
-// echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
-  echo "<tr>";
-  echo "<td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>";
-  if ($id_event > 0){
-      echo "<td class='text-left'>"
-      . "<a href='event.php?id=$id_event'>$name_event</a>"
-      . "</td>";
-  } else {
-      echo "<td></td>";
-  }
-  echo "<td class='text-left'>$date_award</td>";
-  echo "</tr>";
-};
-echo "</table>";
-echo "</div>"; //close the column div
+if ($num_rows > 0) {
+  echo "</div></div>"; //close panel divs
+}
+
+echo "</div></div>"; //close column and row divs
+
+
+echo "<div class='row' height='100%'>";
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Display Combat information
@@ -135,6 +114,9 @@ echo "</div>"; //close the column div
 
 
   echo "<div class='col-md-6'>";
+  echo "<div class='panel panel-default' height='100%'>";
+  echo "<div class='panel-heading'><a name='combat'>Combat Information</a></div>";
+  echo "<div class='panel-body'>";
 
 $query = "SELECT waiver_person, youth_person, birthdate_person
             FROM Persons
@@ -221,8 +203,52 @@ if ($matches > 0) {
        echo "<br>";
     }
     echo "<br>";
+    echo "</div></div>"; // close panel divs
+echo "</div>"; //close column div
 
-echo "</div></div>"; //close both column and row divs
+/////////////////////////////////////////////////////////////////////////////
+// Display Awards information
+/////////////////////////////////////////////////////////////////////////////
+echo "<div class='col-md-6'>";
+echo "<div class='panel panel-default' height='100%'>";
+echo "<div class='panel-heading'><a name='awards'>Awards</a></div>";
+echo "<div class='panel-body'>";
+$query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_event, Events.id_event
+          FROM Persons, Persons_Awards, Awards, Kingdoms, Events
+          WHERE Persons.id_person = Persons_Awards.id_person
+         AND Persons_Awards.id_award = Awards.id_award
+         AND Awards.id_kingdom = Kingdoms.id_kingdom
+         AND Persons_Awards.id_event = Events.id_event
+         AND Persons.id_person = $id_person order by date_award";
+$result = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
+echo "<table class='table table-condensed table-bordered'>
+<thead><td class='text-left'><strong>Award</strong></td>
+<td class='text-left'><strong>Event</strong></td>
+<td class='text-left'><strong>Date</strong></td></thead>";
+while ($row = mysqli_fetch_assoc($result))
+  {extract($row);
+// echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
+  echo "<tr>";
+  echo "<td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>";
+  if ($id_event > 0){
+      echo "<td class='text-left'>"
+      . "<a href='event.php?id=$id_event'>$name_event</a>"
+      . "</td>";
+  } else {
+      echo "<td></td>";
+  }
+  echo "<td class='text-left'>$date_award</td>";
+  echo "</tr>";
+};
+echo "</table>";
+echo "</div></div>"; // close the panel divs
+echo "</div></div>"; // close the column and row divs
+
+/////////////////////////////////////////////////////////////////////////////
+// Alpha browse and feedback form
+/////////////////////////////////////////////////////////////////////////////
+
+
 echo "<div class='row'>";
 echo "<div class='col-md-12'>";
 echo "<hr><p>Browse by Name:</p><p>";
