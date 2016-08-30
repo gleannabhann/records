@@ -105,11 +105,13 @@ while ($row = mysqli_fetch_assoc($result)) {
         case "badge" :
             echo "<div class='col-md-3 col-sm-3'>";
             display_image($image, $ftype, 100, $blazon, $blazon);
+            echo "<br/>Personal Badge";
             echo "</div>";
             break;
         case "household" :
             echo "<div class='col-md-3 col-sm-3'>";
-            display_image($image, $ftype, 75, $blazon, $blazon);
+            display_image($image, $ftype, 100, $blazon, $blazon);
+            echo "<br/>Household Badge";
             echo "</div>";
             break;
     }
