@@ -67,8 +67,9 @@ $result = mysqli_query($cxn, $q_device)
 //////////////////////////////////////////////////////
 // case: member has no device, but has an associated badge
 /////////////////////////////////////////////////////
-  $all_vars = mysqli_fetch_all($result);
-  if ($num_rows > 0 && $all_vars[0][0] != "device") {
+  $first_row = mysqli_fetch_assoc($result);
+
+  if ($num_rows > 0 && $first_row['type_armorial'] != "device") {
     echo "<div class='row'><div class='col-md-8'><div class='panel panel-default><div class='panel-heading'>";
     if ($num_rows == 1) {
       echo $name_person . "'s Badge";
