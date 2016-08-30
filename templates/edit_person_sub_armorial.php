@@ -98,6 +98,7 @@ if ($search_filters=="") {
             $q_new=$q_new. " id_armorial = $filter OR ";
         } else {
             $q_new = $q_new . " blazon_armorial like '%$filter%' OR ";
+            $q_new = $q_new . " fname_armorial like '%$filter%' OR ";
         }
     } 
     $q_new = $q_new . " ABS(TIMESTAMPDIFF(MINUTE,NOW(),timestamp_armorial)) < 15) ";
@@ -109,6 +110,7 @@ $new_links = mysqli_query ($cxn, $q_new)
         or die ("Couldn't execute query to find existing links");
 
 echo form_subtitle("Potential new links based on seach filters:");
+echo form_subsubtitle("(Also includes all files uploaded in last 15 minutes)");
 echo "<table class='table table-condensed table-bordered'>";
 echo "<thead>"
         . "<td>Thumbnail</td>"
