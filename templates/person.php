@@ -48,7 +48,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 echo "<div class='row'>"; //open new row for this content
 echo "<div class='col-md-12'>";
-$q_device = "SELECT type_armorial, fname_armorial, ftype_armorial as ftype, image_armorial as image "
+$q_device = "SELECT type_armorial, fname_armorial, ftype_armorial as ftype, image_armorial as image, blazon_armorial as blazon "
         . "FROM Persons_Armorials, Armorials "
         . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial "
         . "AND Persons_Armorials.id_person = $id_person "
@@ -59,44 +59,62 @@ if (DEBUG) {
 $result = mysqli_query($cxn, $q_device)
     or die ("Couldn't execute device Query");
   $num_rows = mysqli_num_rows($result);
+
   if ($num_rows > 0) {
-    echo "<div class='panel panel-default' height='100%'>";
-    echo "<div class='panel-heading'>Device and Badges</div>";
+    echo "<h2 class='text-center'>Armorial</h2>";
+  }
+
+//////////////////////////////////////////////////////
+// case: member has no device, but has an associated badge
+/////////////////////////////////////////////////////
+  $all_vars = mysqli_fetch_all($result);
+  if ($num_rows > 0 && $all_vars[0][0] != "device") {
+    echo "<div class='row'><div class='col-md-8'><div class='panel panel-default><div class='panel-heading'>";
+    if ($num_rows == 1) {
+      echo $name_person . "'s Badge";
+    }
+    else echo $name_person . "'s Badges";
+    echo "</div>"; // close the panel header
     echo "<div class='panel-body'>";
   }
+
+mysqli_data_seek($result, 0);
+// otherwise, continue with iterating over all rows
 while ($row = mysqli_fetch_assoc($result)) {
     extract($row);
+
     switch ($type_armorial) {
         case "device" :
-            if ($num_rows == 1) {
-              echo "<div class='col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4'>";
+            echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
+            echo "<div class='panel panel-default' height='100%'>";
+            echo "<div class='panel-heading'>". $name_person."'s Device</div>";
+            echo "<div class='panel-body'>";
+            display_image($image, $ftype, 150, $blazon, $blazon);
+            echo "</div></div></div></div>"; // close panel-body, panel, column, row
+            // if the member also has at least one badge associated, set up the badges row and panel
+            if ($num_rows > 1) {
+              echo "<div class='row'><div class='col-md-8 col-md-offset-2'><div class='panel panel-default'><div class='panel-heading'>";
+              if ($num_rows == 2) {
+                echo $name_person . "'s Badge";
+              }
+              else echo $name_person . "'s Badges";
+              echo "</div>"; // close the panel header
+              echo "<div class='panel-body'>"; // open the panel body
             }
-            elseif ($num_rows == 2) {
-              echo "<div class='col-md-3 col-md-offset-4 col-sm-3 col-sm-offset-4'>";
-            }
-            elseif ($num_rows == 3) {
-              echo "<div class='col-md-3 col-md-offset-3 col-sm-3 col-sm-offset-3'>";
-            }
-            elseif ($num_rows == 4) {
-              echo "<div class='col-md-3 col-md-offset-2 col-sm-3 col-sm-offset-2'>";
-            }
-            else {
-              echo "<div class='col-md-3 col-md-offset-1 col-sm-3 col-sm-offset-1'>";}
-            display_image($image, $ftype, 150);
-            echo "</div>";
             break;
         case "badge" :
-            echo "<div class='col-md-2'>";
-            display_image($image, $ftype, 100);
+            echo "<div class='col-md-3 col-sm-3'>";
+            display_image($image, $ftype, 100, $blazon, $blazon);
             echo "</div>";
             break;
         case "household" :
-            echo "<div class='col-md-2'>";
-            display_image($image, $ftype, 75);
+            echo "<div class='col-md-3 col-sm-3'>";
+            display_image($image, $ftype, 75, $blazon, $blazon);
             echo "</div>";
             break;
     }
 }
+
 if ($num_rows > 0) {
   echo "</div></div>"; //close panel divs
 }
@@ -106,7 +124,7 @@ echo "</div></div>"; //close column and row divs
 
 echo "<div class='row' height='100%'>";
 
-
+  echo "<h2 class='text-center'>Combat and Award Information</h2>";
 
 /////////////////////////////////////////////////////////////////////////////
 // Display Combat information
