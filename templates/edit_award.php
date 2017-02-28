@@ -60,13 +60,20 @@ echo '<input type="hidden" name="name" value="'.$search.'">';
 echo "<table class='table table-condensed table-bordered'>";
 
 $varname="name_award";
-if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
+if (isset($_POST[$varname]) && is_string($_POST[$varname])) 
+{
+    //echo "Using POST value for name_award<p>";
     $name_award=$_POST[$varname];
+    $name_award = str_replace("'", "&#039;", $name_award);
 } else {
+    //echo "Using database value for name_award<p>";
     $name_award=$award[$varname];
 }
+if (DEBUG) {
+    echo form_title("Award name is #".$name_award."#");
+}
 echo "<tr><td class='text-right'>Award Name</td>"
-    . "<td><input type='text' name='$name_award' value='$name_award'"
+    . "<td><input type='text' name='name_award' value='$name_award'"
     . "</td></tr>";
 
 $varname="id_group";
@@ -75,6 +82,7 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $id_group=$award[$varname];
 }
+
 echo "<tr><td class='text-right'>Group of Award (if any)</td>";
 echo '<td><select name="id_group" ><option value="-1"></option>';
 while ($row= mysqli_fetch_array($groups)) {
@@ -121,7 +129,12 @@ echo '</form>';
 
 // Now let's update the database if and only if the for was posted
 if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Herald")>=3)){
-    $update="UPDATE Awards SET name_award='$name_award'";
+    // Need to replace any apostrophes in the new name
+    $name_award = str_replace("'", "&#039;", $name_award);
+    if (DEBUG) {
+        echo "Updated name of award is: $name_award<p>";
+    }
+    $update="UPDATE Awards SET name_award='".$name_award."'";
     
     if ($id_group!= $award["id_group"]){
         $update=$update.", id_group=$id_group";
@@ -133,7 +146,9 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Herald")>=3)){
         $update=$update.", id_rank=$id_rank";
     }
     $update=$update." WHERE id_award=$id_award";
-    //echo "Update Query is $update";
+    if (DEBUG) {
+       echo "Update query is:<br>$update<p>";
+    } 
     $result=update_query($cxn, $update);
     if ($result !== 1) {
         echo "Error updating record: " . mysqli_error($cxn);

@@ -96,6 +96,55 @@ echo '<div class="form-group"><label for='.$varname.'>Name of Site:</label><inpu
      . $name_site.'" required>'
      . '<br/>This field is required</div>'."\n";
 /*****************************************************************************/
+$varname="kingdom_level_site";
+if (isset($_POST['id'])) { //
+    if (isset($_POST[$varname])) { $kingdom_level_site = 'Yes';}
+    else {$kingdom_level_site='No';}
+    //$active_site=$_POST[$varname];
+} else {
+    $kingdom_level_site=$site[$varname];
+}
+echo '<div class="form-group"><label for='.$varname.'>Kingdom Level Event Site?</label><input type="checkbox" '
+     . 'name="'.$varname.'" value="Yes"';
+if ($kingdom_level_site == 'Yes') { echo ' checked="checked" </div>';}
+
+/*****************************************************************************/
+$varname="verify_phone_site";
+if (isset($_POST['id'])) { //
+    if (isset($_POST[$varname])) { $verify_phone_site = $_POST[$varname];}
+    else {$verify_phone_site = NULL;}
+} else {
+    $verify_phone_site=$site[$varname];
+}
+
+echo '<div class="form-group"><label for='.$varname.'>Verified by Phone?</label>'
+        . '<input type="date" class="date" name="'.$varname.'" value="'
+        . $verify_phone_site . '"> (format if no datepicker: yyyy-mm-dd)</div>';
+/*****************************************************************************/
+$varname="verify_web_site";
+if (isset($_POST['id'])) { //
+    if (isset($_POST[$varname])) { $verify_web_site = $_POST[$varname];}
+    else {$verify_web_site = NULL;}
+} else {
+    $verify_web_site=$site[$varname];
+}
+
+echo '<div class="form-group"><label for='.$varname.'>Verified the Website?</label>'
+        . '<input type="date" class="date" name="'.$varname.'" value="'
+        . $verify_web_site . '"> (format if no datepicker: yyyy-mm-dd)</div>';
+/*****************************************************************************/
+$varname="verify_visit_site";
+if (isset($_POST['id'])) { //
+    if (isset($_POST[$varname])) { $verify_visit_site = $_POST[$varname];}
+    else {$verify_visit_site = NULL;}
+} else {
+    $verify_visit_site=$site[$varname];
+}
+
+echo '<div class="form-group"><label for='.$varname.'>Verified in Person?</label>'
+        . '<input type="date" class="date" name="'.$varname.'" value="'
+        . $verify_visit_site . '"> (format if no datepicker: yyyy-mm-dd)</div>';
+/*****************************************************************************/
 $varname="url_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
     $url_site=$_POST[$varname];
@@ -127,7 +176,7 @@ if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
 } else {
     $capacity_site=$site[$varname];
 }
-echo '<div class="form-group"><label for='.$varname.'>Capacity:</label><input type="number" '
+echo '<div class="form-group"><label for='.$varname.'>Capacity:</label><input type="text" '
      . 'name="'.$varname.'" value="'
      . $capacity_site.'"> <br/>Maximum number of people permitted</div>'."\n";
 /*****************************************************************************/
@@ -316,10 +365,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     if ($facilities_site!= $site["facilities_site"])
         {$update=$update . ", facilities_site='" . mysqli_real_escape_string($cxn,$facilities_site) ."' ";}
     if ($capacity_site !=$site["capacity_site"])
-        {if ($capacity_site > 0)
-            {$update=$update . ", capacity_site=" . $capacity_site ." ";}
-            else {$update=$update . ", capacity_site=NULL ";}
-        }
+        {$update=$update . ", capacity_site='" . mysqli_real_escape_string($cxn,$capacity_site) ."' ";}
     if ($rates_site != $site["rates_site"])
         {$update=$update . ", rates_site='" . mysqli_real_escape_string($cxn,$rates_site) ."' ";}
     if ($area_site != $site["area_site"])
@@ -346,6 +392,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
         {$update=$update . ", zip_site='" . mysqli_real_escape_string($cxn,$zip_site) ."' ";}
     if ($active_site!= $site["active_site"])
         {$update=$update . ", active_site=$active_site ";}
+    if ($kingdom_level_site != $site["kingdom_level_site"]) {
+        $update=$update.", kingdom_level_site='$kingdom_level_site' ";
+    }
+    if ($verify_phone_site != $site["verify_phone_site"]) {
+        $update=$update . ", verify_phone_site='$verify_phone_site' ";
+    }
+    if ($verify_web_site != $site["verify_web_site"]) {
+        $update=$update . ", verify_web_site='$verify_web_site' ";
+    }
+    if ($verify_visit_site != $site["verify_visit_site"]) {
+        $update=$update . ", verify_visit_site='$verify_visit_site' ";
+    }
     $update=$update. ", verified_site=curdate() WHERE id_site=" .$id_site;
 
     /* Testing code
@@ -355,6 +413,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
             ." and from query is ".$site["active_site"]."<p>";
 
     */
+    if (DEBUG) {
+        echo "Update query is:<br>$update<p>";
+    }
     $result=update_query($cxn, $update);
     if ($result !== 1) {
       echo "Error updating record: " . mysqli_error($cxn);

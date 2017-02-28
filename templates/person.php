@@ -27,23 +27,117 @@ if (DEBUG) {
 }
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
-while ($row = mysqli_fetch_assoc($result))
-  {extract($row);
-  echo "<div class='page-header'>".form_title($name_person);
-  echo form_subtitle("Member of ".live_link("list.php?group=$id_group", "$name_group"));
-  include("../templates/warning.php"); // includes the warning text about paper precedence
-  echo "</small>";
-  if ((permissions("Herald")>= 3) or (permissions("Marshal")>=3)) {
+while ($row = mysqli_fetch_assoc($result)) {
+    extract($row);
+    echo "<div class='page-header'>".form_title($name_person);
+    echo form_subtitle("Member of ".live_link("list.php?group=$id_group", "$name_group"));
+    include("../templates/warning.php"); // includes the warning text about paper precedence
+    echo "</small>";
+    if ((permissions("Herald")>= 3) or (permissions("Marshal")>=3)) {
       // TODO: Make this link more visible?
-    echo "<br>".button_link("./edit_person.php?id=$id_person", 
+    echo "<br>".button_link("./edit_person.php?id=$id_person",
                             "Edit $name_person's record");
-  }
-  echo "</div>";
+    }
+    echo "<br/><a href='#combat'>Skip to Combat</a> | <a href='#awards'>Skip to Awards</a>";
+    echo "</div>"; //close page header div
 };
-echo "
-<div class='row'>
 
-  <div class='col-md-8 col-md-offset-2'>";
+/////////////////////////////////////////////////////////////////////////////
+// Display Armorial Devices
+/////////////////////////////////////////////////////////////////////////////
+
+echo "<div class='row'>"; //open new row for this content
+echo "<div class='col-md-12'>";
+$q_device = "SELECT type_armorial, fname_armorial, ftype_armorial as ftype, image_armorial as image, blazon_armorial as blazon "
+        . "FROM Persons_Armorials, Armorials "
+        . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial "
+        . "AND Persons_Armorials.id_person = $id_person "
+        . "ORDER BY type_armorial;";
+if (DEBUG) {
+    echo "Device query is:$q_device<p>";
+}
+$result = mysqli_query($cxn, $q_device)
+    or die ("Couldn't execute device Query");
+  $num_rows = mysqli_num_rows($result);
+
+  if ($num_rows > 0) {
+    echo "<h2 class='text-center'>Armorial</h2>";
+  }
+
+//////////////////////////////////////////////////////
+// case: member has no device, but has an associated badge
+/////////////////////////////////////////////////////
+  $first_row = mysqli_fetch_assoc($result);
+
+  if ($num_rows > 0 && $first_row['type_armorial'] != "device") {
+    echo "<div class='row'><div class='col-md-8'><div class='panel panel-default><div class='panel-heading'>";
+    if ($num_rows == 1) {
+      echo $name_person . "'s Badge";
+    }
+    else echo $name_person . "'s Badges";
+    echo "</div>"; // close the panel header
+    echo "<div class='panel-body'>";
+  }
+
+mysqli_data_seek($result, 0);
+// otherwise, continue with iterating over all rows
+while ($row = mysqli_fetch_assoc($result)) {
+    extract($row);
+
+    switch ($type_armorial) {
+        case "device" :
+            echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
+            echo "<div class='panel panel-default' height='100%'>";
+            echo "<div class='panel-heading'>". $name_person."'s Device</div>";
+            echo "<div class='panel-body'>";
+            display_image($image, $ftype, 150, $blazon, $blazon);
+            echo "</div></div></div></div>"; // close panel-body, panel, column, row
+            // if the member also has at least one badge associated, set up the badges row and panel
+            if ($num_rows > 1) {
+              echo "<div class='row'><div class='col-md-8 col-md-offset-2'><div class='panel panel-default'><div class='panel-heading'>";
+              if ($num_rows == 2) {
+                echo $name_person . "'s Badge";
+              }
+              else echo $name_person . "'s Badges";
+              echo "</div>"; // close the panel header
+              echo "<div class='panel-body'>"; // open the panel body
+            }
+            break;
+        case "badge" :
+            echo "<div class='col-md-3 col-sm-3'>";
+            display_image($image, $ftype, 100, $blazon, $blazon);
+            echo "<br/>Personal Badge";
+            echo "</div>";
+            break;
+        case "household" :
+            echo "<div class='col-md-3 col-sm-3'>";
+            display_image($image, $ftype, 100, $blazon, $blazon);
+            echo "<br/>Household Badge";
+            echo "</div>";
+            break;
+    }
+}
+
+if ($num_rows > 0) {
+  echo "</div></div>"; //close panel divs
+}
+
+echo "</div></div>"; //close column and row divs
+
+
+echo "<div class='row' height='100%'>";
+
+  echo "<h2 class='text-center'>Combat and Award Information</h2>";
+
+/////////////////////////////////////////////////////////////////////////////
+// Display Combat information
+/////////////////////////////////////////////////////////////////////////////
+
+
+  echo "<div class='col-md-6'>";
+  echo "<div class='panel panel-default' height='100%'>";
+  echo "<div class='panel-heading'><a name='combat'>Combat Information</a></div>";
+  echo "<div class='panel-body'>";
 
 $query = "SELECT waiver_person, youth_person, birthdate_person
             FROM Persons
@@ -65,9 +159,10 @@ if ($matches > 0) {
 //if ($waiver_person != "No") { // No combat waiver?  No fight.
 // Person may be authorized as a marshal without a combat waiver.
 /* query: select a person's (non-expired) authorizations in the database */
-    $query = "SELECT name_combat, name_auth, expire_authorize 
+    $query = "SELECT name_combat, name_auth, expire_authorize
                 FROM Persons_Authorizations, Authorizations, Combat, Persons_CombatCards
-                WHERE Persons_CombatCards.id_person=$id_person 
+                WHERE Persons_CombatCards.id_person=$id_person
+                AND Persons_CombatCards.active_authorize='Yes'
                 AND Persons_Authorizations.id_person=$id_person
                 AND curdate()<= expire_authorize
                 AND Authorizations.id_combat=Combat.id_combat
@@ -97,22 +192,16 @@ if ($matches > 0) {
     echo "<br>";
 
     /* query: select a person's marshal warrants in the database */
-    $query = "SELECT name_combat, name_marshal, Persons_CombatCards.expire_marshal 
+    $query = "SELECT name_combat, name_marshal, Persons_CombatCards.expire_marshal
                 FROM Persons_Marshals, Marshals, Combat, Persons_CombatCards
-                WHERE Persons_CombatCards.id_person=$id_person 
+                WHERE Persons_CombatCards.id_person=$id_person
+                AND Persons_CombatCards.active_marshal='Yes'
                 AND Persons_Marshals.id_person=$id_person
                 AND curdate()<= Persons_CombatCards.expire_marshal
                 AND Marshals.id_combat=Combat.id_combat
                 AND Persons_Marshals.id_marshal=Marshals.id_marshal
                 AND Persons_CombatCards.id_combat = Combat.id_combat
                 ORDER by name_combat, Marshals.id_marshal";
-    //$query = "SELECT name_combat, name_marshal, expire_marshal
-    //          FROM Persons_Marshals, Marshals, Combat
-    //          WHERE Persons_Marshals.id_marshal = Marshals.id_marshal
-    //          AND Marshals.id_combat = Combat.id_combat
-    //          AND id_person = $id_person 
-    //          AND curdate()<= expire_marshal 
-    //          ORDER by name_combat, Marshals.id_marshal";
     if (DEBUG) {
         echo "Marshal Warrants query is:$query<p>";
     }
@@ -135,14 +224,22 @@ if ($matches > 0) {
        echo "<br>";
     }
     echo "<br>";
-//}
-/* query: select a person's awards in the database  */
+    echo "</div></div>"; // close panel divs
+echo "</div>"; //close column div
+
+/////////////////////////////////////////////////////////////////////////////
+// Display Awards information
+/////////////////////////////////////////////////////////////////////////////
+echo "<div class='col-md-6'>";
+echo "<div class='panel panel-default' height='100%'>";
+echo "<div class='panel-heading'><a name='awards'>Awards</a></div>";
+echo "<div class='panel-body'>";
 $query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_event, Events.id_event
           FROM Persons, Persons_Awards, Awards, Kingdoms, Events
           WHERE Persons.id_person = Persons_Awards.id_person
          AND Persons_Awards.id_award = Awards.id_award
          AND Awards.id_kingdom = Kingdoms.id_kingdom
-         AND Persons_Awards.id_event = Events.id_event 
+         AND Persons_Awards.id_event = Events.id_event
          AND Persons.id_person = $id_person order by date_award";
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
 echo "<table class='table table-condensed table-bordered'>
@@ -165,12 +262,23 @@ while ($row = mysqli_fetch_assoc($result))
   echo "</tr>";
 };
 echo "</table>";
-echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
+echo "</div></div>"; // close the panel divs
+echo "</div></div>"; // close the column and row divs
+
+/////////////////////////////////////////////////////////////////////////////
+// Alpha browse and feedback form
+/////////////////////////////////////////////////////////////////////////////
+
+
+echo "<div class='row'>";
+echo "<div class='col-md-12'>";
 echo "<hr><p>Browse by Name:</p><p>";
 include "alpha.php"; // includes the A-Z link list
 mysqli_close ($cxn); /* close the db connection */
 echo "<hr/>";
-
+echo "</div>";
+echo "<div class='row'>";
+echo "<div class='col-md-12'>";
 // If the submit button was pressed, handle the email.
 if (isset($_POST["msgSubmit"])) {
     //TODO: Need to filter these fields carefully.
@@ -204,6 +312,7 @@ if (isset($_POST["msgSubmit"])) {
        echo "Error with setting up email.";
    }
 }
+echo "</div></div>"; //close row and col divs
 
 
 ?>

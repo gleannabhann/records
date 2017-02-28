@@ -41,6 +41,9 @@ if ((permissions("Marshal")>=3) || (permissions("Herald")>=3)){
 //echo "Permissions for herald is ".permissions("Herald")."<br>";
 //echo "<p>".var_dump($_SESSION)."<p>";
 
+if ((permissions("Ruby")>=3)) {
+    include 'edit_person_sub_armorial.php';
+}
 // Edit authorization and warrant stuffs for person
 if (permissions("Marshal")>= 3) {
     

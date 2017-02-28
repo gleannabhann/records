@@ -79,7 +79,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
             && (is_string($_POST["phone"]))){
         $phone = sanitize_mysql($_POST["phone"]);
         $query_head = $query_head.",phone_person";
-        $query_tail = $query_tail.",$phone";
+        $query_tail = $query_tail.",'$phone'";
     }
         
     // street -> street_person
@@ -88,7 +88,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
             && (is_string($_POST["street"]))){
         $street = sanitize_mysql($_POST["street"]);
         $query_head = $query_head.",street_person";
-        $query_tail = $query_tail.",$street";
+        $query_tail = $query_tail.",'$street'";
     }
         
     // city -> city_person
@@ -97,7 +97,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
             && (is_string($_POST["city"]))){
         $city = sanitize_mysql($_POST["city"]);
         $query_head = $query_head.",city_person";
-        $query_tail = $query_tail.",$city";
+        $query_tail = $query_tail.",'$city'";
     }
         
     // state -> state_person
@@ -106,7 +106,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
             && (is_string($_POST["state"]))){
         $state = sanitize_mysql($_POST["state"]);
         $query_head = $query_head.",state_person";
-        $query_tail = $query_tail.",$state";
+        $query_tail = $query_tail.",'$state'";
     }
         
     // zip -> postcode_person
@@ -115,7 +115,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
             && (is_string($_POST["zip"]))){
         $zip = sanitize_mysql($_POST["zip"]);
         $query_head = $query_head.",postcode_person";
-        $query_tail = $query_tail.",$zip";
+        $query_tail = $query_tail.",'$zip'";
     }
         
     
@@ -133,7 +133,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
            $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
            $person=  mysqli_fetch_array($result);
            $id_person=$person["id_person"];
-           echo button_link("edit_person.php?id=$id_person", "Go To Edit Awards for $sca_name");
+           echo button_link("edit_person.php?id=$id_person", "Go To Edit Person for $sca_name");
            echo '<p>or continue adding new persons below:';
     }
 

@@ -1,0 +1,127 @@
+<?php
+/* REST API page for retrieving a list of combat marshals
+ * Retrieves public data from the db and outputs it as JSON
+ * To use, call the page in any php document, including the
+ * ID for the combat type you're retrieving using curl(); this
+ * will allow anyone to store the JSON results as a php array
+ * using json_decode(); and will further allow them to
+ * display the data in a manner of their choosing. Designed
+ * to allow other SCA websites to display current
+ * information without needing to manually
+ * update the page.
+ *
+ * To add additional API functions, either insert disambiguation
+ * testing (to see which $_GET variable is set) or create a separate
+ * page for each type of result.
+  */
+
+// configuration
+require("../includes/config.php");
+
+// establish the db connection
+$cxn = open_db_browse();
+
+// store the passed variable to a local variable after error checking
+if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
+    // We got here through an api call
+    $ic = $_GET["id"];
+
+    if ((isset($_GET['group'])) && (is_numeric($_GET['group']))) {
+        $ig = $_GET["group"];  // If this is set then only marshals from one group are listed.
+    }
+} else {
+    echo '<p>ERROR! You didn\'t supply any parameters. Here is what you can do: </p>';
+    echo '<p>To fetch marshal information about an individual, supply the individual\'s system ID number, ';
+    echo 'using the following format: <em>/api/list_marshals.php?id=n</em>, where <em>n</em> is the individual\'s system ID number.</p> ';
+    echo '<p>To fetch marshal information about a group, suppy the group\'s system ID number, ';
+    echo 'using the following format: <em>/api/list_marshals.php?group=n</em>, where <em>n</em> is the group\'s system ID number.</p>';
+    return false;
+}
+
+// initialize the array
+$combat = array();
+$col_names = array();
+$warrants = array();
+
+$ic=$_GET['id'];
+
+$q_warr = "SELECT id_marshal, name_marshal, name_combat FROM Marshals, Combat where "
+        . "Marshals.id_combat=Combat.id_combat "
+        . "AND Marshals.id_combat=$ic";
+//if (DEBUG) {echo "Warrants query: $q_warr<p>";}
+$warrs = mysqli_query ($cxn, $q_warr)
+    or die ("Couldn't execute query to find warrants to build report.");
+// If the combat id does not return any warrants at all
+if (mysqli_num_rows($warrs)<1) {
+  echo 'error';
+  return false;
+}
+
+$qlink = "SELECT concat('<a href=''../public/person.php?id=',PCC.id_person,' ''>',name_person,'</a>') "
+            . "as 'SCA Name', name_group as 'SCA Group',";
+$qnolink = "SELECT PCC.id_person, name_person "
+            . "as 'SCA Name', name_group as 'SCA Group',";
+
+$q_head = "PCC.card_marshal as 'card number', "
+        . "PCC.expire_marshal as 'expiry date' ";
+$q_body = "FROM
+   (SELECT Persons.id_person, id_person_combat_card,  name_person, name_group,
+           card_marshal, expire_marshal
+    FROM Persons_CombatCards, Persons, Groups
+    WHERE Persons_CombatCards.id_person=Persons.id_person
+    AND Persons.id_group = Groups.id_group ";
+if (isset($ig)) {
+    $q_body = $q_body . " AND Persons.id_group=$ig ";
+}
+$q_body = $q_body ."AND Persons_CombatCards.expire_marshal >= curdate()
+    AND id_combat=$ic) AS PCC
+           LEFT JOIN
+    (SELECT COUNT(*) as num_count, id_person
+    FROM Persons_Marshals, Marshals
+    WHERE Persons_Marshals.id_marshal=Marshals.id_marshal
+    AND Marshals.id_combat=$ic
+    GROUP BY id_person) AS PCount
+    ON PCount.id_person = PCC.id_person ";
+    // Now we have to add the individual warrants
+    while ($warr=  mysqli_fetch_assoc($warrs)) {
+        extract($warr);
+        $q_head = $q_head . ", if (PA$id_marshal.id_person IS NULL,'No', 'Yes') as '$name_marshal' ";
+        $q_body = $q_body .
+                "LEFT JOIN
+                   (SELECT id_person
+                    FROM Persons_Marshals
+                    WHERE Persons_Marshals.id_marshal=$id_marshal) AS PA$id_marshal
+                    ON PA$id_marshal.id_person=PCC.id_person ";
+    }
+$query = $qnolink . $q_head . $q_body . "WHERE num_count is not NULL ORDER BY name_person";
+//if (DEBUG) { echo "Warrants Query is<p> $query";}
+
+// This part borrowed from report_showtable, minus ability to download file
+$data = mysqli_query ($cxn, $query)
+    or die ("Couldn't execute query to build table.");
+// Displays a table with sortable columns based on the data stored in $data.
+
+// Setting the combat name
+$combat["type_combat"] = $name_combat;
+
+// Setting the names of the columns
+//$fields = mysqli_fetch_fields($data);
+//foreach ($fields as $field) {
+//    $col_names[] = $field->name;
+//}
+//$combat["col_names"] = $col_names;
+
+// Setting the personal information
+while ($row = mysqli_fetch_assoc($data)) {
+       $warrants[] = array($row);
+}
+
+$combat["warrants"] = $warrants;
+
+//print_r($combat);
+
+//output the data as JSON
+echo json_encode($combat);
+
+
+?>

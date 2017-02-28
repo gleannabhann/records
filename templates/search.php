@@ -8,6 +8,7 @@
 $cxn = open_db_browse();
 // Build links to the list beginning with the appropriate initial, which is returned as $Initial
 $part_name = $_GET["name"];
+$part_name = str_replace("'", "&#039;", $part_name);
 if (ISSET($_GET["k_id"])) {
    $k_id = $_GET["k_id"];
 } else {
@@ -42,6 +43,9 @@ else {
             AND name_person like '%$part_name%' "
           . "ORDER BY name_person";
       };
+if (DEBUG) {
+    echo "Person search query is:<br>$query<p>";
+}
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 $matches = $result->num_rows;
 echo "$matches people matches";
@@ -101,7 +105,9 @@ echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and
 /*#######################################################################################*/
 echo " <div class='container'><div class='row'><div class='col-md-8 col-md-offset-2'>";
 echo form_title("<a name='groups'>Groups matching <i>$part_name</i></a><small><a href='#top'> (Return to Top)</a></small>");
-echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
+if (permissions("Herald")>=3){
+    echo button_link("./add_group.php?part_name=".$part_name, "Add A New Group");
+}echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1)
 {
   $query = "SELECT id_group, name_group, name_kingdom FROM Groups, Kingdoms
@@ -115,7 +121,7 @@ else {
             AND Groups.id_kingdom = Kingdoms.id_kingdom
             AND Groups.id_kingdom = $k_id "
           . "ORDER BY name_group";
-      };
+      }
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 $matches = $result->num_rows;
 echo "$matches group matches";
@@ -124,8 +130,14 @@ while ($row = mysqli_fetch_assoc($result)) {
     $Name = $row['name_group'];
     $ID = $row['id_group'];
     $KName = $row['name_kingdom'];
-    $link = "<li class='list-group-item text-left'><a href='./list.php?group=$ID'>$Name - $KName</a></li>";
-//    $link = "<li> $Name </li>";
+    if (permissions("Herald")>=3){
+        $link = "<li class='list-group-item text-left'>"
+                . "<a href='./edit_group.php?id=$ID&name=$part_name'>"
+                . "$Name - $KName </a></li>";
+    } else {
+        $link = "<li class='list-group-item text-left'>"
+                . "<a href='./list.php?group=$ID'>$Name - $KName</a></li>";
+    }
     echo "$link";
 }
 echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs

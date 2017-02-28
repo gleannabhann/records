@@ -6,7 +6,9 @@
 
 
 
-if ((!permissions("Herald")>=1) && (!permissions("Marshal")>=1)) {
+if ((!permissions("Herald")>=1) 
+        && (!permissions("Marshal")>=1) 
+        && (!permissions("Sites")>=1)) {
     echo '<p class="error"> This page has been accessed in error...</p>';
     exit_with_footer();
 }
@@ -19,6 +21,10 @@ if (permissions("Herald")>= 1){
 
 if (permissions("Marshal")>= 1){
    include 'report_sub_marshal.php';
+}
+
+if (permissions("Sites")>= 1){
+   include 'report_sub_sites.php';
 }
 
 mysqli_close ($cxn); /* close the db connection */

@@ -20,10 +20,13 @@ if (is_numeric($_GET["id"]) && $_GET["id"] > 0)
 $cxn = open_db_browse();
 $query = "SELECT id_site, name_site, street_site, city_site, state_site, zip_site,"
         . "facilities_site, capacity_site, rates_site, contact_site, "
-        . "url_site, lat_site, long_site, area_site, active_site "
+        . "url_site, lat_site, long_site, area_site, active_site, "
+        . "kingdom_level_site, verify_phone_site, verify_web_site, verify_visit_site "
         . "FROM Sites "
         . "WHERE id_site= $id_site";
-
+if (DEBUG) {
+    echo "Site query is:<br>$query<p>";
+}
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query. Query was: ". $query);
 $details = mysqli_fetch_array($result);
@@ -43,6 +46,19 @@ $lat_site = $details["lat_site"];
 $long_site = $details["long_site"];
 $area_site = $details["area_site"];
 $active_site = $details["active_site"];
+$kingdom_level_site = $details["kingdom_level_site"];
+if ($details["verify_phone_site"] != NULL) {
+    $verify_phone_site = $details["verify_phone_site"];
+} else { $verify_phone_site = "Not verified yet."; }
+
+if ($details["verify_web_site"] != NULL) {
+    $verify_web_site = $details["verify_web_site"];
+} else { $verify_web_site = "Not verified yet."; }
+
+if ($details["verify_visit_site"] != NULL) {
+    $verify_visit_site = $details["verify_visit_site"];
+} else { $verify_visit_site = "Not verified yet."; }
+
 
 // check to see if lat/lng are absent, and if so, geocode the city/state and
 // temp store into $lat_site and $long_site so you get a general location pin
@@ -132,10 +148,14 @@ echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
 
         //warn the user if the site is inactive
   if (!$active_site) {
-
-          echo "<h2>Caution! This site is inactive!</h2>";
-      }
-
+    echo "<h2>Caution! This site is inactive!</h2>";
+  }
+  echo "<p class='text-left'><strong>Suitable for Kingdom Level Events: </strong>$kingdom_level_site</p>";
+  echo "<p class='text-left'><strong>Last Verified</strong> <br>"
+        . "<strong>By phone:</strong> $verify_phone_site <br> "
+          . "<strong>Web:</strong> $verify_web_site <br> "
+          . "<strong>In person visit:</strong> $verify_visit_site <br>"
+          . "</p>";
   if ($url_site !="") echo "<p class='text-left'><strong>Website: </strong><a href=\"$url_site\">$name_site</a></p>";
 
   //list the available facilities

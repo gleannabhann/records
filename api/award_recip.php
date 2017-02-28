@@ -1,14 +1,15 @@
 <?php
-/* REST API page for retrieving a person's awards
+/* REST API page for retrieving a list of individuals who
+ * have received a specified award.
  * Retrieves public data from the db and outputs it as JSON
  * To use, call the page in any php document, including the
- * ID for the person you're retrieving using curl(); this
+ * ID for the award you're retrieving using curl(); this
  * will allow anyone to store the JSON results as a php array
  * using json_decode(); and will further allow them to
  * display the data in a manner of their choosing. Designed
- * to allow baronial websites to display current award
- * information for their members without needing to manually
- * update the page.
+ * to allow baronial websites to display a list of award
+ * recipients or order members without needing to update
+ * their site.
  *
  * To add additional API functions, either insert disambiguation
  * testing (to see which $_GET variable is set) or create a separate
@@ -25,50 +26,50 @@ $cxn = open_db_browse();
 if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
     // We got here through a search link or directly link on person.php
     // echo "Arrived from person.php";
-    $id_person = $_GET["id"];
+    $id_award = $_GET["id"];
 } else {
   echo '<p>ERROR! You didn\'t supply any parameters. Here is what you can do: </p>';
-  echo '<p>To fetch award information about an individual, supply the individual\'s system ID number, ';
-  echo 'using the following format: <em>/api/person_awards.php?id=n</em>, where <em>n</em> is the individual\'s system ID number.</p> ';
+  echo '<p>To fetch a list of award recipients, supply the award\'s system ID number, ';
+  echo 'using the following format: <em>/api/award_recip.php?id=n</em>, where <em>n</em> is the award\'s system ID number.</p> ';
     return false;
 }
 
 // initialize the array
-$person = array();
-$awards = array();
+$persons = array();
+$award = array();
 
-//fetch the person's name
-$query = "SELECT name_person, name_group, Groups.id_group "
-        . "FROM Persons, Groups "
-        . "WHERE Persons.id_person = $id_person "
-        . "AND Persons.id_group=Groups.id_group";
+//fetch the award's name
+$query = "SELECT name_award, name_group, Groups.id_group "
+        . "FROM Awards, Groups "
+        . "WHERE Awards.id_award = $id_award "
+        . "AND Awards.id_group=Groups.id_group";
 
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query");
 $row = mysqli_fetch_assoc($result);
-$person["person"] = $row;
+$award["award"] = $row;
 
-/* query: select a person's awards in the database  */
-$query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_event, Events.id_event
+/* query: select an award's recipients in the database  */
+$query = "SELECT  Persons.id_person, name_person, date_award,name_kingdom, name_event, Events.id_event
           FROM Persons, Persons_Awards, Awards, Kingdoms, Events
-          WHERE Persons.id_person = Persons_Awards.id_person
-         AND Persons_Awards.id_award = Awards.id_award
+          WHERE Persons_Awards.id_person = Persons.id_person
+         AND Awards.id_award = Persons_Awards.id_award
          AND Awards.id_kingdom = Kingdoms.id_kingdom
          AND Persons_Awards.id_event = Events.id_event
-         AND Persons.id_person = $id_person order by date_award";
+         AND Awards.id_award = $id_award order by date_award";
 $result = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
 while ($row = mysqli_fetch_assoc($result))
   {
   extract($row);
-  $awards[] = $row;
+  $persons[] = $row;
 
   }
 
 
-$person["awards"] = $awards;
+$award["persons"] = $persons;
 
 //output the data as JSON
-echo json_encode($person);
+echo json_encode($award);
 
 
 ?>
