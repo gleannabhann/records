@@ -23,18 +23,14 @@ $cxn = open_db_browse();
 
 // store the passed variable to a local variable after error checking
 if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
-    // We got here through an api call
+    // We got here through an api call 
     $ic = $_GET["id"];
 
     if ((isset($_GET['group'])) && (is_numeric($_GET['group']))) {
         $ig = $_GET["group"];  // If this is set then only marshals from one group are listed.
     }
 } else {
-    echo '<p>ERROR! You didn\'t supply any parameters. Here is what you can do: </p>';
-    echo '<p>To fetch marshal information about an individual, supply the individual\'s system ID number, ';
-    echo 'using the following format: <em>/api/list_marshals.php?id=n</em>, where <em>n</em> is the individual\'s system ID number.</p> ';
-    echo '<p>To fetch marshal information about a group, suppy the group\'s system ID number, ';
-    echo 'using the following format: <em>/api/list_marshals.php?group=n</em>, where <em>n</em> is the group\'s system ID number.</p>';
+    echo 'error';
     return false;
 }
 
@@ -107,7 +103,7 @@ $combat["type_combat"] = $name_combat;
 // Setting the names of the columns
 //$fields = mysqli_fetch_fields($data);
 //foreach ($fields as $field) {
-//    $col_names[] = $field->name;
+//    $col_names[] = $field->name;    
 //}
 //$combat["col_names"] = $col_names;
 

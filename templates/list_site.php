@@ -24,9 +24,11 @@ echo "<div id='row'><div id='map' class='col-md-10 col-md-offset-1'></div></div>
 echo "<div class='row'><div class='col-md-10 col-md-offset-1'><hr/>";
 
   if (permissions("Sites") >= 3){
-
       echo '<p>'.button_link("./add_site.php","Add a New Site").'</p>';
-  };
+  } else {
+      echo '<p>'.button_link("./submit_campsite_report.php",
+                            "Report a New Site").'</p>';
+  }
 echo "<table class='table table-bordered'>
 <thead>
 <td class='text-left'><strong>Site</strong></td>
