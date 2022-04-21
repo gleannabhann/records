@@ -28,7 +28,8 @@ $query_auths = "SELECT * FROM "
         . "LEFT JOIN "
         . "(SELECT id_auth as ia, id_person_auth "
         . "FROM Persons_Authorizations where id_person=$id_person) AS PA "
-        . "on AC.id_auth = PA.ia";
+        . "on AC.id_auth = PA.ia "
+        . "order by name_combat,name_auth";
 if (DEBUG) {
     echo "Per Category known facts:<br>$query_comb<p>";
     echo "Known authorizations: <br>$query_auths<p>";

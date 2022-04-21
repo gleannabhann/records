@@ -26,7 +26,8 @@ $query_marshals = "SELECT * FROM "
         . "LEFT JOIN "
         . "(SELECT id_marshal as ia, id_person_marshal "
         . "FROM Persons_Marshals where id_person=$id_person) AS PA "
-        . "on AC.id_marshal = PA.ia";
+        . "on AC.id_marshal = PA.ia "
+        . "order by name_combat, name_marshal";
 if (DEBUG) {
     echo "Per Category known facts:<br>$query_comb<p>";
     echo "Known Marshal's Warrants: <br>$query_marshals<p>";

@@ -29,7 +29,9 @@ $query_comb = "SELECT id_combat, name_combat, cn, ea, ipcc, note, active "
         . "active_authorize as active "
         . "FROM  Persons_CombatCards "
         . "WHERE id_person=$id_person) AS PA "
-        . "ON Combat.id_combat = PA.ic ORDER BY name_combat ";
+        . "ON Combat.id_combat = PA.ic "
+        . "where id_combat in (select id_combat from Authorizations) "
+        . "ORDER BY name_combat ";
 if (DEBUG) {
     echo "Per Category known facts:<br>$query_comb<p>";
 }        
@@ -65,7 +67,7 @@ $i=0;
 while ($row = mysqli_fetch_assoc($combats)){
     extract($row);
     // If the record exists in Person_Combatcards i.e. $ipcc != NULL
-    //print_r($row);
+    // echo "Row being processed is ";print_r($row);
     if (($dyndate[$id_combat] != $ea) // change in expiry date
             || (isset($dynact[$id_combat]) && ($dynact[$id_combat] != $active)) // change in active status
             || ($dyncard[$id_combat] != $cn) // change in card number
