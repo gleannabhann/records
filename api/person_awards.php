@@ -27,9 +27,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
     // echo "Arrived from person.php";
     $id_person = $_GET["id"];
 } else {
-  echo '<p>ERROR! You didn\'t supply any parameters. Here is what you can do: </p>';
-  echo '<p>To fetch award information about an individual, supply the individual\'s system ID number, ';
-  echo 'using the following format: <em>/api/person_awards.php?id=n</em>, where <em>n</em> is the individual\'s system ID number.</p> ';
+    echo 'error';
     return false;
 }
 

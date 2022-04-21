@@ -17,7 +17,7 @@
 </form>
 
 <div>
-    or <a href="register.php">register</a> for an account
+    <!--or <a href="register.php">register</a> for an account -->
 </div>
 </div><!-- ./block-center -->
 </div><!-- ./col-md-4 -->

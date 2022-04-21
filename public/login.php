@@ -18,7 +18,9 @@
         $username = $_POST["username"];
         $password = crypt($_POST["password"], SALT);
 
-        // echo "Salted input password: " . $password . "<br/>";
+        if (DEBUG){
+         echo "Salted input password: " . $password . "<br/>";
+        }
         // connect to the db
         $cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
         or die ("message");

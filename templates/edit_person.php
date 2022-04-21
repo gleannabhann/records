@@ -34,12 +34,13 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id'])) && (isset($_SESSION['id'])
 
 $cxn = open_db_browse();
 
+//echo "Permissions for herald is ".permissions("Herald")."<br>";
+//echo "<p>".var_dump($_SESSION)."<p>";
+
 // Edit the personal information like name, mundane info, etc.
 if ((permissions("Marshal")>=3) || (permissions("Herald")>=3)){
     include 'edit_person_sub_personal_info.php';
 }
-//echo "Permissions for herald is ".permissions("Herald")."<br>";
-//echo "<p>".var_dump($_SESSION)."<p>";
 
 if ((permissions("Ruby")>=3)) {
     include 'edit_person_sub_armorial.php';

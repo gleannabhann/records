@@ -334,7 +334,7 @@
     {
         return '<br><b>'.$label.'</b></br>';
     }
-
+    
     function display_image($image, $ftype, $width, $alt = " ", $title = " ") {
     if ($image !== false) {
         switch ($ftype) {
