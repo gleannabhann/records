@@ -11,7 +11,7 @@
 /* connect to the database */
 $cxn = open_db_browse();
 include "alpha.php";
-mysqli_close ($cxn); /* close the db connection */
+$cxn = null; /* close the db connection */
 ?>
 </div><!-- ./col-md-4 -->
 <div class="col-md-2">
