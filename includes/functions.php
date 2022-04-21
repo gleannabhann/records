@@ -54,7 +54,7 @@
      */
     function open_db_browse(){
       
-        $connection =  new PDO('mysql:host=localhost;dbname=recordsgleannabh_oop',USERNAME,PASSWORD)
+        $connection =  new PDO(DSN,USERNAME,PASSWORD)
                        or die ("message");
         return $connection;
     }
