@@ -45,10 +45,11 @@ $q_warr = "SELECT id_marshal, name_marshal, name_combat FROM Marshals, Combat wh
         . "Marshals.id_combat=Combat.id_combat "
         . "AND Marshals.id_combat=$ic";
 //if (DEBUG) {echo "Warrants query: $q_warr<p>";}
-$warrs = mysqli_query ($cxn, $q_warr)
-    or die ("Couldn't execute query to find warrants to build report.");
+$sth = $cxn->prepare($q_warr);
+$sth->execute();
+// TODO probably unnecessary $warrs = $sth->fetchAll() or die ("Couldn't execute query to find warrants to build report.")
 // If the combat id does not return any warrants at all
-if (mysqli_num_rows($warrs)<1) {
+if ($sth->rowCount()<1) {
   echo 'error';
   return false;
 }
@@ -79,7 +80,7 @@ $q_body = $q_body ."AND Persons_CombatCards.expire_marshal >= curdate()
     GROUP BY id_person) AS PCount
     ON PCount.id_person = PCC.id_person ";
     // Now we have to add the individual warrants
-    while ($warr=  mysqli_fetch_assoc($warrs)) {
+    while ($warr=  $sth->fetch()) {
         extract($warr);
         $q_head = $q_head . ", if (PA$id_marshal.id_person IS NULL,'No', 'Yes') as '$name_marshal' ";
         $q_body = $q_body .
@@ -93,7 +94,10 @@ $query = $qnolink . $q_head . $q_body . "WHERE num_count is not NULL ORDER BY na
 //if (DEBUG) { echo "Warrants Query is<p> $query";}
 
 // This part borrowed from report_showtable, minus ability to download file
-$data = mysqli_query ($cxn, $query)
+
+$sth = $cxn->query($query);
+$sth->setFetchMode(PDO::FETCH_ASSOC);
+$sth->execute()
     or die ("Couldn't execute query to build table.");
 // Displays a table with sortable columns based on the data stored in $data.
 
@@ -108,7 +112,7 @@ $combat["type_combat"] = $name_combat;
 //$combat["col_names"] = $col_names;
 
 // Setting the personal information
-while ($row = mysqli_fetch_assoc($data)) {
+while ($row = $sth->fetch()) {
        $warrants[] = array($row);
 }
 

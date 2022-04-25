@@ -22,22 +22,22 @@
          echo "Salted input password: " . $password . "<br/>";
         }
         // connect to the db
-        $cxn = mysqli_connect (SERVER,USERNAME,PASSWORD,DATABASE)
-        or die ("message");
+        $cxn = open_db_browse() or die ("message");
 
         // pre-build the query
         $query = "select * from WebUsers where name_webuser = '$username'";
 
         // query database for user
-        $rows = mysqli_query ($cxn, $query)
-        or die ("Couldn't execute query" . $query);
-
+        $sth = $cxn->prepare($query);
+        $sth->execute() or die ("couldn't execute query" . $query);
+        $rowcount = $sth->rowCount();
 
         // if we found user, check password
-        if (count($rows) == 1)
+        if ($rowcount == 1)
         {
             // first (and only) row
-            $row = mysqli_fetch_assoc($rows);
+          $result = $sth->fetchAll() or die ("couldn't execute query" . $query);
+          foreach ($result as $row) {
 
             //echo $row["password_webuser"];
 
@@ -76,8 +76,9 @@
               // In query, the expire_role and id_roletype were included for debugging only.
               // TODO: make sure that Roletype occurs only once.
               $max_perm=0;
-              $result = mysqli_query($cxn, $query) or die ("Couldn't execute query");
-                while ($row = mysqli_fetch_assoc($result)) {
+              $sth = $cxn->prepare($query);
+              $sth->execute();
+              foreach ($cxn->query($query) as $row) {
                     extract($row);
                     //echo "Adding $perm_role to variable $name_roletype";
                     $_SESSION[$name_roletype] = $perm_role;
@@ -98,6 +99,7 @@
                 // redirect to main page
                 redirect("/");
             }
+          }
         }
 
         // else apologize

@@ -20,14 +20,16 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
 
 $query = "SELECT name_person, name_group, Groups.id_group "
         . "FROM Persons, Groups "
-        . "WHERE Persons.id_person = $id_person "
+        . "WHERE Persons.id_person = :id_person "
         . "AND Persons.id_group=Groups.id_group";
+$data = array('id_person' => $id_person);
+$sth = $cxn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 if (DEBUG) {
     echo "Query to database is: $query<p>";
 }
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
-while ($row = mysqli_fetch_assoc($result)) {
+$sth->execute($data);
+$result = $sth->fetchAll() or die ("Couldn't execute query");
+foreach ($result as $row) {
     extract($row);
     echo "<div class='page-header'>".form_title($name_person);
     echo form_subtitle("Member of ".live_link("list.php?group=$id_group", "$name_group"));
@@ -51,14 +53,15 @@ echo "<div class='col-md-12'>";
 $q_device = "SELECT type_armorial, fname_armorial, ftype_armorial as ftype, image_armorial as image, blazon_armorial as blazon "
         . "FROM Persons_Armorials, Armorials "
         . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial "
-        . "AND Persons_Armorials.id_person = $id_person "
+        . "AND Persons_Armorials.id_person = :id_person "
         . "ORDER BY type_armorial;";
+$data = array('id_person' => $id_person);
 if (DEBUG) {
     echo "Device query is:$q_device<p>";
 }
-$result = mysqli_query($cxn, $q_device)
-    or die ("Couldn't execute device Query");
-  $num_rows = mysqli_num_rows($result);
+$sth = $cxn->prepare($q_device, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+$sth->execute($data);
+$num_rows = $sth->rowCount();
 
   if ($num_rows > 0) {
     echo "<h2 class='text-center'>Armorial</h2>";
@@ -67,7 +70,7 @@ $result = mysqli_query($cxn, $q_device)
 //////////////////////////////////////////////////////
 // case: member has no device, but has an associated badge
 /////////////////////////////////////////////////////
-  $first_row = mysqli_fetch_assoc($result);
+  $first_row = $sth->fetch(PDO::FETCH_ASSOC);
 
   if ($num_rows > 0 && $first_row['type_armorial'] != "device") {
     echo "<div class='row'><div class='col-md-8'><div class='panel panel-default><div class='panel-heading'>";
@@ -79,9 +82,9 @@ $result = mysqli_query($cxn, $q_device)
     echo "<div class='panel-body'>";
   }
 
-mysqli_data_seek($result, 0);
 // otherwise, continue with iterating over all rows
-while ($row = mysqli_fetch_assoc($result)) {
+  $result = $sth->fetchAll();
+  foreach ($result as $row) {
     extract($row);
 
     switch ($type_armorial) {
@@ -141,15 +144,16 @@ echo "<div class='row' height='100%'>";
 
 $query = "SELECT waiver_person, youth_person, birthdate_person
             FROM Persons
-            WHERE id_person=$id_person";
+            WHERE id_person=:id_person";
+$data = array('id_person' => $id_person);
 if (DEBUG) {
     echo "Waiver query is:$query<p>";
 }
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute waiver query");
-$matches = $result->num_rows;
+$sth = $cxn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+$sth->execute($data);
+$matches = $sth->rowCount();
 if ($matches > 0) {
-    $row=mysqli_fetch_assoc($result);
+    $row = $sth->fetch(PDO::FETCH_ASSOC);
     extract($row);
     echo form_subsubtitle("Combat waiver on file: $waiver_person");
     if ($waiver_person=='Parent') {
@@ -161,25 +165,26 @@ if ($matches > 0) {
 /* query: select a person's (non-expired) authorizations in the database */
     $query = "SELECT name_combat, name_auth, expire_authorize
                 FROM Persons_Authorizations, Authorizations, Combat, Persons_CombatCards
-                WHERE Persons_CombatCards.id_person=$id_person
+                WHERE Persons_CombatCards.id_person=:id_person
                 AND Persons_CombatCards.active_authorize='Yes'
-                AND Persons_Authorizations.id_person=$id_person
+                AND Persons_Authorizations.id_person=:id_person
                 AND curdate()<= expire_authorize
                 AND Authorizations.id_combat=Combat.id_combat
                 AND Persons_Authorizations.id_auth=Authorizations.id_auth
                 AND Persons_CombatCards.id_combat = Combat.id_combat
                 ORDER by name_combat, Authorizations.id_auth";
+$data = array('id_person' => $id_person);
     if (DEBUG) {
         echo "Authorization query is:$query<p>";
     }
-    $result = mysqli_query ($cxn, $query)
-    or die ("Couldn't execute authorization query");
-    $matches = $result->num_rows;
+$sth = $cxn->prepare($query);
+$sth->execute($data);
+$matches = $sth->rowCount();
     if ($matches > 0) {
        $ocombat = "";
        echo form_subsubtitle("Authorizations on file:");
-       while ($row = mysqli_fetch_assoc($result))
-         {extract($row);
+       while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+         extract($row);
          if ($ocombat != $name_combat) {
             echo "<br><b>$name_combat (expires $expire_authorize)</b>: $name_auth";
          } else {
@@ -194,26 +199,26 @@ if ($matches > 0) {
     /* query: select a person's marshal warrants in the database */
     $query = "SELECT name_combat, name_marshal, Persons_CombatCards.expire_marshal
                 FROM Persons_Marshals, Marshals, Combat, Persons_CombatCards
-                WHERE Persons_CombatCards.id_person=$id_person
+                WHERE Persons_CombatCards.id_person=:id_person
                 AND Persons_CombatCards.active_marshal='Yes'
-                AND Persons_Marshals.id_person=$id_person
+                AND Persons_Marshals.id_person=:id_person
                 AND curdate()<= Persons_CombatCards.expire_marshal
                 AND Marshals.id_combat=Combat.id_combat
                 AND Persons_Marshals.id_marshal=Marshals.id_marshal
                 AND Persons_CombatCards.id_combat = Combat.id_combat
                 ORDER by name_combat, Marshals.id_marshal";
+    $data = array('id_person' => $id_person);
     if (DEBUG) {
         echo "Marshal Warrants query is:$query<p>";
     }
-
-    $result = mysqli_query ($cxn, $query)
-        or die ("Couldn't execute marshaling query");
-    $matches = $result->num_rows;
+    $sth = $cxn->prepare($query);
+    $sth->execute($data);
+    $matches= $sth->rowCount();
     if ($matches > 0) {
        $ocombat = "";
        echo form_subsubtitle("Marshal's Warrants on file:");
-       while ($row = mysqli_fetch_assoc($result))
-         {extract($row);
+       while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+         extract($row);
          if ($ocombat != $name_combat) {
             echo "<br><b>$name_combat (expires $expire_marshal)</b>: $name_marshal";
          } else {
@@ -240,14 +245,17 @@ $query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_eve
          AND Persons_Awards.id_award = Awards.id_award
          AND Awards.id_kingdom = Kingdoms.id_kingdom
          AND Persons_Awards.id_event = Events.id_event
-         AND Persons.id_person = $id_person order by date_award";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
+         AND Persons.id_person = :id_person order by date_award";
+
+$data = array('id_person' => $id_person);
+$sth = $cxn->prepare($query);
+$sth->execute($data);
 echo "<table class='table table-condensed table-bordered'>
 <thead><td class='text-left'><strong>Award</strong></td>
 <td class='text-left'><strong>Event</strong></td>
 <td class='text-left'><strong>Date</strong></td></thead>";
-while ($row = mysqli_fetch_assoc($result))
-  {extract($row);
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+  extract($row);
 // echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
   echo "<tr>";
   echo "<td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>";
@@ -274,7 +282,7 @@ echo "<div class='row'>";
 echo "<div class='col-md-12'>";
 echo "<hr><p>Browse by Name:</p><p>";
 include "alpha.php"; // includes the A-Z link list
-mysqli_close ($cxn); /* close the db connection */
+$cxn = NULL; /* close the db connection */
 echo "<hr/>";
 echo "</div>";
 echo "<div class='row'>";
@@ -320,8 +328,8 @@ echo "</div></div>"; //close row and col divs
 <!-- Problem report form hosted on forms.gleannabhann.net -->
 <!-- element_3 is the email subject and is initialized with current record's name and id # -->
 <script type="text/javascript">
-var __machform_url = 'http://forms.gleannabhann.net/embed.php?id=10117&element_3=Records%20Correction%20for%20<?php echo "$name_person ($id_person)"?>';
-var __machform_height = 751;
+//var __machform_url = 'http://forms.gleannabhann.net/embed.php?id=10117&element_3=Records%20Correction%20for%20<?php echo "$name_person ($id_person)"?>';
+//var __machform_height = 751;
 </script>
 <div id="mf_placeholder"></div>
 <script type="text/javascript" src="http://forms.gleannabhann.net/js/jquery.min.js"></script>
