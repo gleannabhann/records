@@ -4,20 +4,19 @@ echo "
   <div class='col-md-8 col-md-offset-2'>";
 
 // TODO Clean up the SELECT * query
-$query = "SELECT * FROM Persons WHERE id_person = $id_person;";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
-if (mysqli_num_rows($result)==1) {
-   $person=  mysqli_fetch_array($result);
+$opts = array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY);
+$query = "SELECT * FROM Persons WHERE id_person = :id_person;";
+$data = array('id_person' => $id_person);
+$sth = $cxn->prepare($query, $opts);
+$sth->execute($data);
+
+if ($sth->rowCount()==1) {
+   $person=  $sth->fetch(PDO::FETCH_ASSOC);
 } else {
     exit_with_footer();
 }
-$query = "SELECT id_group, "
-        . "CONCAT(name_group,' (',name_kingdom,')') as Name_Group, "
-        . "Groups.id_kingdom!=".HOST_KINGDOM_ID." as In_Kingdom "
-        . "FROM Groups, Kingdoms "
-        . "WHERE Groups.id_kingdom = Kingdoms.id_kingdom "
-        . "Order By In_Kingdom, Name_Group;";
-$groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
+
+
 
 // Display form with all person's info.
 echo '<form action="edit_person.php" method="post">';
@@ -70,7 +69,16 @@ if (isset($_POST["id_group"]) && is_numeric($_POST["id_group"])) {
 }
 echo '<tr><td class="text-right">SCA Group:</td><td>';
 echo '<select name="id_group" ><option value="0"></option>';
-while ($row= mysqli_fetch_array($groups)) {
+
+$query = "SELECT id_group, "
+        . "CONCAT(name_group,' (',name_kingdom,')') as Name_Group, "
+        . "Groups.id_kingdom!=".HOST_KINGDOM_ID." as In_Kingdom "
+        . "FROM Groups, Kingdoms "
+        . "WHERE Groups.id_kingdom = Kingdoms.id_kingdom "
+        . "Order By In_Kingdom, Name_Group;";
+$sth = $cxn->prepare($query, $opts);
+$sth->execute();
+while ($row = $sth->fetch()) {
     echo '<option value="'.$row["id_group"].'"';
     if ($row["id_group"]==$id_group) echo ' selected';
     echo '>'.$row["Name_Group"].'</option>';
@@ -189,63 +197,79 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') // we got here through a form
         && ($_POST["form_name"]=="edit_personal_info") // and we used *this* form
         ){
     
-    $sca_name=  str_replace("'","&#039;",$sca_name);
-
-    $update = "UPDATE Persons SET ";
-    $update=$update." name_person='$sca_name'";
+    $data = array('sca_name' => $sca_name);
+    $update = "UPDATE Persons SET";
+    $update=$update." name_person=:sca_name";
     if ($mundane_name!=$person["name_mundane_person"]) {
-        $mundane_name=  str_replace("'","&#039;",$mundane_name);
-        $update=$update.", name_mundane_person='$mundane_name'";        
+        $update=$update.", name_mundane_person=:mundane_name";
+        $data['mundane_name'] = $mundane_name;
     }
     if ($mem_num!=$person["membership_person"]) {
-        $update=$update.", membership_person='$mem_num'";        
+        $update=$update.", membership_person=:mem_num";
+        $data['mem_num'] = $mem_num;    
     }
     if ($mem_exp!=$person["membership_expire_person"]) {
-        $update=$update.", membership_expire_person='$mem_exp'";        
+        $update=$update.", membership_expire_person=:mem_exp";
+        $data['mem_exp'] = $mem_exp;
     }
     if ($id_group!=$person["id_group"]) {
-        $update=$update.", id_group='$id_group'";        
+        $update=$update.", id_group=:id_group";     
+        $data['id_group'] = $id_group;
     }
     if ($email!=$person["email_person"]) {
-        $update=$update.", email_person='$email'";        
+        $update=$update.", email_person=:email";
+        $data['email'] = $email;      
     }
     if ($phone!=$person["phone_person"]) {
-        $update=$update.", phone_person='$phone'";        
+        $update=$update.", phone_person=:phone";
+        $data['phone'] = $phone;
     }
     if ($street!=$person["street_person"]) {
-        $update=$update.", street_person='$street'";        
+        $update=$update.", street_person=:street";
+        $data['street'] = $street;      
     }
     if ($city!=$person["city_person"]) {
-        $update=$update.", city_person='$city'";        
+        $update=$update.", city_person=:city";
+        $data['city'] = $city;
     }
     if ($state!=$person["state_person"]) {
-        $update=$update.", state_person='$state'";        
+        $update=$update.", state_person=:state";
+        $data['state'] = $state;
     }
     if ($zip!=$person["postcode_person"]) {
-        $update=$update.", postcode_person='$zip'";        
+        $update=$update.", postcode_person=:zip";
+        $data['zip'] = $zip; 
     }
 
     if ($waiver_person!=$person["waiver_person"]) {
-        $update=$update.", waiver_person='$waiver_person'";
+        $update=$update.", waiver_person=:waiver_person";
+        $data['waiver_person'] = $waiver_person;
     }
     
     if ($youth_person!=$person["youth_person"]) {
-        $update=$update.", youth_person='$youth_person'";
+      $update=$update.", youth_person=:youth_person";
+      $data['youth_person'] = $youth_person;
     }
     
     if ($birthdate_person!= $person["birthdate_person"]) {
-            $update=$update.", birthdate_person='$birthdate_person'";
+      $update=$update.", birthdate_person=:birthdate_person";
+      $data['birthdate_person'] = $birthdate_person;
     }
-    $update=$update. " WHERE id_person=" .$id_person;
-    // echo "<p>Query is " . $update . "<p>";
-    if (DEBUG){
-        echo "Personal info update query is;<br>$update<p>";
-    }
-    $result=update_query($cxn, $update);
-    if ($result !== 1) {
-        echo "Error updating record: " . mysqli_error($cxn);
-        if (DEBUG) { echo "<P>Query was $update<p>";}
-    }
+    $update=$update. " WHERE id_person=:id_person";
+    $data['id_person'] = $id_person;
+
+    
+    $sth = $cxn->prepare($update, $opts);
+    try {
+      $sth->execute($data);
+    } catch ( PDOException $e) {
+      if ( DEBUG ) {
+        throw new MyDatabaseException( $e->getMessage(), (int)$e->getCode());
+      } else {
+        echo "<p>Error updating record.</p>";
+      }
+    }   
+
 }
 
 
