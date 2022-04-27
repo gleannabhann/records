@@ -44,16 +44,16 @@ echo '<form action="edit_person_marshal.php" method="post">';
 echo form_title("Editing Marshal's Warrants");
 echo '<input type="hidden" name="id" value="'.$person["id_person"].'">';
 echo '<input type="hidden" name="name_person" value="'.$person["name_person"].'">';
-echo "<div>"; // start of warrants grid
+echo "<div class='row'>"; // start of warrants grid
 $curr_id_combat=0; $i=0;
-echo "<div class='row'>"
+// echo "<div class='col'><!-- begin fields col -->";
 while ($row = $sth_marshals->fetch(PDO::FETCH_ASSOC)){
   extract($row); $i++;
   if ($curr_id_combat!= $id_combat) {// Build for the next item in combats
-      if ($id_combat > 0) { echo "</div><div class='row'>" }
-      echo "<div class='col'>"; //fields column
+      if ($id_combat > 0) { echo "</div><div class='row'>"; }
+      echo "<div class='col'><!-- begin fields col -->"; //fields column
       $curr_id_combat=$id_combat;
-      $mcombat = $sth_mcombats->fetch(PDO:FETCH_ASSOC);
+      $mcombat = $sth_mcombats->fetch(PDO::FETCH_ASSOC);
       echo "<div class='row'>";
       echo "<input type='hidden' name='dynmcombat[]' value='$id_combat'>";
       echo "<strong>$name_combat</strong>";
@@ -93,7 +93,7 @@ while ($row = $sth_marshals->fetch(PDO::FETCH_ASSOC)){
   if ($id_person_marshal!=""){
       echo " checked ";
   }
-  echo "></div><!-- end of $name_marshal col -->";
+  echo "></span></div><!-- end of $name_marshal col -->";
 
 }
 echo '</div>';
