@@ -30,7 +30,7 @@ $query_auths = "SELECT * FROM "
         . "FROM Persons_Authorizations where id_person=:id_person) AS PA "
         . "on AC.id_auth = PA.ia "
         . "order by name_combat,name_auth";
-$data = array('id_person' => $id_person);
+$data = ['id_person' => $id_person];
 if (DEBUG) {
     echo "Per Category known facts:<br>$query_comb<p>";
     echo "Known authorizations: <br>$query_auths<p>";
@@ -71,7 +71,7 @@ while ($row = $sth_auths->fetch(PDO::FETCH_ASSOC)){
         echo "<div class='col-4'><!-- begin fields col -->";
         if ($combat["ipcc"] != NULL) {
             echo "<div class='row mx-1'>";
-            $active_status = array ('Yes', 'No' );
+            $active_status =  ['Yes', 'No' ];
             if ($combat["active"]==NULL) { $combat["active"]='No';}
             echo "<div class='col'><label for='dynact[$id_combat]'>Currently Active:</label></div>"
                . "<div class='col'> <select class='form-control' name='dynact[$id_combat]' >";

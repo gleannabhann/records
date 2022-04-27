@@ -22,8 +22,8 @@ $query = "SELECT name_person, name_group, Groups.id_group "
         . "FROM Persons, Groups "
         . "WHERE Persons.id_person = :id_person "
         . "AND Persons.id_group=Groups.id_group";
-$data = array('id_person' => $id_person);
-$sth = $cxn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+$data = ['id_person' => $id_person];
+$sth = $cxn->prepare($query, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
 if (DEBUG) {
     echo "Query to database is: $query<p>";
 }
@@ -37,8 +37,10 @@ foreach ($result as $row) {
     echo "</small>";
     if ((permissions("Herald")>= 3) or (permissions("Marshal")>=3)) {
       // TODO: Make this link more visible?
-    echo "<br>".button_link("./edit_person.php?id=$id_person",
-                            "Edit $name_person's record");
+    echo "<br>".button_link(
+        "./edit_person.php?id=$id_person",
+        "Edit $name_person's record"
+    );
     }
     echo "<br/><a href='#combat'>Skip to Combat</a> | <a href='#awards'>Skip to Awards</a>";
     echo "</div>"; //close page header div
@@ -55,11 +57,11 @@ $q_device = "SELECT type_armorial, fname_armorial, ftype_armorial as ftype, imag
         . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial "
         . "AND Persons_Armorials.id_person = :id_person "
         . "ORDER BY type_armorial;";
-$data = array('id_person' => $id_person);
+$data = ['id_person' => $id_person];
 if (DEBUG) {
     echo "Device query is:$q_device<p>";
 }
-$sth = $cxn->prepare($q_device, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+$sth = $cxn->prepare($q_device, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
 $sth->execute($data);
 $num_rows = $sth->rowCount();
 
@@ -145,11 +147,11 @@ echo "<div class='row' height='100%'>";
 $query = "SELECT waiver_person, youth_person, birthdate_person
             FROM Persons
             WHERE id_person=:id_person";
-$data = array('id_person' => $id_person);
+$data = ['id_person' => $id_person];
 if (DEBUG) {
     echo "Waiver query is:$query<p>";
 }
-$sth = $cxn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+$sth = $cxn->prepare($query, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
 $sth->execute($data);
 $matches = $sth->rowCount();
 if ($matches > 0) {
@@ -173,7 +175,7 @@ if ($matches > 0) {
                 AND Persons_Authorizations.id_auth=Authorizations.id_auth
                 AND Persons_CombatCards.id_combat = Combat.id_combat
                 ORDER by name_combat, Authorizations.id_auth";
-$data = array('id_person' => $id_person);
+$data = ['id_person' => $id_person];
     if (DEBUG) {
         echo "Authorization query is:$query<p>";
     }
@@ -207,7 +209,7 @@ $matches = $sth->rowCount();
                 AND Persons_Marshals.id_marshal=Marshals.id_marshal
                 AND Persons_CombatCards.id_combat = Combat.id_combat
                 ORDER by name_combat, Marshals.id_marshal";
-    $data = array('id_person' => $id_person);
+    $data = ['id_person' => $id_person];
     if (DEBUG) {
         echo "Marshal Warrants query is:$query<p>";
     }
@@ -247,7 +249,7 @@ $query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_eve
          AND Persons_Awards.id_event = Events.id_event
          AND Persons.id_person = :id_person order by date_award";
 
-$data = array('id_person' => $id_person);
+$data = ['id_person' => $id_person];
 $sth = $cxn->prepare($query);
 $sth->execute($data);
 echo "<table class='table table-condensed table-bordered'>

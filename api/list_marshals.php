@@ -35,9 +35,9 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
 }
 
 // initialize the array
-$combat = array();
-$col_names = array();
-$warrants = array();
+$combat = [];
+$col_names = [];
+$warrants = [];
 
 $ic=$_GET['id'];
 
@@ -113,7 +113,7 @@ $combat["type_combat"] = $name_combat;
 
 // Setting the personal information
 while ($row = $sth->fetch()) {
-       $warrants[] = array($row);
+       $warrants[] = [$row];
 }
 
 $combat["warrants"] = $warrants;

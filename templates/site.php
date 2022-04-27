@@ -30,7 +30,7 @@ if (DEBUG) {
 $result = mysqli_query ($cxn, $query)
 or die ("Couldn't execute query. Query was: ". $query);
 $details = mysqli_fetch_array($result);
-$sites = array();
+$sites = [];
 $id_site = $details["id_site"];
 $name_site = $details["name_site"];
 $street_site = $details["street_site"];
@@ -112,7 +112,7 @@ if (($lat_site == null || $long_site == NULL))
         // add a row to the array to hand to JS, only if coords are available
         if ($lat_site && $long_site) {
 
-          $site = array($name_site, $lat_site, $long_site, $url_site, $facilities_site, $capacity_site, $rates_site, $address, $contact_site, $id_site);
+          $site = [$name_site, $lat_site, $long_site, $url_site, $facilities_site, $capacity_site, $rates_site, $address, $contact_site, $id_site];
           $sites[] = $site;
 
         }

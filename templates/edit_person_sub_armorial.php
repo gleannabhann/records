@@ -37,7 +37,7 @@ $q_exist = "SELECT id_person_armorial as ipa, id_person as ip, Armorials.id_armo
         . "FROM Persons_Armorials, Armorials "
         . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial "
         . "AND id_person = :id_person";
-$data = array('id_person' => $id_person);
+$data = ['id_person' => $id_person];
 if (DEBUG) {
     echo "Query to list existing links is: $q_exist</br>";
 }

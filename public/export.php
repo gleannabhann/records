@@ -11,7 +11,7 @@ header('Content-Disposition: attachment; filename=data.csv');
 $output = fopen('php://output', 'w');
 
 // output the column headings
-fputcsv($output, array('Column 1', 'Column 2', 'Column 3'));
+fputcsv($output, ['Column 1', 'Column 2', 'Column 3']);
 
 // fetch the data
 mysql_connect('localhost', 'username', 'password');

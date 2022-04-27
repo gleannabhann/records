@@ -18,7 +18,7 @@ $result = mysqli_query ($cxn, $query) or die ("Couldn't execute event_info query
 echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
 echo form_title("A List of All Known Events");
 if (permissions("Herald")>= 3){
-    echo button_link("add_event.php","Add A New Event");
+    echo button_link("add_event.php", "Add A New Event");
 }
 echo "</p>";
 echo "<table class='table table-condensed table-bordered'>

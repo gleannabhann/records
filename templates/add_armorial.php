@@ -103,7 +103,7 @@ mysqli_close ($cxn);
 
 <div class='row'><div class='col-md-8 col-md-offset-2'>
 <?php if ($id_person > 0) {
-    echo button_link("edit_person.php?id=$id_person","Return to Edit Person Page");
+    echo button_link("edit_person.php?id=$id_person", "Return to Edit Person Page");
 }   ?>     
 <form action="add_armorial.php" method="post" enctype="multipart/form-data">
   <?php echo form_title("Adding a New Device or Badge"); ?>

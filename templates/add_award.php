@@ -14,7 +14,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (permissions("Herald")>=3)){
     //       award form will reappear at the bottom of the page
     
     $query_head = "INSERT INTO Awards(name_award";
-    $query_tail = " VALUES('".  str_replace("'", "&#039;",$_POST["name_award"])."'";    
+    $query_tail = " VALUES('".  str_replace("'", "&#039;", $_POST["name_award"])."'";    
     if (isset($_POST["id_group"])
     && (!empty($_POST["id_group"]))
     && (is_numeric($_POST["id_group"]))){

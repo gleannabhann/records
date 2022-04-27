@@ -28,7 +28,7 @@ $query_marshals = "SELECT * FROM "
         . "FROM Persons_Marshals where id_person=:id_person) AS PA "
         . "on AC.id_marshal = PA.ia "
         . "order by name_combat, name_marshal";
-$data = array('id_person' => $id_person);
+$data = ['id_person' => $id_person];
 if (DEBUG) {
     echo "Per Category known facts:<br>$query_comb<p>";
     echo "Known Marshal's Warrants: <br>$query_marshals<p>";
@@ -62,7 +62,7 @@ while ($row = $sth_marshals->fetch(PDO::FETCH_ASSOC)){
       // ipcc = 'id_person_combat_card'
       if ($mcombat["ipcc"] != NULL) {
           echo "<div class='row'>";
-          $active_status = array ('Yes', 'No' );
+          $active_status =  ['Yes', 'No' ];
           if ($mcombat["active"]==NULL) { $mcombat["active"]='No';}
           echo "Currently Active: <select name='dynmact[$id_combat]' >";
           foreach ($active_status as $value ) {

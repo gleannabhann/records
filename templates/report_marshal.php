@@ -21,9 +21,9 @@ $cxn = open_db_browse(); // Open the db connection which is now live for the sub
 
 // Build the query based on the parameters: this will be a massive if statement.
 $report =$_POST["id_report"];
-$combat =explode('|',$_POST["id_combat"]);
-$auth   =explode('|',$_POST["id_auth"]);
-$marshal=explode('|',$_POST["id_marshal"]);
+$combat =explode('|', $_POST["id_combat"]);
+$auth   =explode('|', $_POST["id_auth"]);
+$marshal=explode('|', $_POST["id_marshal"]);
 switch ($report) {
     case "1": // All active fighters of given combat type
         $report_name = "List of all Active Fighters for $combat[1]";

@@ -24,10 +24,12 @@ echo "<div id='row'><div id='map' class='col-md-10 col-md-offset-1'></div></div>
 echo "<div class='row'><div class='col-md-10 col-md-offset-1'><hr/>";
 
   if (permissions("Sites") >= 3){
-      echo '<p>'.button_link("./add_site.php","Add a New Site").'</p>';
+      echo '<p>'.button_link("./add_site.php", "Add a New Site").'</p>';
   } else {
-      echo '<p>'.button_link("./submit_campsite_report.php",
-                            "Report a New Site").'</p>';
+      echo '<p>'.button_link(
+          "./submit_campsite_report.php",
+          "Report a New Site"
+      ).'</p>';
   }
 echo "<table class='table table-bordered'>
 <thead>
@@ -44,7 +46,7 @@ if (permissions("Sites") >= 3){
   echo  "<td class='text-left'><strong> </strong></td>";
 };
 echo " </thead>";
-$sites = array();
+$sites = [];
 if (permissions("Sites") >= 3) {
     $websiteurl = "/public/edit_site.php";
 } else {
@@ -63,7 +65,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         // add a row to the array to hand to JS, only if coords are available
         if ($lat_site && $long_site) {
 
-          $site = array($name_site, $lat_site, $long_site, $url_site, $facilities_site, $capacity_site, $rates_site, $address, $contact_site, $id_site, $kingdom_level_site);
+          $site = [$name_site, $lat_site, $long_site, $url_site, $facilities_site, $capacity_site, $rates_site, $address, $contact_site, $id_site, $kingdom_level_site];
           $sites[] = $site;
 
         }

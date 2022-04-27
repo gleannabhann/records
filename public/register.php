@@ -43,8 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
       // while we're creating new columns, also create 'last_login' to store
       // the date of the last successful login by each user.
       $query = "INSERT INTO WebUsers VALUES (NULL, :name_webuser, :password_webuser, :name_mundane_webuser, :email_webuser, :id_person)";
-      $values = array('name_webuser' => $_POST['username'], 'password_webuser' => $hash, 'name_mundane_webuser' => $_POST['mundaneName'], 'email_webuser' => $_POST['email'], 'id_person' => $_POST['personId']);
-      $sth = $cxn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+      $values = ['name_webuser' => $_POST['username'], 'password_webuser' => $hash, 'name_mundane_webuser' => $_POST['mundaneName'], 'email_webuser' => $_POST['email'], 'id_person' => $_POST['personId']];
+      $sth = $cxn->prepare($query, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
       $sth->execute($values);
       try {
         $result = $sth->fetchAll() ; //or die ("Couldn't execute insert query");

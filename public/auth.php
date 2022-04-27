@@ -18,8 +18,8 @@ $expire_marshal = NULL;
 $expire_authorize = NULL;
 $issue_date = NULL;
 $exp_date = NULL;
-$authorizations = array();
-$warrants = array();
+$authorizations = [];
+$warrants = [];
 $mem_number = NULL;
 $mem_exp = NULL;
 

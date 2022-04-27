@@ -17,7 +17,7 @@ echo "<table class='table table-condensed table-bordered'>\n
          and Awards.id_kingdom = Kingdoms.id_kingdom
          and Persons_Awards.id_event = Events.id_event 
          and Persons.id_person = :id_person order by date_award";
-$data = array('id_person' => $id_person);
+$data = ['id_person' => $id_person];
 if (DEBUG) { echo "Query to list awards is: ".$query."<br>";}
 $sth = $cxn->prepare($query);
 $sth->execute($data);
@@ -32,8 +32,10 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
       echo "<td></td>";
   }
   echo "<td>".button_link("./edit_person_award.php?idpa=".$id_person_award."&id=".$id_person, "Edit Date/Event")."</td>\n";
-  echo "<td>".button_link("./delete_person_award.php?id=".$id_person."&idpa=".$id_person_award, 
-                          "Delete Award")."</td>\n";
+  echo "<td>".button_link(
+      "./delete_person_award.php?id=".$id_person."&idpa=".$id_person_award,
+      "Delete Award"
+  )."</td>\n";
   echo "</tr>";
 };
 echo "</table>";

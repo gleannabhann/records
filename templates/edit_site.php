@@ -359,19 +359,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 
     $update = "UPDATE Sites SET ";
     if (!empty($name_site))
-        { $update=$update . "name_site='" . mysqli_real_escape_string($cxn,$name_site) . "'" ;}
+        { $update=$update . "name_site='" . mysqli_real_escape_string($cxn, $name_site) . "'" ;}
     if ($url_site != $site["url_site"] )
-        {$update=$update . ", url_site='" . mysqli_real_escape_string($cxn,$url_site) ."' ";}
+        {$update=$update . ", url_site='" . mysqli_real_escape_string($cxn, $url_site) ."' ";}
     if ($facilities_site!= $site["facilities_site"])
-        {$update=$update . ", facilities_site='" . mysqli_real_escape_string($cxn,$facilities_site) ."' ";}
+        {$update=$update . ", facilities_site='" . mysqli_real_escape_string($cxn, $facilities_site) ."' ";}
     if ($capacity_site !=$site["capacity_site"])
-        {$update=$update . ", capacity_site='" . mysqli_real_escape_string($cxn,$capacity_site) ."' ";}
+        {$update=$update . ", capacity_site='" . mysqli_real_escape_string($cxn, $capacity_site) ."' ";}
     if ($rates_site != $site["rates_site"])
-        {$update=$update . ", rates_site='" . mysqli_real_escape_string($cxn,$rates_site) ."' ";}
+        {$update=$update . ", rates_site='" . mysqli_real_escape_string($cxn, $rates_site) ."' ";}
     if ($area_site != $site["area_site"])
-        {$update=$update . ", area_site='" . mysqli_real_escape_string($cxn,$area_site) ."' ";}
+        {$update=$update . ", area_site='" . mysqli_real_escape_string($cxn, $area_site) ."' ";}
     if ($contact_site != $site["contact_site"])
-        {$update=$update . ", contact_site='" . mysqli_real_escape_string($cxn,$contact_site) ."' ";}
+        {$update=$update . ", contact_site='" . mysqli_real_escape_string($cxn, $contact_site) ."' ";}
     if ($lat_site !=$site["lat_site"])
         {if (!empty($lat_site))
             {$update=$update . ", lat_site=" . $lat_site ." ";}
@@ -383,13 +383,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
             else {$update=$update . ", long_site=NULL ";}
         }
     if ($street_site!= $site["street_site"])
-        {$update=$update . ", street_site='" . mysqli_real_escape_string($cxn,$street_site) ."' ";}
+        {$update=$update . ", street_site='" . mysqli_real_escape_string($cxn, $street_site) ."' ";}
     if ($city_site != $site["city_site"])
-        {$update=$update . ", city_site='" . mysqli_real_escape_string($cxn,$city_site) ."' ";}
+        {$update=$update . ", city_site='" . mysqli_real_escape_string($cxn, $city_site) ."' ";}
     if ($state_site != $site["state_site"])
-        {$update=$update . ", state_site='" . mysqli_real_escape_string($cxn,$state_site) ."' ";}
+        {$update=$update . ", state_site='" . mysqli_real_escape_string($cxn, $state_site) ."' ";}
     if ($zip_site!= $site["zip_site"])
-        {$update=$update . ", zip_site='" . mysqli_real_escape_string($cxn,$zip_site) ."' ";}
+        {$update=$update . ", zip_site='" . mysqli_real_escape_string($cxn, $zip_site) ."' ";}
     if ($active_site!= $site["active_site"])
         {$update=$update . ", active_site=$active_site ";}
     if ($kingdom_level_site != $site["kingdom_level_site"]) {

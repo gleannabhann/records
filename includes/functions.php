@@ -54,7 +54,7 @@
      */
     function open_db_browse(){
       
-        $connection =  new PDO(DSN,USERNAME,PASSWORD)
+        $connection =  new PDO(DSN, USERNAME, PASSWORD)
                        or die ("message");
         return $connection;
     }
@@ -152,7 +152,7 @@
         if (is_logged_in()) {
             if (isset($_SESSION["Admin"])) {$perm=$_SESSION["Admin"];}
             if (isset($_SESSION[$role])  && (is_numeric($_SESSION[$role]))) {
-                return max($_SESSION[$role],$perm);
+                return max($_SESSION[$role], $perm);
             } else {
                 return $perm;
             }
@@ -186,7 +186,7 @@
      * a copy of the update query to the transaction log.
      * TODO: query cleaning?
      */
-    function update_query($cxn,$query){
+    function update_query($cxn, $query){
         if  (mysqli_query($cxn, $query)) {
             //echo "Record updated successfully";
             $log = "INSERT INTO Transaction_Log VALUES ('',NOW(),"
@@ -242,13 +242,13 @@
           if($lat && $lng){
 
               // put the data in the array
-              $coords = array();
+              $coords = [];
 
               array_push(
                   $coords,
-                      $lat,
-                      $lng
-                  );
+                  $lat,
+                  $lng
+              );
 
               return $coords;
 
@@ -305,7 +305,7 @@
 
     // Produces a string output to create a button in html
     //<a href="somepage.html"><button type="button">Text of Some Page</button></a>
-    function button_link($link,$label)
+    function button_link($link, $label)
     {
         return '<a href="'.$link.'">'
                 .'<button type="button">'
@@ -314,7 +314,7 @@
 
     }
 
-    function live_link($link,$label)
+    function live_link($link, $label)
     {
         return "<a href='$link'>$label</a>";
     }

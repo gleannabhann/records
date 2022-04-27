@@ -32,8 +32,8 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
 }
 
 // initialize the array
-$person = array();
-$awards = array();
+$person = [];
+$awards = [];
 
 //fetch the person's name
 $query = "SELECT name_person, name_group, Groups.id_group "

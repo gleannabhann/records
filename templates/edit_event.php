@@ -44,7 +44,7 @@ if (permissions("Herald")>=  3) {
     // Build the form, populating fields based on the post variable or database variable
     echo form_title("Editing Event Information")."\n";
     echo button_link("event.php?id=$id_event", "Return to Event Overview");
-    echo button_link("list_events.php","Return to List of Events");
+    echo button_link("list_events.php", "Return to List of Events");
     echo '<form action="edit_event.php" method="post">';
     echo '<input type="hidden" name="id" value="'.$id_event.'"'.">\n";
 
@@ -133,22 +133,22 @@ if (permissions("Herald")>=  3) {
         // First, update local variables
         // Build Update Query
         $update = "UPDATE Events SET name_event='"
-                .mysqli_real_escape_string($cxn,$name_event)."'";
+                .mysqli_real_escape_string($cxn, $name_event)."'";
         if ($date_event_start != $event["date_event_start"]) {
             $update = $update . ", date_event_start = '"
-                      .mysqli_real_escape_string($cxn,$date_event_start)."'";
+                      .mysqli_real_escape_string($cxn, $date_event_start)."'";
         }
         if ($date_event_stop != $event["date_event_stop"]) {
             $update = $update . ", date_event_stop = '"
-                      .mysqli_real_escape_string($cxn,$date_event_stop)."'";
+                      .mysqli_real_escape_string($cxn, $date_event_stop)."'";
         }
         if ($id_group != $event["id_group"]) {
             $update = $update . ", id_group="
-                    . mysqli_real_escape_string($cxn,$id_group);
+                    . mysqli_real_escape_string($cxn, $id_group);
         }
         if ($id_site != $event["id_site"]) {
             $update = $update . ", id_site="
-                    . mysqli_real_escape_string($cxn,$id_site);
+                    . mysqli_real_escape_string($cxn, $id_site);
         }
         $update = $update." WHERE id_event=$id_event";
         if (DEBUG){

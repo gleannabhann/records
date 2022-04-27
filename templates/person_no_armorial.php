@@ -35,8 +35,10 @@ while ($row = mysqli_fetch_assoc($result))
   echo "</small>";
   if ((permissions("Herald")>= 3) or (permissions("Marshal")>=3)) {
       // TODO: Make this link more visible?
-    echo "<br>".button_link("./edit_person.php?id=$id_person", 
-                            "Edit $name_person's record");
+    echo "<br>".button_link(
+        "./edit_person.php?id=$id_person",
+        "Edit $name_person's record"
+    );
   }
   echo "</div>";
 };

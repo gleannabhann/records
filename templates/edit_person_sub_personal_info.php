@@ -4,9 +4,9 @@ echo "
   <div class='col-md-8 col-md-offset-2'>";
 
 // TODO Clean up the SELECT * query
-$opts = array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY);
+$opts = [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY];
 $query = "SELECT * FROM Persons WHERE id_person = :id_person;";
-$data = array('id_person' => $id_person);
+$data = ['id_person' => $id_person];
 $sth = $cxn->prepare($query, $opts);
 $sth->execute($data);
 
@@ -146,7 +146,7 @@ if (isset($_POST["waiver_person"]) && is_string($_POST["waiver_person"])) {
 }
 echo '<tr><td class="text-right">Waiver on File with Sheriff:</td><td>';
 echo '<select name="waiver_person" >';
-$waivers = array ('Yes', 'No', 'Parent' );
+$waivers =  ['Yes', 'No', 'Parent' ];
 foreach ($waivers as $value ) {
     echo '<option value="'.$value.'"';
     if ($waiver_person==$value) echo ' selected';
@@ -162,7 +162,7 @@ if (isset($_POST["youth_person"]) && is_string($_POST["youth_person"])) {
 }
 echo '<tr><td class="text-right">Youth Fighter:</td><td>';
 echo '<select name="youth_person" >';
-$youths = array ('Yes', 'No' );
+$youths =  ['Yes', 'No' ];
 foreach ($youths as $value ) {
     echo '<option value="'.$value.'"';
     if ($youth_person==$value) echo ' selected';
@@ -197,7 +197,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') // we got here through a form
         && ($_POST["form_name"]=="edit_personal_info") // and we used *this* form
         ){
     
-    $data = array('sca_name' => $sca_name);
+    $data = ['sca_name' => $sca_name];
     $update = "UPDATE Persons SET";
     $update=$update." name_person=:sca_name";
     if ($mundane_name!=$person["name_mundane_person"]) {
