@@ -77,6 +77,4 @@ if (!$is_deleted) { // Haven't pressed delete button yet
 
 mysqli_close ($cxn); /* close the db connection */
        
-?>
-
-    
+?> 

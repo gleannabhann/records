@@ -150,4 +150,3 @@ if (!isset($_POST["id"])) { // Allow submit button only if this is new.
 echo "<p>";      
 mysqli_close ($cxn); /* close the db connection */
 ?>
-

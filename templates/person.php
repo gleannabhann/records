@@ -75,13 +75,13 @@ $num_rows = $sth->rowCount();
   $first_row = $sth->fetch(PDO::FETCH_ASSOC);
 
   if ($num_rows > 0 && $first_row['type_armorial'] != "device") {
-    echo "<div class='row'><div class='col-md-8'><div class='panel panel-default><div class='panel-heading'>";
+    echo "<div class='row'><div class='col-md-8'><div class='card card-block><div class='card-header'>";
     if ($num_rows == 1) {
       echo $name_person . "'s Badge";
     }
     else echo $name_person . "'s Badges";
-    echo "</div>"; // close the panel header
-    echo "<div class='panel-body'>";
+    echo "</div>"; // close the card header
+    echo "<div class='card-body'>";
   }
 
 // otherwise, continue with iterating over all rows
@@ -92,20 +92,20 @@ $num_rows = $sth->rowCount();
     switch ($type_armorial) {
         case "device" :
             echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
-            echo "<div class='panel panel-default' height='100%'>";
-            echo "<div class='panel-heading'>". $name_person."'s Device</div>";
-            echo "<div class='panel-body'>";
+            echo "<div class='card card-block' height='100%'>";
+            echo "<div class='card-header'>". $name_person."'s Device</div>";
+            echo "<div class='card-body'>";
             display_image($image, $ftype, 150, $blazon, $blazon);
-            echo "</div></div></div></div>"; // close panel-body, panel, column, row
-            // if the member also has at least one badge associated, set up the badges row and panel
+            echo "</div></div></div></div>"; // close card-body, card, column, row
+            // if the member also has at least one badge associated, set up the badges row and card
             if ($num_rows > 1) {
-              echo "<div class='row'><div class='col-md-8 col-md-offset-2'><div class='panel panel-default'><div class='panel-heading'>";
+              echo "<div class='row'><div class='col-md-8 col-md-offset-2'><div class='card card-block'><div class='card-header'>";
               if ($num_rows == 2) {
                 echo $name_person . "'s Badge";
               }
               else echo $name_person . "'s Badges";
-              echo "</div>"; // close the panel header
-              echo "<div class='panel-body'>"; // open the panel body
+              echo "</div>"; // close the card header
+              echo "<div class='card-body'>"; // open the card body
             }
             break;
         case "badge" :
@@ -124,7 +124,7 @@ $num_rows = $sth->rowCount();
 }
 
 if ($num_rows > 0) {
-  echo "</div></div>"; //close panel divs
+  echo "</div></div>"; //close card divs
 }
 
 echo "</div></div>"; //close column and row divs
@@ -140,9 +140,9 @@ echo "<div class='row' height='100%'>";
 
 
   echo "<div class='col-md-6'>";
-  echo "<div class='panel panel-default' height='100%'>";
-  echo "<div class='panel-heading'><a name='combat'>Combat Information</a></div>";
-  echo "<div class='panel-body'>";
+  echo "<div class='card card-block' height='100%'>";
+  echo "<div class='card-header'><a name='combat'>Combat Information</a></div>";
+  echo "<div class='card-body'>";
 
 $query = "SELECT waiver_person, youth_person, birthdate_person
             FROM Persons
@@ -231,16 +231,16 @@ $matches = $sth->rowCount();
        echo "<br>";
     }
     echo "<br>";
-    echo "</div></div>"; // close panel divs
+    echo "</div></div>"; // close card divs
 echo "</div>"; //close column div
 
 /////////////////////////////////////////////////////////////////////////////
 // Display Awards information
 /////////////////////////////////////////////////////////////////////////////
 echo "<div class='col-md-6'>";
-echo "<div class='panel panel-default' height='100%'>";
-echo "<div class='panel-heading'><a name='awards'>Awards</a></div>";
-echo "<div class='panel-body'>";
+echo "<div class='card card-block' height='100%'>";
+echo "<div class='card-header'><a name='awards'>Awards</a></div>";
+echo "<div class='card-body'>";
 $query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_event, Events.id_event
           FROM Persons, Persons_Awards, Awards, Kingdoms, Events
           WHERE Persons.id_person = Persons_Awards.id_person
@@ -272,7 +272,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
   echo "</tr>";
 };
 echo "</table>";
-echo "</div></div>"; // close the panel divs
+echo "</div></div>"; // close the card divs
 echo "</div></div>"; // close the column and row divs
 
 /////////////////////////////////////////////////////////////////////////////
