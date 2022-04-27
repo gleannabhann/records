@@ -59,5 +59,5 @@ if ((permissions("Herald")>= 3) && (permissions("Obsidian")>=3)){
 }
 
 
-mysqli_close ($cxn); /* close the db connection */
+$cxn = NULL; /* close the db connection */
 ?>

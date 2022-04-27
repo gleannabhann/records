@@ -87,30 +87,25 @@
   <header class="header">
 <img class="banner" src="/img/banner.png" alt="Banner for Kingdom of Gleann Abhann" width="100%">
     <div id="top" role="navigation">
-      <nav class="navbar navbar-default">
+      <nav class="navbar navbar-expand-md navbar-default">
         <div class="container-fluid">
       <!-- Brand and toggle get grouped for better mobile display -->
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            </button>
             <a class="navbar-brand" href="../">Home</a>
-          </div>
+            <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-expanded="false">
+            <span class="navbar-toggler-icon"></span>
+            </button>
 
       <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <div class="collapse navbar-collapse" id="main-nav">
       <ul class="nav navbar-nav">
-      <li><a class="navbar-brand"  href="/public/awards.php">Awards</a></li>
-      <li><a class="navbar-brand"  href="/public/combat.php">Combat</a></li>
+      <li class='nav-item'><a class="nav-link"  href="/public/awards.php">Awards</a></li>
+      <li class='nav-item'><a class="nav-link"  href="/public/combat.php">Combat</a></li>
       <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
-      <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
+      <li class='nav-item'><a class="nav-link"  href="/public/list_site.php">Campgrounds</a></li>
         <?php
         if (isset($_SESSION["id"]))
         {
-           echo '<li><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
+           echo '<li class="nav-item"><a class="nav-link" href="/public/reports.php">Reports</a></li>';
         }
         ?>           <!--
           <li class="dropdown">
@@ -142,19 +137,19 @@
           <?php
           if (isset($_SESSION["id"]))
           {
-            echo '<li class="navbar-brand" >Logged in as '.$_SESSION["webuser_name"].'</li>';
-            echo '<li><a href="logout.php" class="navbar-brand">Logout</a></li>';
+            echo '<li class="nav-item" >Logged in as '.$_SESSION["webuser_name"].'</li>';
+            echo '<li class="nav-item"><a class="nav-link" href="logout.php">Logout</a></li>';
           }
           ?>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle navbar-brand" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
+          <li class="nav-item dropdown">
+            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="http://gleannabhann.net/award-recommendation-form/" rel="external">Award Recommendation Form</a></li>
+              <li><a class="dropdown-item" href="http://gleannabhann.net/award-recommendation-form/" rel="external">Award Recommendation Form</a></li>
               <!--<li class="disabled">
                  <a href="legal.php">Disclaimers</a></li>-->
-              <li><a href="http://docs.gleannabhann.net/ws-ga-library/College%20of%20Heralds/Amethyst%20Herald" rel="external">Award Definitions</a></li>
-              <li role="separator" class="divider"></li>
-              <li><a href="http://gleannabhann.net" rel="external">GleannAbhann.net</a></li>
+              <li><a class="dropdown-item" href="http://docs.gleannabhann.net/ws-ga-library/College%20of%20Heralds/Amethyst%20Herald" rel="external">Award Definitions</a></li>
+              <li role="separator" class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="http://gleannabhann.net" rel="external">GleannAbhann.net</a></li>
             </ul>
           </li>
 

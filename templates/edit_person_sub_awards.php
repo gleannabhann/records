@@ -16,11 +16,13 @@ echo "<table class='table table-condensed table-bordered'>\n
          and Persons_Awards.id_award = Awards.id_award
          and Awards.id_kingdom = Kingdoms.id_kingdom
          and Persons_Awards.id_event = Events.id_event 
-         and Persons.id_person = $id_person order by date_award";
+         and Persons.id_person = :id_person order by date_award";
+$data = array('id_person' => $id_person);
 if (DEBUG) { echo "Query to list awards is: ".$query."<br>";}
-$awards = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
-while ($row = mysqli_fetch_assoc($awards))
-  {extract($row);
+$sth = $cxn->prepare($query);
+$sth->execute($data);
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+  extract($row);
 // echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
   echo "<tr><td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>";
   echo "<td class='text-left'>$date_award</td>\n";
