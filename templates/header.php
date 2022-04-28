@@ -10,12 +10,17 @@
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-            <!-- Bootstrap Overrides -->
-
            <!-- Bootstrap Stylesheet -->
             <link href="/css/bootstrap.min.css" rel="stylesheet">
             <link href="/css/bootstrap-theme.min.css" rel="stylesheet"/>
+
+            <!-- Bootstrap Overrides -->
+            <link href="/css/cards.css" rel="stylesheet"/>
+            <link href="/css/forms.css" rel="stylesheet"/>
+
+            <!-- local style settings -->
             <link href="/css/styles.css" rel="stylesheet"/>
+
             <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
             <!-- WARNING: Respond.js does not work if you view the page via file:// -->
             <!--[if lt IE 9]>
