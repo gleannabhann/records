@@ -8,7 +8,7 @@
 $cxn = open_db_browse();
 // Build links to the list beginning with the appropriate initial, which is returned as $Initial
 $part_name = $_GET["name"];
-$part_name = str_replace("'", "&#039;", $part_name);
+$part_name_q = "%".$part_name."%"; // wrap query term in wildcards
 if (ISSET($_GET["k_id"])) {
    $k_id = $_GET["k_id"];
 } else {
@@ -33,29 +33,32 @@ echo "<div class='list-group'><ul type='none'>"; // make the list pretty with fo
 
 //TODO convert these to prepared statements
 if ($k_id == -1){
-  $query = "SELECT id_person, name_person, name_group FROM Persons, Groups
-            WHERE Persons.id_group = Groups.id_group
-            AND name_person like '%$part_name%' "
-          . "ORDER BY name_person";
-          }
+  $query = "SELECT id_person, name_person, name_group FROM Persons, Groups "
+         . "WHERE Persons.id_group = Groups.id_group "
+         . "AND name_person like :part_name " 
+         . "ORDER BY name_person";
+ 
+  $data = [':part_name' => $part_name_q];
+}
 else {
-  $query = "SELECT id_person, name_person, name_group FROM Persons, Groups
-            WHERE Persons.id_group = Groups.id_group
-            AND Groups.id_kingdom = $k_id
-            AND name_person like '%$part_name%' "
-          . "ORDER BY name_person";
-      };
+  $query = "SELECT id_person, name_person, name_group FROM Persons, Groups "
+         . "WHERE Persons.id_group = Groups.id_group "
+         . "AND Groups.id_kingdom = :k_id "
+         . "AND name_person like :part_name "
+         . "ORDER BY name_person";
+  $data = [':k_id' => $k_id, ':part_name' => $part_name_q];
+  };
 if (DEBUG) {
     echo "Person search query is:<br>$query<p>";
 }
 
 $sth = $cxn->prepare($query);
-$sth->execute();
+$sth->execute($data);
 $matches = $sth->rowCount();
 echo "$matches people matches";
 if ($matches > 0) {
-  $result = $sth->fetchAll() or die ("Couldn't execute query");
-  foreach ($result as $row) {
+  
+  while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
   //    extract($row);
       $Name = $row['name_person'];
       $ID = $row['id_person'];
@@ -79,26 +82,31 @@ if (permissions("Herald")>=3){
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1)
 {
-  $query = "SELECT id_award, name_award FROM Awards
-            WHERE name_award like '%$part_name%'"
-          . "ORDER BY name_award";
+  $query = "SELECT id_award, name_award FROM Awards "
+         . " WHERE name_award like :part_name " 
+         . "ORDER BY name_award";
+  $data = [':part_name' => $part_name_q];
 }
 else {
-$query = "SELECT id_award, name_award FROM Awards
-          WHERE name_award like '%$part_name%'
-          AND id_kingdom = $k_id "
+$query = "SELECT id_award, name_award FROM Awards "
+       . " WHERE name_award like :part_name "
+       . "AND id_kingdom = :k_id "
         . "ORDER BY name_award";
+$data = [':part_name' => $part_name_q, ':k_id' => $k_id];
 };
 // perform the query
 $sth = $cxn->prepare($query);
-$sth->execute();
+try {
+  $sth->execute($data);
+} catch (PDOException $e) {
+  if (DEBUG){
+    throw new DatabaseException($e->getMessage(), (int)$e->getCode());
+  }
+}
 $matches = $sth->rowCount();
 echo "$matches award matches";
-if ($sth->rowCount() > 0) {
-  $result = $sth->fetchAll() or die ("Couldn't execute query");
-  $matches = count($result);
-  echo "$matches award matches";
-  foreach ($result as $row) {
+if ($matches > 0) {
+  while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
   //    extract($row);
       $Name = $row['name_award'];
       $ID = $row['id_award'];
@@ -123,30 +131,29 @@ if (permissions("Herald")>=3){
 }echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1)
 {
-  $query = "SELECT id_group, name_group, name_kingdom FROM Groups, Kingdoms
-            WHERE name_group like '%$part_name%'
-            AND Groups.id_kingdom = Kingdoms.id_kingdom "
-          . "ORDER BY name_group";
+  $query = "SELECT id_group, name_group, name_kingdom FROM Groups, Kingdoms "
+         . "WHERE name_group like :part_name "
+         . "AND Groups.id_kingdom = Kingdoms.id_kingdom "
+         . "ORDER BY name_group";
+  $data = [':part_name' => $part_name_q];
 }
 else {
-  $query = "SELECT id_group, name_group, name_kingdom FROM Groups, Kingdoms
-            WHERE name_group like '%$part_name%'
-            AND Groups.id_kingdom = Kingdoms.id_kingdom
-            AND Groups.id_kingdom = $k_id "
+  $query = "SELECT id_group, name_group, name_kingdom FROM Groups, Kingdoms "
+          . "WHERE name_group like :part_name "
+          . "AND Groups.id_kingdom = Kingdoms.id_kingdom "
+          . "AND Groups.id_kingdom = :k_id "
           . "ORDER BY name_group";
+  $data = [':part_name' => $part_name_q, ':k_id' => $k_id];
       }
 
 // execute the query
 $sth = $cxn->prepare($query);
-$sth->execute();
+$sth->execute($data);
 $matches = $sth->rowCount();
 echo "$matches group matches";  
 if ($matches > 0) {
-  $result = $sth->fetchAll() or die ("Couldn't execute query");
-
-
   // display the results
-  foreach ($result as $row) {
+  while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
   //    extract($row);
       $Name = $row['name_group'];
       $ID = $row['id_group'];
@@ -172,33 +179,33 @@ if (permissions("Herald")>=3){
 echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
 if ($k_id == -1)
 {
-  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom
-            FROM Events, Groups, Kingdoms
-            WHERE name_event like '%$part_name%'
-            AND Events.id_group = Groups.id_group
-            AND Groups.id_kingdom = Kingdoms.id_kingdom "
-          . "ORDER BY name_event";
+  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom "
+         . "FROM Events, Groups, Kingdoms "
+         . "WHERE name_event like :part_name "
+         . "AND Events.id_group = Groups.id_group "
+         . "AND Groups.id_kingdom = Kingdoms.id_kingdom "
+         . "ORDER BY name_event";
+  $data = [':part_name' => $part_name_q];
 }
 else {
-  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom
-            FROM Events, Groups, Kingdoms
-            WHERE name_event like '%$part_name%'
-            AND Events.id_group = Groups.id_group
-            AND Groups.id_kingdom = Kingdoms.id_kingdom "
-          . "AND Groups.id_kingdom = $k_id "
+  $query = "SELECT id_event, name_event, date_event_start, date_event_stop, name_group, name_kingdom "
+          . "FROM Events, Groups, Kingdoms "
+          . "WHERE name_event like ':part_name' "
+          . "AND Events.id_group = Groups.id_group "
+          . "AND Groups.id_kingdom = Kingdoms.id_kingdom "
+          . "AND Groups.id_kingdom = :k_id "
           . "ORDER BY name_group";
+  $data = [':part_name' => $part_name_q, ':k_id' => $k_id];
       };
 
 // execute the query
 $sth = $cxn->prepare($query);
-$sth->execute();
+$sth->execute($data);
 $matches = $sth->rowCount();
 echo "$matches events matches";
 if ($matches > 0) {
-  // fetch the result
-  $result = $sth->fetchAll() or die ("Couldn't execute query");
   // display the results
-  foreach ($result as $row) {
+  while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
       extract($row);
       if (permissions("Herald")>=3){
           $link = "<li class='list-group-item text-left'>"

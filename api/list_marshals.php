@@ -22,33 +22,55 @@ require("../includes/config.php");
 $cxn = open_db_browse();
 
 // store the passed variable to a local variable after error checking
-if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
+try {
+  if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
     // We got here through an api call 
-    $ic = $_GET["id"];
-
-    if ((isset($_GET['group'])) && (is_numeric($_GET['group']))) {
-        $ig = $_GET["group"];  // If this is set then only marshals from one group are listed.
-    }
-} else {
-    echo 'error';
-    return false;
+    // store the combat id in a var
+    $id_combat = $_GET["id"];
+  } else {
+    throw new Exception("Martial Type ID must be Numeric. Instead, I received '" . $_GET['id'] . "'");
+  }
+} catch (Exception $e) {
+  echo json_encode(array($e->getMessage()));
+  return false;
 }
+
+    // if a group ID was also provided, set that here:
+try 
+{
+  if ((isset($_GET['group'])) && (is_numeric($_GET['group']))) {
+    $id_group = $_GET["group"];  // If this is set then only marshals from one group are listed.
+  } else if (isset($_GET['group']))
+  {
+    throw new Exception("Group ID must be Numeric. Instead, I received '" .$_GET['group'] . "'");
+  }
+} catch (Exception $e) {
+  echo json_encode(array($e->getMessage()));
+  return false;
+} 
 
 // initialize the array
 $combat = [];
 $col_names = [];
 $warrants = [];
-
-$ic=$_GET['id'];
-
+$data = [];
 $q_warr = "SELECT id_marshal, name_marshal, name_combat FROM Marshals, Combat where "
         . "Marshals.id_combat=Combat.id_combat "
-        . "AND Marshals.id_combat=$ic";
-//if (DEBUG) {echo "Warrants query: $q_warr<p>";}
+        . "AND Marshals.id_combat=:id_combat";
+$data[':id_combat'] = $id_combat;
+if (DEBUG) 
+{
+  echo "<p>Warrants query: $q_warr</p>";
+  echo "<p>Data array: ";
+  print_r($data);
+  echo "</p>";
+}
+
 $sth = $cxn->prepare($q_warr);
-$sth->execute();
-// TODO probably unnecessary $warrs = $sth->fetchAll() or die ("Couldn't execute query to find warrants to build report.")
+$sth->execute($data);
+
 // If the combat id does not return any warrants at all
+// there's no point in continuing to build a full query
 if ($sth->rowCount()<1) {
   echo 'error';
   return false;
@@ -67,20 +89,21 @@ $q_body = "FROM
     FROM Persons_CombatCards, Persons, Groups
     WHERE Persons_CombatCards.id_person=Persons.id_person
     AND Persons.id_group = Groups.id_group ";
-if (isset($ig)) {
-    $q_body = $q_body . " AND Persons.id_group=$ig ";
+if (isset($id_group)) {
+  $q_body = $q_body . " AND Persons.id_group=:id_group ";
+  $data[':id_group'] = $id_group;
 }
 $q_body = $q_body ."AND Persons_CombatCards.expire_marshal >= curdate()
-    AND id_combat=$ic) AS PCC
+    AND id_combat=:id_combat) AS PCC
            LEFT JOIN
     (SELECT COUNT(*) as num_count, id_person
     FROM Persons_Marshals, Marshals
     WHERE Persons_Marshals.id_marshal=Marshals.id_marshal
-    AND Marshals.id_combat=$ic
+    AND Marshals.id_combat=:id_combat
     GROUP BY id_person) AS PCount
     ON PCount.id_person = PCC.id_person ";
     // Now we have to add the individual warrants
-    while ($warr=  $sth->fetch()) {
+    while ($warr =  $sth->fetch()) {
         extract($warr);
         $q_head = $q_head . ", if (PA$id_marshal.id_person IS NULL,'No', 'Yes') as '$name_marshal' ";
         $q_body = $q_body .
@@ -91,28 +114,23 @@ $q_body = $q_body ."AND Persons_CombatCards.expire_marshal >= curdate()
                     ON PA$id_marshal.id_person=PCC.id_person ";
     }
 $query = $qnolink . $q_head . $q_body . "WHERE num_count is not NULL ORDER BY name_person";
-//if (DEBUG) { echo "Warrants Query is<p> $query";}
+if (DEBUG) 
+{ 
+  echo "<p>Warrants Query is<br> $query <br>and data array is";
+  print_r($data);
+  echo "</p>";
+}
 
 // This part borrowed from report_showtable, minus ability to download file
 
-$sth = $cxn->query($query);
-$sth->setFetchMode(PDO::FETCH_ASSOC);
-$sth->execute()
-    or die ("Couldn't execute query to build table.");
-// Displays a table with sortable columns based on the data stored in $data.
+$sth = $cxn->prepare($query);
+$sth->execute($data);
+    
 
 // Setting the combat name
 $combat["type_combat"] = $name_combat;
 
-// Setting the names of the columns
-//$fields = mysqli_fetch_fields($data);
-//foreach ($fields as $field) {
-//    $col_names[] = $field->name;    
-//}
-//$combat["col_names"] = $col_names;
-
-// Setting the personal information
-while ($row = $sth->fetch()) {
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
        $warrants[] = [$row];
 }
 
