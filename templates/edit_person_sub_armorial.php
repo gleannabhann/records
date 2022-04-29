@@ -112,6 +112,7 @@ $sth->execute($data);
 
 echo form_subtitle("Potential new links based on seach filters:");
 echo form_subsubtitle("(Also includes all files uploaded in last 15 minutes)");
+echo "<details><summary class='btn btn-default' style='cursor: pointer'>Show/Hide Table</summary>";
 echo "<table class='table table-condensed table-bordered'>";
 echo "<thead>"
         . "<td>Thumbnail</td>"
@@ -138,5 +139,6 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 
 }
 echo "</table>";
+echo "</details>";
 echo "</div> </div>"; // class=col-md-8, class=row,
 ?>

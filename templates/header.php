@@ -92,25 +92,29 @@
   <header class="header">
 <img class="banner" src="/img/banner.png" alt="Banner for Kingdom of Gleann Abhann" width="100%">
     <div id="top" role="navigation">
-      <nav class="navbar navbar-expand-md navbar-default">
+      <nav class="navbar navbar-default">
         <div class="container-fluid">
       <!-- Brand and toggle get grouped for better mobile display -->
-            <a class="navbar-brand" href="../">Home</a>
-            <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-expanded="false">
-            <span class="navbar-toggler-icon"></span>
+          <div class='navbar-header'>
+            <button type="button" class="navbar-toggle collapsed" data-toggle='collapse' data-target='#main-nav' aria-expanded="false">
+            <span class="sr-only">Toggle Navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
             </button>
-
+            <a class="navbar-brand" href="../">Home</a>
+          </div>
       <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="main-nav">
       <ul class="nav navbar-nav">
-      <li class='nav-item'><a class="nav-link"  href="/public/awards.php">Awards</a></li>
-      <li class='nav-item'><a class="nav-link"  href="/public/combat.php">Combat</a></li>
+      <li class='nav-item'><a class='navbar-brand' href="/public/awards.php">Awards</a></li>
+      <li class='nav-item'><a class='navbar-brand' href="/public/combat.php">Combat</a></li>
       <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
-      <li class='nav-item'><a class="nav-link"  href="/public/list_site.php">Campgrounds</a></li>
+      <li class='nav-item'><a class='navbar-brand' href="/public/list_site.php">Campgrounds</a></li>
         <?php
         if (isset($_SESSION["id"]))
         {
-           echo '<li class="nav-item"><a class="nav-link" href="/public/reports.php">Reports</a></li>';
+           echo '<li class="nav-item"><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
         }
         ?>           <!--
           <li class="dropdown">
@@ -142,12 +146,12 @@
           <?php
           if (isset($_SESSION["id"]))
           {
-            echo '<li class="nav-item" >Logged in as '.$_SESSION["webuser_name"].'</li>';
-            echo '<li class="nav-item"><a class="nav-link" href="logout.php">Logout</a></li>';
+            echo '<li class="nav-item navbar-brand">Logged in as '.$_SESSION["webuser_name"].'</li>';
+            echo '<li class="nav-item"><a class="navbar-brand" href="logout.php">Logout</a></li>';
           }
           ?>
           <li class="nav-item dropdown">
-            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle nav-link navbar-brand" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="http://gleannabhann.net/award-recommendation-form/" rel="external">Award Recommendation Form</a></li>
               <!--<li class="disabled">

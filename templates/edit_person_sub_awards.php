@@ -1,5 +1,7 @@
 <?php
 // Part of the edit_person.php file
+echo "<div class='row justify-content-center'>";
+echo "<div class='col-xs-8 col-xs-offset-2'>";
 echo form_title("Editing awards");
 echo button_link("./add_person_award.php?id=".$id_person, "Add a new Award for ".$sca_name);
 echo "<table class='table table-condensed table-bordered'>\n
@@ -21,6 +23,7 @@ $data = ['id_person' => $id_person];
 if (DEBUG) { echo "Query to list awards is: ".$query."<br>";}
 $sth = $cxn->prepare($query);
 $sth->execute($data);
+
 while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
   extract($row);
 // echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
@@ -39,5 +42,6 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
   echo "</tr>";
 };
 echo "</table>";
-
+echo "</div>";
+echo "</div>";
 ?>
