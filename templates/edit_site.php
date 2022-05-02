@@ -24,9 +24,10 @@ $cxn = open_db_browse();
 
 //obtain a count of how many site records are in the db
 $query = "SELECT COUNT(*) from Sites";
-$result = mysqli_query($cxn, $query) or die ("Couldn't execute query to find max count");
-if (mysqli_num_rows($result)==1) {
-   $max_item_result= mysqli_fetch_assoc($result);
+$sth = $cxn->prepare($query);
+$sth->execute();
+if ($sth->rowCount() == 1) {
+   $max_item_result= $sth->fetch(PDO::FETCH_ASSOC);
 } else {
     exit_with_footer();
 }
@@ -37,10 +38,12 @@ $max_item = $max_item_result['COUNT(*)'];
 echo "<div class='row'><div class='col-md-6 col-md-offset-3 col-xs-12 col-sm-12'>\n";
 
 //look up the information for the site we want to edit
-$query = "SELECT * from Sites where id_site = $id_site";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query to find site info");
-if (mysqli_num_rows($result)==1) {
-   $site= mysqli_fetch_assoc($result);
+$query = "SELECT * from Sites where id_site = :id_site";
+$data = [':id_site' => $id_site];
+$sth = $cxn->prepare($query);
+$sth->execute($data);
+if ($sth->rowCount() == 1) {
+   $site = $sth->fetch(PDO::FETCH_ASSOC);
 } else {
     exit_with_footer();
 }
@@ -337,9 +340,10 @@ if ($next_item < $max_item) {
 }
 
 $query="SELECT id_site, verified_site from Sites order by verified_site desc, id_site;";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
-if (mysqli_num_rows($result)>=1) {
-   $next_site= mysqli_fetch_assoc($result);
+$sth = $cxn->prepare($query);
+$sth->execute();
+if ($sth->rowCount() >= 1) {
+   $next_site= $sth->fetch(PDO::FETCH_ASSOC);
 
   //  echo button_link("./edit_site.php?id=".$next_site["id_site"],
   //                   "Next Site Needed to Verify");
@@ -356,34 +360,64 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 
 // Process form by updating the database
-
+$data = [];
     $update = "UPDATE Sites SET ";
     if (!empty($name_site))
-        { $update=$update . "name_site='" . mysqli_real_escape_string($cxn, $name_site) . "'" ;}
+    { 
+      $update=$update . "name_site=:name_site " ;
+      $data[':name_site'] = $name_site;
+    }
     if ($url_site != $site["url_site"] )
-        {$update=$update . ", url_site='" . mysqli_real_escape_string($cxn, $url_site) ."' ";}
-    if ($facilities_site!= $site["facilities_site"])
-        {$update=$update . ", facilities_site='" . mysqli_real_escape_string($cxn, $facilities_site) ."' ";}
+    {
+      $update=$update . ", url_site=:url_site ";
+      $data[':url_site'] = $url_site;
+    }
+    if ($facilities_site!= $site[":facilities_site"])
+    {
+      $update=$update . ", facilities_site=:facilities_site ";
+      $data[':facilities_site'] = $facilities_site;
+    }
     if ($capacity_site !=$site["capacity_site"])
-        {$update=$update . ", capacity_site='" . mysqli_real_escape_string($cxn, $capacity_site) ."' ";}
+    {
+      $update=$update . ", capacity_site=:capacity_site ";
+      $data[':capacity_site'] = $capacity_site;
+    }
     if ($rates_site != $site["rates_site"])
-        {$update=$update . ", rates_site='" . mysqli_real_escape_string($cxn, $rates_site) ."' ";}
+    {
+      $update=$update . ", rates_site=:rates_site ";
+      $data[':rates_site'] = $rates_site;
+    }
     if ($area_site != $site["area_site"])
-        {$update=$update . ", area_site='" . mysqli_real_escape_string($cxn, $area_site) ."' ";}
+    {
+      $update=$update . ", area_site=:area_site ";
+      $data[':area_site'] = $area_site;
+    }
     if ($contact_site != $site["contact_site"])
-        {$update=$update . ", contact_site='" . mysqli_real_escape_string($cxn, $contact_site) ."' ";}
+    {
+      $update=$update . ", contact_site=:contact_site ";
+      $data[':contact_site'] = $contact_site;
+    }
     if ($lat_site !=$site["lat_site"])
         {if (!empty($lat_site))
-            {$update=$update . ", lat_site=" . $lat_site ." ";}
+          {
+            $update=$update . ", lat_site=:lat_site ";
+            $data[':lat_site'] = $lat_site;
+          }
             else {$update=$update . ", lat_site=NULL ";}
         }
     if ($long_site !=$site["long_site"])
         {if (!empty($long_site))
-            {$update=$update . ", long_site=" . $long_site ." ";}
+          {
+            $update=$update . ", long_site=:long_site ";
+            $data[':long_site'] = $long_site;
+          }
             else {$update=$update . ", long_site=NULL ";}
         }
     if ($street_site!= $site["street_site"])
-        {$update=$update . ", street_site='" . mysqli_real_escape_string($cxn, $street_site) ."' ";}
+    {
+      $update=$update . ", street_site=:street_site ";
+      $data[':street_site'] = $street_site;
+    }
     if ($city_site != $site["city_site"])
         {$update=$update . ", city_site='" . mysqli_real_escape_string($cxn, $city_site) ."' ";}
     if ($state_site != $site["state_site"])

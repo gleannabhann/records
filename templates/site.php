@@ -23,13 +23,14 @@ $query = "SELECT id_site, name_site, street_site, city_site, state_site, zip_sit
         . "url_site, lat_site, long_site, area_site, active_site, "
         . "kingdom_level_site, verify_phone_site, verify_web_site, verify_visit_site "
         . "FROM Sites "
-        . "WHERE id_site= $id_site";
+        . "WHERE id_site= :id_site";
+$data = [':id_site' => $id_site];
 if (DEBUG) {
     echo "Site query is:<br>$query<p>";
 }
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query. Query was: ". $query);
-$details = mysqli_fetch_array($result);
+$sth = $cxn->prepare($query);
+$sth->execute($data)
+$details = $sth->fetch(PDO::FETCH_ASSOC);
 $sites = [];
 $id_site = $details["id_site"];
 $name_site = $details["name_site"];
@@ -127,7 +128,7 @@ if (($lat_site == null || $long_site == NULL))
 
 /*#######################################################################################*/
 // This will list all the sites in the database.
-// If the user is logged in with the Sites rolytype, will also include edit/delete/add buttons
+// If the user is logged in with the Sites roletype, will also include edit/delete/add buttons
 echo "<div class='page-header'><h1>" . $name_site . "</h1>";
 echo "<small>$address</small></div>"; //Customize the page header
 

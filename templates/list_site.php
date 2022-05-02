@@ -6,8 +6,8 @@
 $cxn = open_db_browse();
 $query = "select @rn:=@rn+1 as row_number, s.* from Sites s, (SELECT @rn:=0) r "
         . "order by active_site desc, state_site, name_site;";
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
+$sth = $cxn->prepare($query);
+$sth->execute();
 /*#######################################################################################*/
 // This will list all the sites in the database.
 // If the user is logged in with the Sites rolytype, will also include edit/delete/add buttons
@@ -52,7 +52,7 @@ if (permissions("Sites") >= 3) {
 } else {
     $websiteurl = "/public/site.php";
 }
-while ($row = mysqli_fetch_assoc($result)) {
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     extract($row);
     if (($active_site > 0) || (permissions("Sites") >= 3)) {
         //TODO: Indicate if site is inactive
