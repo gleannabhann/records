@@ -419,26 +419,43 @@ $data = [];
       $data[':street_site'] = $street_site;
     }
     if ($city_site != $site["city_site"])
-        {$update=$update . ", city_site='" . mysqli_real_escape_string($cxn, $city_site) ."' ";}
+    {
+      $update=$update . ", city_site=:city_site ";
+      $data[':city_site'] = $city_site;
+    }
     if ($state_site != $site["state_site"])
-        {$update=$update . ", state_site='" . mysqli_real_escape_string($cxn, $state_site) ."' ";}
+    {
+      $update=$update . ", state_site=:state_site ";
+      $data[':state_site'] = $state_site;
+    }
     if ($zip_site!= $site["zip_site"])
-        {$update=$update . ", zip_site='" . mysqli_real_escape_string($cxn, $zip_site) ."' ";}
+    {
+      $update=$update . ", zip_site=:zip_site ";
+      $data[':zip_site'] = $zip_site;
+    }
     if ($active_site!= $site["active_site"])
-        {$update=$update . ", active_site=$active_site ";}
+    {
+      $update=$update . ", active_site=:active_site ";
+      $data[':active_site'] = $active_site;
+    }
     if ($kingdom_level_site != $site["kingdom_level_site"]) {
-        $update=$update.", kingdom_level_site='$kingdom_level_site' ";
+      $update=$update.", kingdom_level_site=:kingdom_level_site ";
+      $data[':kingdom_level_site'] = $kingdom_level_site;
     }
     if ($verify_phone_site != $site["verify_phone_site"]) {
-        $update=$update . ", verify_phone_site='$verify_phone_site' ";
+        $update=$update . ", verify_phone_site=:verify_phone_site ";
+        $data[':verify_phone_site'] = $verify_phone_site;
     }
     if ($verify_web_site != $site["verify_web_site"]) {
-        $update=$update . ", verify_web_site='$verify_web_site' ";
+      $update=$update . ", verify_web_site=:verify_web_site ";
+      $data[':verify_web_site'] = $verify_web_site;
     }
     if ($verify_visit_site != $site["verify_visit_site"]) {
-        $update=$update . ", verify_visit_site='$verify_visit_site' ";
+      $update=$update . ", verify_visit_site=:verify_visit_site ";
+      $data[':verify_visit_site'] = $verify_visit_site;
     }
-    $update=$update. ", verified_site=curdate() WHERE id_site=" .$id_site;
+    $update=$update. ", verified_site=curdate() WHERE id_site=:id_site";
+    $data[':id_site'] = $id_site;
 
     /* Testing code
     echo "<p>Query is " . $update . "<p>";
@@ -450,9 +467,10 @@ $data = [];
     if (DEBUG) {
         echo "Update query is:<br>$update<p>";
     }
-    $result=update_query($cxn, $update);
-    if ($result !== 1) {
-      echo "Error updating record: " . mysqli_error($cxn);
+    $sth = $cxn->prepare($query);
+    $sth->execute($data);
+        if ($sth->rowCount() !== 1) {
+      echo "Error updating record: " . $sth->errorInfo();
     }
 }
 

@@ -186,17 +186,34 @@
      * a copy of the update query to the transaction log.
      * TODO: query cleaning?
      */
-    function update_query($cxn, $query){
-        if  (mysqli_query($cxn, $query)) {
+    function update_query($cxn, $query, $data=null){
+      try {
+        $sth = $cxn->prepare($query);
+        $sth->execute($data);
+      } catch (PDOException $e) {
+          if (DEBUG) {
+            $message = $e->getMessage();
+            $code = (int)$e->getCode();
+            // send the information to the error log.
+            error_log("Functions.php: update_query() failed to complete. Query was '$query'. Data was '$data'. Error message: $message. Code: $code");
+      }
+
+      if  ($sth->rowCount() != '0') {
             //echo "Record updated successfully";
             $log = "INSERT INTO Transaction_Log VALUES ('',NOW(),"
-                    . get_webuser()
-                    . ",0,'"
-                    . addslashes($query) . "')";
+                  . " :web_user ,0, :query)";
+            $webuser = get_webuser();
+            $query = addslashes($query);
+            $data = [':web_user' => $webuser, ':query' => $query];
+            $sth_log = $cxn->prepare($log);
+            $sth_log->execute($data);
+
             // echo "<p>Updating the transaction log with: " . $log;
-            $result = mysqli_query($cxn, $log);
-        } else {
-            return mysqli_error($cxn);
+            
+      } else {
+            // just return 0 and leave it to the calling doc to communicate the
+            // error. We can tell the user that the error has been logged.
+            return 0;
         }
         return 1;
     }
