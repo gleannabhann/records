@@ -46,22 +46,25 @@ $cxn = open_db_browse();
 $query = "SELECT Persons.id_person, id_person_combat_card, Combat.id_combat, name_combat "
         . "FROM Persons, Persons_CombatCards, Combat "
         . "WHERE Persons.id_person=Persons_CombatCards.id_person "
-        . "AND membership_person=$mem_num "
+        . "AND membership_person=:mem_num "
         . "AND Combat.id_combat = Persons_CombatCards.id_combat "
-        . "AND Combat.id_combat=$id_combat;";
+        . "AND Combat.id_combat=:id_combat;";
+$data = [':mem_num' => $mem_num, ':id_combat' => $id_combat];
 if (DEBUG){
     echo "Find person query is: $query<p>";
 }
-$result = mysqli_query ($cxn, $query) or die ("Couldn't find authorization card");
+$sth = $cxn->prepare($query);
+$sth->execute($data);
+
 // Now check: if we returned a result we have id_person.  If not, exit out with card not found.
 // Note: we will return either 1 row, or 0.
-$num_rows= mysqli_num_rows($result);
+$num_rows= $sth->rowCount();
 if ($num_rows < 1){
     echo "Couldn't find authorization card given Combat type and Membership Number.<p>";
     echo '<a id="back" href="combat.php">Back to the Combat Page!</a>';
     exit_with_footer();
 }
-$row = mysqli_fetch_assoc($result);
+$row = $sth->fetch(PDO::FETCH_ASSOC);
 $id_person=$row["id_person"];
 $name_combat=$row["name_combat"];
 //$id_person=764;
@@ -72,14 +75,16 @@ $query_fighter="SELECT name_person, name_mundane_person, membership_person,
     if(expire_marshal>=NOW(), expire_marshal, 'NONE') as expire_marshal
     FROM Persons, Persons_CombatCards
     WHERE Persons.id_person = Persons_CombatCards.id_person
-    AND id_combat=$id_combat
-    AND Persons.id_person=$id_person";
+    AND id_combat=:id_combat
+    AND Persons.id_person=:id_person";
+$data = [':id_combat' => $id_combat, ':id_person' => $id_person];
+
 if (DEBUG) {
     echo "Find fighter query is:$query_fighter<p>";
 }
-$result_fighter = mysqli_query ($cxn, $query_fighter)
-        or die ("Couldn't find fighter information");
-$rowf = mysqli_fetch_assoc($result_fighter);
+$sth = $cxn->prepare($query_fighter);
+$sth->execute($data);
+$rowf = $sth->fetch(PDO::FETCH_ASSOC);
 $SCA_name=$rowf["name_person"];
 $mundane_name=$rowf["name_mundane_person"];
 $expire_authorize=$rowf["expire_authorize"];
@@ -87,22 +92,26 @@ $expire_marshal=$rowf["expire_marshal"];
 
 $query_auth="SELECT A.id_auth, A.name_auth, A.id_combat, PA.id_person_auth
     FROM Authorizations A LEFT JOIN Persons_Authorizations PA
-    ON A.id_auth=PA.id_auth AND id_person=$id_person
-    WHERE A.id_combat=$id_combat";
+    ON A.id_auth=PA.id_auth AND id_person=:id_person
+    WHERE A.id_combat=:id_combat";
+$data = [':id_person' => $id_person, ':id_combat' => $id_combat];
+
 if (DEBUG) {
     echo "Find authorization query is:$query_auth<p>";
 }
-$result_auth = mysqli_query ($cxn, $query_auth)
-        or die ("Couldn't find authorization information");
+$sth_auth = $cxn->prepare($query_auth);
+$sth_auth->execute($data);
+
 $query_marshal="SELECT M.id_marshal, M.name_marshal, M.id_combat, PM.id_person_marshal
     FROM Marshals M LEFT JOIN Persons_Marshals PM
-    ON M.id_marshal=PM.id_marshal AND id_person=$id_person
-    WHERE M.id_combat=$id_combat";
+    ON M.id_marshal=PM.id_marshal AND id_person=:id_person
+    WHERE M.id_combat=:id_combat";
+$data = [':id_person' => $id_person, ':id_combat' => $id_combat];
 if (DEBUG) {
     echo "Find marshal query is:$query_marshal<p>";
 }
-$result_marshal = mysqli_query ($cxn, $query_marshal)
-        or die ("Couldn't find marshal warranting information");
+$sth_marshal = $cxn->prepare($query_marshal);
+$sth_marshal->execute($data);
 
         echo "<section id=\"side1\">";
 
@@ -118,7 +127,7 @@ $result_marshal = mysqli_query ($cxn, $query_marshal)
         requested to show it to the marshals at any time. </span>";
         echo "</section><section id=\"side2\">
           <div id=\"leftcol\"><b>Authorizations:</b><br/>"; // Authorizations
-                while ($row = mysqli_fetch_assoc($result_auth)){
+                while ($row = $sth_auth->fetch(PDO::FETCH_ASSOC)){
                     echo "* ".$row["name_auth"].": ";
                     if ($row["id_person_auth"] == NULL) {
                         echo "NO<br/>";
@@ -128,7 +137,7 @@ $result_marshal = mysqli_query ($cxn, $query_marshal)
                 }
                 echo "</div><div id=\"rightcol\">";
                 echo "<b>Warrants:</b> <br />"; // Marshals' Warrants
-                while ($row = mysqli_fetch_assoc($result_marshal)){
+                while ($row = $sth_marshal->fetch(PDO::FETCH_ASSOC)){
                     echo "* ".$row["name_marshal"].": ";
                     if ($row["id_person_marshal"] == NULL) {
                         echo "NO<br/>";
