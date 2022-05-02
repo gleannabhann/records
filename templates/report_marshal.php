@@ -242,4 +242,4 @@ switch ($report) {
 // Display data in $data (includes possibility to download)
 include 'report_showtable.php';
 
-mysqli_close ($cxn); // Close the db connection
+$cxn = null; // Close the db connection

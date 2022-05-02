@@ -140,7 +140,7 @@ if (permissions("Sites")>=  3) {
            echo '<a href="./list_site.php">Return to List of Sites</a><br>';
            echo 'Continue adding new sites below:';
        }
-       mysqli_close ($cxn); /* close the db connection */
+       $cxn = null; /* close the db connection */
 
            
    }

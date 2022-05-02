@@ -118,5 +118,5 @@ if ((isset($_POST["date_award"]) && ($date_award != $award["date_award"]))
         echo "No data changed in form; no update query needed<p>";
     }
 }
-mysqli_close($cxn); /* close the db connection */
+$cxn = null; /* close the db connection */
 ?>

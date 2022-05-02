@@ -104,4 +104,4 @@ switch ($report) {
 // Display data in $data
 include 'report_showtable.php';
 
-mysqli_close ($cxn); // Close the db connection
+$cxn = null; // Close the db connection

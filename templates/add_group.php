@@ -40,7 +40,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') && (permissions("Herald")>=3)){
 $query = "SELECT id_kingdom, name_kingdom FROM Kingdoms;";
 $kingdoms = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 
-mysqli_close ($cxn); 
+$cxn = null; 
 ?>
 
 <div class='row'><div class='col-md-8 col-md-offset-2'>

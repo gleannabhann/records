@@ -172,7 +172,7 @@ echo "</table>";
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 echo "<hr><p>Browse by Name:</p><p>";
 include "alpha.php"; // includes the A-Z link list
-mysqli_close ($cxn); /* close the db connection */
+$cxn = null; /* close the db connection */
 echo "<hr/>";
 
 // If the submit button was pressed, handle the email.

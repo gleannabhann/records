@@ -109,7 +109,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 echo "</table>";
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 #######################################################################################*/
-mysqli_close ($cxn); /* close the db connection */
+$cxn = null; /* close the db connection */
 
 ?>
 

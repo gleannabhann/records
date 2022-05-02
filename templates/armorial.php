@@ -85,5 +85,5 @@ include "warning.php"; // includes the warning text about paper precedence
  echo "<!-- ./row -->";
 
 
-mysqli_close ($cxn); /* close the db connection */
+$cxn = null; /* close the db connection */
 ?>

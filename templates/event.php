@@ -105,6 +105,6 @@ echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open 
 }
 
 
-mysqli_close ($cxn); /* close the db connection */
+$cxn = null; /* close the db connection */
 ?>
 </div>

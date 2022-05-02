@@ -97,7 +97,7 @@ $image = NULL;
         }
       }
 
-mysqli_close ($cxn);
+$cxn = null;
 }
 ?>
 

@@ -224,7 +224,7 @@ if (isset($_POST["msgSubmit"])) {
 
 
 #######################################################################################*/
-mysqli_close ($cxn); /* close the db connection */
+$cxn = null; /* close the db connection */
 
 ?>
 <!-- end of php -->

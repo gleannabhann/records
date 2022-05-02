@@ -63,7 +63,7 @@ $kingdoms = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 $query = "SELECT id_rank, name_rank FROM Ranks;";
 $ranks = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 
-mysqli_close ($cxn); 
+$cxn = null; 
 ?>
 
 <div class='row'><div class='col-md-8 col-md-offset-2'>

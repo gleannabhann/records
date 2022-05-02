@@ -213,5 +213,5 @@ $groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 </div><!-- ./col-md-8 --></div><!-- ./row -->  
 
 <?php
-mysqli_close ($cxn); /* close the db connection */
+$cxn = null; /* close the db connection */
 ?>

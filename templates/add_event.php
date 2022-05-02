@@ -87,7 +87,8 @@ if (permissions("Herald")>=  3) {
         echo "<p>Sites query is:<br>$query<br>";
     }
     $sites = mysqli_query($cxn, $query) or die ("Couldn't execute sites query");
-    mysqli_close($cxn); /* close the db connection */
+    
+    $cxn = null; /* close the db connection */
 } else {
     // We don't have sufficient permissions for this page.
     echo '<p class = "error"> This page has been accessed in error.</p>';

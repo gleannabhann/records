@@ -86,5 +86,5 @@ if ($result !== 1) {
     echo form_subtitle($update);
 }
 echo button_link("edit_person.php?id=$ip", "Return to Edit Person page");
-mysqli_close ($cxn); /* close the db connection */
+$cxn = null; /* close the db connection */
 ?>
