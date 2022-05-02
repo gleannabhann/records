@@ -27,4 +27,4 @@ if (permissions("Sites")>= 1){
    include 'report_sub_sites.php';
 }
 
-mysqli_close ($cxn); /* close the db connection */
+$cxn = null; /* close the db connection */

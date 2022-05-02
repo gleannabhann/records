@@ -11,6 +11,8 @@
 // configuration
 require("../includes/config.php");
 
+// builds the auth card for an individual. 
+
 // Initialize Variables
 $sca_name = NULL;
 $mundane_name = NULL;
@@ -36,11 +38,12 @@ $cxn = open_db_browse();
 // get authorizations
 $query_auth="SELECT A.id_auth, A.name_auth, A.id_combat, PA.id_person_auth
 FROM Authorizations A LEFT JOIN Persons_Authorizations PA
-ON A.id_auth=PA.id_auth AND id_person=$id_person
-WHERE A.id_combat=$id_combat";
-  $result = mysqli_query ($cxn, $query_auth) or die ("Couldn't execute event_info query");
-
-  while ($row = mysqli_fetch_assoc($result)){
+ON A.id_auth=PA.id_auth AND id_person=:id_person
+WHERE A.id_combat=:id_combat";
+  $data = [':id_person' => $id_person, ':id_combat' => $id_combat];
+  $sth = $cxn->prepare($query_auth);
+  $sth->execute($data);  
+  while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
       extract($row);
       if (($row["name_auth"] == "Rapier") && ($row["id_person_auth"] != NULL))
         {
@@ -98,12 +101,13 @@ WHERE A.id_combat=$id_combat";
 
 $query_marshal="SELECT M.id_marshal, M.name_marshal, M.id_combat, PM.id_person_marshal
 FROM Marshals M LEFT JOIN Persons_Marshals PM
-ON M.id_marshal=PM.id_marshal AND id_person=$id_person
-WHERE M.id_combat=$id_combat";
+ON M.id_marshal=PM.id_marshal AND id_person=:id_person
+WHERE M.id_combat=:id_combat";
+$data = [':id_person' => $id_person, ':id_combat' => $id_combat];
+$sth = $cxn->prepare($query_marshal);
+$sth->execute($data);
 
-$result = mysqli_query ($cxn, $query_marshal) or die ("Couldn't execute event_info query");
-
-while ($row = mysqli_fetch_assoc($result)){
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
     extract($row);
 
     if (($row["name_marshal"] == "Rapier Marshal in Training") && ($row["id_person_marshal"] != NULL))
@@ -176,10 +180,11 @@ FROM Persons, Persons_CombatCards
 WHERE Persons.id_person = Persons_CombatCards.id_person
 AND id_combat=$id_combat
 AND Persons.id_person=$id_person";
+$data = [':id_combat' => $id_combat, ':id_person' => $id_person];
+$sth = $cxn->prepare($query_fighter);
+$sth->execute($data);
 
-$result = mysqli_query ($cxn, $query_fighter) or die ("Couldn't execute event_info query");
-
-while ($row = mysqli_fetch_assoc($result)){
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
     extract($row);
 
     $sca_name = $row["name_person"];
