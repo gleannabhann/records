@@ -107,6 +107,7 @@ if (!isset($_GET["initial"]) && !isset($_GET["award"]) && isset($_GET["group"]))
     echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
     if (permissions("Herald")>= 3) {
         $query = "SELECT concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') as 'SCA Name' ";
+        echo button_link("./edit_group.php?id=$group", "Edit this Group");
     } else {
         $query = "SELECT concat('<a href=''person.php?id=',Persons.id_person,'''>',name_person,'</a>') as 'SCA Name' ";        
     }
@@ -125,7 +126,7 @@ if (!isset($_GET["initial"]) && !isset($_GET["award"]) && isset($_GET["group"]))
     //    or die ("Couldn't execute query to build report.");
     echo '<table class="sortable table table-condensed table-bordered">';
     echo '<thead>';
-    foreach (range(0, $sth->getColumnCount() -1) as $index)
+    foreach (range(0, $sth->ColumnCount() -1) as $index)
       {
       $col = $sth->getColumnMeta($index);
       echo '<th>'.$col['name'].'</th>';
