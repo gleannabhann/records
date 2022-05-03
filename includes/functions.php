@@ -198,9 +198,10 @@
             $message = $e->getMessage();
             $code = (int)$e->getCode();
             if (DEBUG) {
-            echo "Functions.php::update_query() failed to complete. The query was '$query'. The data was $data. The error message is $message, with code $code";
+            throw new Exception("Functions.php::update_query() failed to complete. The query was '$query'. The data was $data. The error message is $message, with code $code");
+            } else {
+            throw new Exception("Could not Update.");
             }
-            return 0;
       }
       if  ($sth->rowCount() != '0') {
             //echo "Record updated successfully";
@@ -220,7 +221,7 @@
               // send the information to the error log
               error_log("Functions.php::update_query() failed to log the transaction. Query was '$query'. Data was '$data'. Error message: $message. Error code: $code.");
               if (DEBUG) {
-                echo "Functions.php::update_query() failed to log the transaction. Query was '$query'. Data was '$data'. Error message: $message. Error code: $code.";
+                throw new Exception("Functions.php::update_query() failed to log the transaction. Query was '$query'. Data was '$data'. Error message: $message. Error code: $code.");
               }
             }
         }        
