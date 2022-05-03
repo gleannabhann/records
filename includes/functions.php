@@ -189,7 +189,11 @@
     function update_query($cxn, $query, $data=null){
       try {
         $sth = $cxn->prepare($query);
-        $sth->execute($data);
+        if (isset($data)) {
+          $sth->execute($data);
+        } else {
+          $sth->execute();
+        }
       } catch (PDOException $e) {
             $message = $e->getMessage();
             $code = (int)$e->getCode();
