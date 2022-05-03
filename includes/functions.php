@@ -191,13 +191,13 @@
         $sth = $cxn->prepare($query);
         $sth->execute($data);
       } catch (PDOException $e) {
-          if (DEBUG) {
             $message = $e->getMessage();
             $code = (int)$e->getCode();
-            // send the information to the error log.
-            error_log("Functions.php: update_query() failed to complete. Query was '$query'. Data was '$data'. Error message: $message. Code: $code");
+            if (DEBUG) {
+            echo "Functions.php::update_query() failed to complete. The query was '$query'. The data was $data. The error message is $message, with code $code";
+            }
+            return 0;
       }
-
       if  ($sth->rowCount() != '0') {
             //echo "Record updated successfully";
             $log = "INSERT INTO Transaction_Log VALUES ('',NOW(),"
@@ -205,16 +205,21 @@
             $webuser = get_webuser();
             $query = addslashes($query);
             $data = [':web_user' => $webuser, ':query' => $query];
+            try {
             $sth_log = $cxn->prepare($log);
             $sth_log->execute($data);
 
             // echo "<p>Updating the transaction log with: " . $log;
-            
-      } else {
-            // just return 0 and leave it to the calling doc to communicate the
-            // error. We can tell the user that the error has been logged.
-            return 0;
-        }
+            } catch (PDOException $e) {
+              $message = $e->getMessage();
+              $code = (int)$e->getCode();
+              // send the information to the error log
+              error_log("Functions.php::update_query() failed to log the transaction. Query was '$query'. Data was '$data'. Error message: $message. Error code: $code.");
+              if (DEBUG) {
+                echo "Functions.php::update_query() failed to log the transaction. Query was '$query'. Data was '$data'. Error message: $message. Error code: $code.";
+              }
+            }
+        }        
         return 1;
     }
 
