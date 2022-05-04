@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
    * however this document does not include either of those
    * so we need to open the db connection manually */
   try {
-  $cxn = open_db_browse()
+  $cxn = open_db_browse();
   } catch (PDOException $e) {
     if (DEBUG) {
       $message = $e->getMessage();
