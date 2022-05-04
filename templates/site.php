@@ -16,8 +16,8 @@ if (is_numeric($_GET["id"]) && $_GET["id"] > 0)
     echo "Invalid argument supplied. The url for this page should include ?id=, followed by a positive integer.";
     exit_with_footer();
   }
-/* connect to the database */
-$cxn = open_db_browse();
+/* header.php and header_main.php connect to the database for us */
+
 $query = "SELECT id_site, name_site, street_site, city_site, state_site, zip_site,"
         . "facilities_site, capacity_site, rates_site, contact_site, "
         . "url_site, lat_site, long_site, area_site, active_site, "
@@ -225,7 +225,7 @@ if (isset($_POST["msgSubmit"])) {
 
 
 #######################################################################################*/
-$cxn = null; /* close the db connection */
+/* footer.php closes the db connection for us */
 
 ?>
 <!-- end of php -->

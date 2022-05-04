@@ -24,7 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Ruby")>=3)){ //portion commented out for testing
-  $cxn = open_db_browse();
+
+  /* note: db connection created by header.php or header_main.php */  
 
     // We have a form submission.
     // Note: we allow for addition of multiple devices which is why the blank
@@ -97,7 +98,7 @@ $image = NULL;
         }
       }
 
-$cxn = null;
+  /* footer.php will close the database connection for us */
 }
 ?>
 

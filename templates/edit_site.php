@@ -18,9 +18,7 @@ if (permissions("Sites")>= 3) {
     exit_with_footer();
 }
 
-
-
-$cxn = open_db_browse();
+/* header.php and header_main.php open the database connection for us */
 
 //obtain a count of how many site records are in the db
 $query = "SELECT COUNT(*) from Sites";
@@ -475,5 +473,5 @@ $data = [];
 }
 
 
-$cxn = null; /* close the db connection */
+/* footer.php closes the db connection */
 ?>

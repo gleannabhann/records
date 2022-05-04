@@ -9,7 +9,11 @@
 if ($_SERVER["REQUEST_METHOD"] == "POST")
   {       
   $email = $_POST["email"];
-  // open db connection
+
+/* open db connection
+ * normally header.php or header_main.php would have done this for us
+ * however, neither of those has been included here
+ * so we need to do it manually */
   $cxn = open_db_browse();
 
   // check to make sure this email isn't being used by another user 
@@ -100,6 +104,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
   exit;
 }
 
-
+/* close the db
+ * normally handled by footer.php
+ * however, we are not including that file here
+ * so we need to close it manually */
+$cxn = null;
 
     ?>

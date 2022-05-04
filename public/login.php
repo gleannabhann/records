@@ -18,9 +18,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
   $username = $_POST["username"];
   $password = $_POST["password"];
   
-  // establish database connection object
-  $cxn = open_db_browse() or die ("message");
-
+  /* establish database connection object
+   * normally header.php or header_main.php would handle this
+   * however this document does not include either of those
+   * so we need to open the db connection manually */
+  try {
+  $cxn = open_db_browse()
+  } catch (PDOException $e) {
+    if (DEBUG) {
+      $message = $e->getMessage();
+      $code = $e->getCode();
+      $error = "Could not establish database connection. $message / $code";
+    } else {
+      $error = "Could not establish database connection. Please contact your administrator.";
+    }
+    die($error);
+  }
   // pre-build the query
   $query = "select * from WebUsers where name_webuser = :username";
   $data = [':username' => $username];
@@ -163,5 +176,8 @@ else
     // else render form
     render("login_form.php", ["title" => "Log In"]);
 }
-
+/* close db connection
+ * normally handled by footer.php
+ * but we are not including that file here */
+$cxn = null;
 ?>

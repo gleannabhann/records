@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 // we will now update the database
 $id_person = $_POST["id"];
 $name_person = $_POST["name_person"];
-$cxn = open_db_browse();
+/* header.php and header_main.php connect us to the browser */
 $query_comb = "SELECT id_combat, name_combat, cn, ea, ipcc, note, active "
         . "FROM Combat LEFT JOIN"
         . "(SELECT  id_person_combat_card as ipcc, card_marshal as cn, "

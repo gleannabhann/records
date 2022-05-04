@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') { // this page wasn't reached through 
     exit_with_footer();
 }
     
-$cxn = open_db_browse(); // Open the db connection which is now live for the subforms
+/* header.php and header_main.php open the db connection for us */
 // Generate the report.
 
 // Build the query based on the parameters: this will be a massive if statement.
@@ -104,4 +104,4 @@ switch ($report) {
 // Display data in $data
 include 'report_showtable.php';
 
-$cxn = null; // Close the db connection
+/* footer.php closes the db connection*/

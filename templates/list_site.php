@@ -2,8 +2,8 @@
 
 <?php
 
-/* connect to the database */
-$cxn = open_db_browse();
+/* header.php and header_main.php connect to the database for us */
+
 $query = "select @rn:=@rn+1 as row_number, s.* from Sites s, (SELECT @rn:=0) r "
         . "order by active_site desc, state_site, name_site;";
 $sth = $cxn->prepare($query);
@@ -109,7 +109,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 echo "</table>";
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 #######################################################################################*/
-$cxn = null; /* close the db connection */
+/* footer.php closes the db connection */
 
 ?>
 

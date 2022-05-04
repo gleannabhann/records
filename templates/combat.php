@@ -6,8 +6,8 @@
  */
 
 // Build the Links to the Marshal list pages depending on what is in the database
-/* connect to the database */
-$cxn = open_db_browse();
+/* header.php and header_main.php connect us to the database */
+
 echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
 ///////////////////////////////////////////////////////////////////////////////
 // Main portion of the page

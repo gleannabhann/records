@@ -17,7 +17,7 @@ if ((isset($_GET['part_name'])) && (is_string($_GET['part_name']))) {
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();
 }
-$cxn = open_db_browse();
+/* header.php and header_main.php open the db connection for us */
 
 // Build list of groups for add_person page.
 if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Any")>=3)){
@@ -213,5 +213,5 @@ $groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 </div><!-- ./col-md-8 --></div><!-- ./row -->  
 
 <?php
-$cxn = null; /* close the db connection */
+/* footer.php closes the db connection */
 ?>

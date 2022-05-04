@@ -2,6 +2,8 @@
 <?php if (isset($_SESSION['initiated'])) {
     validate_session();
 }
+// connect to the db
+$cxn = open_db_browse();
 ?>
 <html>
 

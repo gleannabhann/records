@@ -31,7 +31,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     if (isset($_SESSION)) {
       logout();
     }
-
+    /* connect to database
+     * normally handled by header.php or header_main.php
+     * but this document does not include either one */
+    try {
+      $cxn = open_db_browse();
+    } catch (PDOException $e) {
+      if (DEBUG) {
+        $message = $e->getMessage();
+        $code = (int)$e->getCode();
+        $error = "Could not establish database connection. $message / $code";
+      } else {
+        $error = "Could not establish database connection.";
+      }
+      die($error);
+    }
     // pull email var
     $email = $_POST['email'];
     $username = $_POST['username'];
@@ -39,7 +53,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     // check for active, unused invite code
     $query = "SELECT * FROM invites WHERE invite_email=:email AND invite_used=0";
     $data = [':email' => $email];
-    $cxn = open_db_browse() or die ("message");
     $sth = $cxn->prepare($query);
     try {
       $sth->execute($data);
@@ -213,6 +226,12 @@ if (!isset($_SESSION['initiated']))
     // 14 days, if (using a public computer) {expire after 4 hours}
     // based on login form input -> tickbox asking, "Are you using a shared or
     // public computer?". If TRUE, expire after 4 hours, else, expire after 2 weeks
+  
+    /* close db connection
+     * normally handled by footer.php, but we aren't including it
+     */
+      $cxn = null;
+
     // redirect to main page
 
 

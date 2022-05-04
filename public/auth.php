@@ -26,8 +26,13 @@ $mem_number = NULL;
 $mem_exp = NULL;
 
 
-/* connect to the database */
+/* connect to the database 
+ * Normally we would use the connection set by header.php or header_main.php
+ * but those documents are not included here
+ * */
+
 $cxn = open_db_browse();
+
 	$itl = "<span class=\"italics\">";
 	$itlx = "</span>";
 	$ctr = "<span class=\"center\">";
@@ -197,59 +202,49 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
 
 
 // make the card
-			print "
-					<section id=\"side1\">
-					<img src=\"ram.jpg\">
-					$itl The Society for Creative Anachronism <br/>
-					Combat Authorization Card <br />
-					Kingdom of Gleann Abhann $itlx <br /> <br />
-					<b>Sca Name: $sca_name </b><br />
-					Mundane Name: $mundane_name <br>
-					Auth Exp: $expire_authorize &nbsp; &nbsp; &nbsp; Marshal Exp: $expire_marshal<br>
-					<span id=\"spacing\">
-					Signature: ______________________________ </span><br />
-					<span class=\"small\"> This your authorization to participate on the field at SCA activities. It must be
-presented to the List Officials at SCA events to register for participation and you may be
-requested to show it to the marshals at any time. </span>
-					</sction>
-					<section id=\"side2\">
-						<div id=\"leftcol\">
-							<b>Authorized Styles:</b> <br />";
-							if (!$authorizations)
-              {
-                echo "None.";
-              }
-              foreach ($authorizations as $auth)
-              {
-                if ($auth != NULL)
-                {
-                  echo $auth . ', ';
-                }
-              }
-						echo "</div>
-					<div id=\"rightcol\">
-						<b>Warrants:</b> <br />";
-            if (!$warrants)
-            {
-              echo "None.";
-            }
-              foreach ($warrants as $warrant)
-                {
-                  if ($warrant != NULL)
-                  {echo $warrant . ', ';}
-                }
-            echo "
+print "<section id=\"side1\">	<img src=\"ram.jpg\">"
+    . "$itl The Society for Creative Anachronism <br/>"
+    . "Combat Authorization Card <br />"
+    . "Kingdom of Gleann Abhann $itlx <br /> <br />"
+    . "<b>Sca Name: $sca_name </b><br />"
+    . "Mundane Name: $mundane_name <br>"
+    . "Auth Exp: $expire_authorize &nbsp; &nbsp; &nbsp; Marshal Exp: $expire_marshal<br>"
+    . "<span id=\"spacing\">"
+    . "Signature: ______________________________ </span><br />"
+    . "<span class=\"small\"> This your authorization to participate on the field at SCA activities. It must be "
+    . "presented to the List Officials at SCA events to register for participation and you may be "
+    . "requested to show it to the marshals at any time. </span>"
+    . "</sction>"
+    . "<section id=\"side2\">"
+    . "<div id=\"leftcol\">"
+    . "<b>Authorized Styles:</b> <br />";
+    if (!$authorizations)
+    {
+      echo "None.";
+    }
+    foreach ($authorizations as $auth)
+    {
+      if ($auth != NULL)
+      {
+        echo $auth . ', ';
+      }
+    }
+  echo "</div><div id=\"rightcol\"><b>Warrants:</b> <br />";
+  if (!$warrants)
+  {
+    echo "None.";
+  }
+    foreach ($warrants as $warrant)
+      {
+        if ($warrant != NULL)
+        {echo $warrant . ', ';}
+      }
+  echo "</div></section>";
 
-					</div>
-					</section>
-			";
-
-
-
-// legacy - candidate for deletion
-//	if (!$found) {
-//		print "<h2>Membership number not found in authorization database.</h2>";
-//	}
+/* close the db connection 
+ * normally footer.php will do this, however, we are not including the footer
+ * in this document, so we have to close it here */
+$sth = null;
 
 ?>
 <a id="back" href="combat.php">Back to the Combat Page!</a>

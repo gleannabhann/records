@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<?php if (isset($_SESSION['initiated'])) validate_session();?>
+<?php if (isset($_SESSION['initiated'])) validate_session();
+$cxn = open_db_browse();
+?>
 
 <html>
 

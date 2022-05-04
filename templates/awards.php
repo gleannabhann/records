@@ -1,6 +1,5 @@
 <?php
-/* connect to the database */
-$cxn = open_db_browse();
+/* header.php and header_main.php connect to the database for us */
 
 echo "<div class='row'><div class='col-xs-12 col-sm-8 col-md-6 col-md-offset-2' >";
 
@@ -108,5 +107,5 @@ include "warning.php"; // includes the warning text about paper precedence
 echo "<div> <!-- ./col-md-3 --></div> <!-- ./row -->";
 
 
-$cxn = null; /* close the db connection */
+/* footer.php closes the db connection */
 ?>

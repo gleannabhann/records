@@ -1,7 +1,7 @@
 <div class="container">
 <?php
-/* connect to the database */
-$cxn = open_db_browse();
+/* header.php and header_main.php connect to the database for us */
+
 /*#######################################################################################*/
 // This section wil list persons beginning with initial if initial is passed
 echo "<!-- names beginning with initial results -->";
@@ -150,7 +150,7 @@ if (!isset($_GET["initial"]) && !isset($_GET["award"]) && isset($_GET["group"]))
     
 }
 /*#######################################################################################*/
-$cxn = null; /* close the db connection */
+/* footer.php closes the db connection */
 ?>
 </div>
 

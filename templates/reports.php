@@ -12,7 +12,7 @@ if ((!permissions("Herald")>=1)
     echo '<p class="error"> This page has been accessed in error...</p>';
     exit_with_footer();
 }
-$cxn = open_db_browse(); // Open the db connection which is now live for the subforms
+/* header.php and header_main.php open the db connection for us */
 
 // If a herald is logged in, they see the herald reports.
 if (permissions("Herald")>= 1){
@@ -27,4 +27,4 @@ if (permissions("Sites")>= 1){
    include 'report_sub_sites.php';
 }
 
-$cxn = null; /* close the db connection */
+/* footer.php closes the db connection */

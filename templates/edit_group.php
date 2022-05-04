@@ -21,8 +21,9 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id'])) && (isset($_SESSION['id'])
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();
 }
+// note: db connection relocated to header.php and header_main.php 
+// and should already exist for this document to use
 
-$cxn = open_db_browse();
 
 $query="SELECT id_group, name_group, id_kingdom "
         . "FROM Groups "
@@ -129,6 +130,6 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Herald")>=3)){
 }
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 
-$cxn = null; /* close the db connection */
+// don't need to close the db connection - the footer will do that for us
 
 

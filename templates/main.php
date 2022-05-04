@@ -8,11 +8,14 @@
 <div class="row">
   <div class="col-md-4 col-md-offset-1">
 <?php
-/* connect to the database */
-$cxn = open_db_browse();
+
+/* header.php and header_main.php handle creating the db connection */
+
 include "alpha.php";
-$cxn = null; /* close the db connection */
+
+/* footer.php handles closing db connections */
 ?>
+
 </div><!-- ./col-md-4 -->
 <div class="col-md-2">
 <h2 class="text-center"><i>or</i><h2>

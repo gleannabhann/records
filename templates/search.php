@@ -4,8 +4,8 @@
    - name - partial name that we will search on
    - k_id - restricts the kingdom to be searched (k_id=-1 means search all entries)
 */
-/* connect to the database */
-$cxn = open_db_browse();
+/* header.php and header_main connect to the database for us */
+
 // Build links to the list beginning with the appropriate initial, which is returned as $Initial
 $part_name = $_GET["name"];
 $part_name_q = "%".$part_name."%"; // wrap query term in wildcards
@@ -226,6 +226,6 @@ if ($matches > 0) {
 }
 echo "</ul></div><small><a href='#top'>Return to Top</a></small><!-- ./col-md-8 --></div><!-- ./row --></div><!-- ./container-->"; //close out list and open divs
 /*#######################################################################################*/
-$cxn = null; /* close the db connection */
+/* footer.php closes the db connection */
 ?>
 </div>

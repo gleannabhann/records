@@ -32,7 +32,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id'])) && (isset($_SESSION['id'])
     exit_with_footer();
 }
 
-$cxn = open_db_browse();
+/* header.php and header_main.php open the db connection */
 
 //echo "Permissions for herald is ".permissions("Herald")."<br>";
 //echo "<p>".var_dump($_SESSION)."<p>";
@@ -59,5 +59,6 @@ if ((permissions("Herald")>= 3) && (permissions("Obsidian")>=3)){
 }
 
 
-$cxn = NULL; /* close the db connection */
+/* footer.php closes the db connection */
+
 ?>

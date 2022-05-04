@@ -39,8 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if (DEBUG) {
     echo form_subsubtitle("Now using values mem_num=$mem_num and id_combat=$id_combat");
 }
-// Open database
-$cxn = open_db_browse();
+/* header.php and header_main.php open the database connection for us */
 
 // Confirm that there is a fighter authorization card on file for this person and combat type
 $query = "SELECT Persons.id_person, id_person_combat_card, Combat.id_combat, name_combat "

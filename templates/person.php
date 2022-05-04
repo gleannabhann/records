@@ -1,8 +1,7 @@
 
 <div class="container">
 <?php
-/* connect to the database */
-$cxn = open_db_browse();
+/* header.php and header_main.php connect to the database for us */
 
 /* query: select a person's name for the header */
 if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
@@ -324,8 +323,9 @@ if (isset($_POST["msgSubmit"])) {
 }
 echo "</div></div>"; //close row and col divs
 
-
+/* footer.php will close the db connection */
 ?>
+
 <!-- end of php -->
 <!-- Problem report form hosted on forms.gleannabhann.net -->
 <!-- element_3 is the email subject and is initialized with current record's name and id # -->

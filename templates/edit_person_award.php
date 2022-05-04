@@ -28,7 +28,7 @@ if ((isset($_GET['idpa'])) && (is_numeric($_GET['idpa']))
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();
 }
-$cxn = open_db_browse();
+/* header.php and header_main.php establish the db connection */
 $query = "SELECT  id_person_award, name_person, name_award, "
          . "date_award, name_kingdom, name_event, Events.id_event "
          . "from Persons, Persons_Awards, Awards, Kingdoms, Events "
@@ -146,5 +146,5 @@ if ((isset($_POST["date_award"]) && ($date_award != $award["date_award"]))
         echo "No data changed in form; no update query needed<p>";
     }
 }
-$cxn = null; /* close the db connection */
+ /* footer.php closes the db connection */
 ?>

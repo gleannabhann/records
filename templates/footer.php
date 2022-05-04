@@ -28,6 +28,11 @@ if (DEBUG) {
   }
 }
 
+// close the database connection
+// but only if it hasn't already been closed
+if (isset($cxn)) {
+  $cxn = null;
+}
 ?>
 
         </div>

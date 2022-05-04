@@ -20,7 +20,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id'])) && (isset($_SESSION['id'])
     exit_with_footer();
 }
 
-$cxn = open_db_browse();
+/* header.php and header_main.php create the database connection for us */
 
 $query="SELECT id_award, name_award, id_group, id_kingdom, id_rank "
         . "FROM Awards "
@@ -41,17 +41,14 @@ $query = "SELECT id_group, "
 //echo $query;
 $sth_groups = $cxn->prepare($query);
 $sth_groups->execute();
-//$groups = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 
 $query = "SELECT id_kingdom, name_kingdom FROM Kingdoms;";
 $sth_kingdoms = $cxn->prepare($query);
 $sth_kingdoms->execute();
-//$kingdoms = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 
 $query = "SELECT id_rank, name_rank FROM Ranks;";
 $sth_ranks = $cxn->prepare($query);
 $sth_ranks->execute();
-//$ranks = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
 
 echo "
 <div class='row'>
@@ -178,6 +175,6 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Herald")>=3)){
 }
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 
-$cxn = null; /* close the db connection */
+/* footer.php closes the db connection */
 
 
