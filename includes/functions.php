@@ -17,6 +17,20 @@
         render("apology.php", ["message" => $message]);
         exit;
     }
+    /* Bootstrap Alert - compatible with bootstrap 3, 4, and 5
+     * accepts any $message and one of the bootstrap alert $level names 
+     * echoes the alert wrapped in a <div> with the correct classes
+     * possible levels (& default bootstrap colors) are: 
+     * 'success' (green), 'info' (blue), 'warning' (yellow), 'danger' (red) 
+     * these colors may be different if your bootstrap theme is different 
+     * and this styling won't work if you don't have Bootstrap installed */
+    function bs_alert($message, $level) {
+      echo "<div class='alert alert-$level center-block'>";
+      echo "<p class='text-center'>$message</p>";
+      echo "</div>";
+    }
+    
+
 
     /**
      * Facilitates debugging by dumping contents of variable
