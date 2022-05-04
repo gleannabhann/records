@@ -1,10 +1,8 @@
 <?php
 
     /**
+     * Order of Precedence
      * config.php
-     *
-     * Computer Science 50
-     * Problem Set 7
      *
      * Configures pages.
      */

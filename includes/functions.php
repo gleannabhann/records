@@ -1,12 +1,10 @@
 <?php
 
     /**
+     * Order of Precedence
      * functions.php
      *
-     * Computer Science 50
-     * Problem Set 7
-     *
-     * Helper functions.
+     * Reusable functions
      */
 
     require_once("constants.php");
