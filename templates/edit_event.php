@@ -72,11 +72,20 @@ if (permissions("Herald")>=  3) {
             . "FROM Sites WHERE id_site > -1 "
             . "AND active_site=1 "
             . "ORDER BY name_site;";
-    $sth_query = $cxn->prepare($query);
-    $sth_query->execute();
-    
-    if (DEBUG) { echo "Sites info query is: $query</br>";}
-    
+    try {
+    $sth_sites = $cxn->prepare($query);
+    $sth_sites->execute();
+    } catch (PDOException $e) {
+      $error = "Problem fetching list of sites.";
+      if (DEBUG) {
+        $message = $e->getMessage;
+        $code = (int)$e->getCode;
+        $error = $error . " $message / $code ";
+      }
+      bs_alert($error, 'warning');
+      exit_with_footer();
+    }
+        
     echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
     // Build the form, populating fields based on the post variable or database variable
     echo form_title("Editing Event Information")."\n";
@@ -124,7 +133,7 @@ if (permissions("Herald")>=  3) {
     } else {
         $id_group=$event[$varname];
     }
-    echo "<div class='form-group'><label for='$varname'>Hosted by:</label>"
+    echo "<div class='form-group'><label for='$varname'>Hosted by group:</label>"
             . "<select name='id_group'>";
     echo "<option value='-1'> Unknown</option>";
     while ($row= $sth_groups->fetch()) {
@@ -148,7 +157,7 @@ if (permissions("Herald")>=  3) {
     } else {
         $id_site=$event[$varname];
     }
-    echo "<div class='form-group'><label for='$varname'>Hosted by:</label>"
+    echo "<div class='form-group'><label for='$varname'>Hosted at site:</label>"
             . "<select name='id_site'>";
     echo "<option value='-1'> Unknown</option>";
     while ($row= $sth_sites->fetch()) {
@@ -212,9 +221,10 @@ if (permissions("Herald")>=  3) {
         }
         echo "<div class='alert alert-success center-block'>";
           echo "<p class='text-center'>Record Updated!</p>";
-          echo "</div>";
+        echo "</div>";
+        
       }
-
+exit_with_footer();
     /* footer.php will close the db connection for us */
 } else {
     // We don't have sufficient permissions for this page.
