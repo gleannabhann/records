@@ -20,7 +20,15 @@ Website disclaimer:  *All external links are not part of the Kingdom of Gleann A
               </div>
             </footer>
           </div>
+<?php
+if (DEBUG) {
+  if (isset($_SESSION)) {
+    echo "Session details:<br/>";
+    print_r($_SESSION);
+  }
+}
 
+?>
 
         </div>
 

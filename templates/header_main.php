@@ -108,6 +108,11 @@
             {
                echo '<li><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
             }
+            if (permissions("Admin")>=5) {
+              // put link to invite a new user on the navbar if user has
+              // correct perm
+              echo '<li><a class="navbar-brand" href="/public/key.php">Invite</a></li>';
+            }
             ?>      
 
           <!-- (disabled until needed) <li class="dropdown">
@@ -141,6 +146,9 @@
             {
               echo '<li class="navbar-brand" >Logged in as '.$_SESSION["webuser_name"].'</li>';
               echo '<li><a href="public/logout.php" class="navbar-brand">Logout</a></li>';
+            }
+            else {
+              echo '<li><a href="public/login.php" class="navbar-brand">Log In</a></li>';
             }
             ?>
 
