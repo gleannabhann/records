@@ -42,7 +42,6 @@ $sth_combats = $cxn->prepare($query_comb);
 $sth_combats->execute($data);
 
 echo "<!-- beginning of authorizations block -->";        
-echo "<div class='row justify-content-center'><div class='col-md-8 col-md-offset-2'>";
 echo "<form class='form' action='edit_person_authorization.php' method='post'>";
 echo form_title("Editing Authorizations");
 echo '<input type="hidden" name="id" value="'.$person["id_person"].'">';
@@ -125,7 +124,6 @@ echo "</div><!-- end of row inside combat-type card-body -->";
 echo "</div><!-- end of combat-type card-body -->";
 echo "</div><!-- end of combat-type card -->";
 echo '<input type="submit" value="Update Authorizations">';
-echo "</div><!--close the form-group --></form>";
-echo "</div></div>";
+echo "<!--close the form-group --></form>";
 echo "<!-- end of authorizations block -->";
 ?>

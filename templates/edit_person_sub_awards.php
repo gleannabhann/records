@@ -1,7 +1,5 @@
 <?php
 // Part of the edit_person.php file
-echo "<div class='row justify-content-center'>";
-echo "<div class='col-xs-8 col-xs-offset-2'>";
 echo form_title("Editing awards");
 echo button_link("./add_person_award.php?id=".$id_person, "Add a new Award for ".$sca_name);
 echo "<table class='table table-condensed table-bordered'>\n
@@ -42,6 +40,5 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
   echo "</tr>";
 };
 echo "</table>";
-echo "</div>";
-echo "</div>";
+
 ?>

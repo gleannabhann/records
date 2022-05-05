@@ -1,8 +1,6 @@
 <?php
 // This page links up the amorials and is available on to the Ruby Herald
 // Set up search filters
-echo "<div class='row'>
-        <div class='col-md-8 col-md-offset-2'>";
 
 echo '<form action="edit_person.php" method="post">';
 echo form_title("Adding Armorial Links");
@@ -140,5 +138,5 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 }
 echo "</table>";
 echo "</details>";
-echo "</div> </div>"; // class=col-md-8, class=row,
+
 ?>

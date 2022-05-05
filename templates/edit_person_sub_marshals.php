@@ -42,8 +42,6 @@ $sth_mcombats = $cxn->prepare($query_comb);
 $sth_mcombats->execute($data);
 
 echo '<!-- begin marshal warrants section-->';
-echo '<div class="row justify-content-center">';
-echo '<div class="col-md-8 col-md-offset-2">';
 echo '<form class="form" action="edit_person_marshal.php" method="post">';
 echo form_title("Editing Marshal's Warrants");
 echo '<input type="hidden" name="id" value="'.$person["id_person"].'">';
@@ -120,7 +118,6 @@ while ($row = $sth_marshals->fetch(PDO::FETCH_ASSOC)){
 
 echo '</div></div></div></div></div></div>';
 echo '<input type="submit" value="Update Marshals Warrants">';
-echo "</div></form>";
-echo "</div></div>";
+echo "</form>";
 echo "<!-- end marshal warrants section -->";
 ?>

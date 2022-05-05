@@ -8,21 +8,21 @@
 
 if (permissions("Ruby")< 3) { // This page is only accessible to the Ruby Herald
     //echo var_dump($_SESSION);
-    echo '<p class="error"> This page has been accessed in error by a non-Ruby Herald.</p>';
+    bs_alert('<p class="error"> This page has been accessed in error by a non-Ruby Herald.</span>', 'warning');
     exit_with_footer();
 }
 
 if (isset($_GET["ip"])) { // Need person's id for return button
     $ip = $_GET["ip"];
 } else {
-    echo '<p class="error"> This page has been accessed with incorrect parameters.</p>';
+    bs_alert('<span class="error"> This page has been accessed with incorrect parameters.</span>', 'warning');
     exit_with_footer();
 }
 
 if (isset($_GET["act"])){ // Need to know what to do
     $act = $_GET["act"];
 } else {
-    echo '<p class="error"> This page has been accessed with incorrect parameters.</p>';
+    bs_alert("<span class='error'>This page has been accessed with incorrect parameters.</span>", 'warning');
     exit_with_footer();
 }
 
@@ -36,55 +36,64 @@ if (isset($_GET["ia"])) {
 
 switch ($act) { // This will set the update/insert query, or exit the page if no good action is passed
     case "make_device" : // Note: currently we are not checking that person has at most one device
-        $query = "UPDATE Persons_Armorials SET type_armorial='device' WHERE id_person_armorial=$ipa";
+        $query = "UPDATE Persons_Armorials SET type_armorial='device' WHERE id_person_armorial=:ipa";
+        $data = [':ipa' => $ipa];
         $update = "Updated Record to change armorial to type device.";
         break;
     case "make_badge" :
-        $query = "UPDATE Persons_Armorials SET type_armorial='badge' WHERE id_person_armorial=$ipa";
+        $query = "UPDATE Persons_Armorials SET type_armorial='badge' WHERE id_person_armorial=:ipa";
+        $data = [':ipa' => $ipa];
         $update = "Updated Record to change armorial to type badge.";
         break;
     case "make_household" :
-        $query = "UPDATE Persons_Armorials SET type_armorial='household' WHERE id_person_armorial=$ipa";
+      $query = "UPDATE Persons_Armorials SET type_armorial='household' WHERE id_person_armorial=:ipa";
+      $data = [':ipa' => $ipa];
         $update = "Updated Record to change armorial to type household.";
         break;
     case "delete" : // Extra careful when deleting a link
         if (isset($ipa) && is_numeric($ipa)) {
-            $query = "DELETE FROM Persons_Armorials WHERE id_person_armorial=$ipa";
+            $query = "DELETE FROM Persons_Armorials WHERE id_person_armorial=:ipa";
+            $data = [':ipa' => $ipa];
             $update = "Updated Record to delete this link.";
         } else {
-            echo '<p class="error">Need a valid ipa</p>';
+            bs_alert('<span class="error">Need a valid ipa</span>', 'warning');
             exit_with_footer();          }
         break;
     case "add_device" :
         $query = "INSERT INTO Persons_Armorials (id_person, id_armorial, type_armorial) "
-            . "VALUES ($ip, $ia, 'device')";
+          . "VALUES (:ip, :ia, 'device')";
+        $data = [':ip' => $ip, ':ia' => $ia];
         $update = "Added a new device link.";
         break;
     case "add_badge" :
         $query = "INSERT INTO Persons_Armorials (id_person, id_armorial, type_armorial) "
-            . "VALUES ($ip, $ia, 'badge')";
+          . "VALUES (:ip, :ia, 'badge')";
+        $data = [':ip' => $ip, ':ia' => $ia];
         $update = "Added a new badge link.";
         break;
     case "add_household" :
         $query = "INSERT INTO Persons_Armorials (id_person, id_armorial, type_armorial) "
-            . "VALUES ($ip, $ia, 'household')";
+          . "VALUES (:ip, :ia, 'household')";
+        $data = [':ip' => $ip, ':ia' => $ia];
         $update = "Added a new household link.";
         break;
     default:
-        echo '<p class="error">There is no specified valid action</p>';
+        bs_alert('<span class="error">There is no specified valid action</span>', 'warning');
         exit_with_footer();
 }
 
-$cxn = open_db_browse();
+/* header opens the db connection for us */
+
 if (DEBUG) {
-    echo "Update query is: $query";
+  echo "<p>Update query is: $query<br>";
+  echo "Vars are " . json_encode($data) . "</p>";
 }
-$result = update_query($cxn, $query);
+$result = update_query($cxn, $query, $data);
 if ($result !== 1) {
-    echo "Error on attempt to: $update";
+    bs_alert("<span class='error'>Error on attempt to: $update</span>", 'danger');
 } else {
-    echo form_subtitle($update);
+    bs_alert(form_subtitle($update), 'success');
 }
 echo button_link("edit_person.php?id=$ip", "Return to Edit Person page");
-$cxn = null; /* close the db connection */
+/* footer closes the db connection */
 ?>

@@ -1,13 +1,10 @@
 <?php
-echo "
-<div class='row'>
-  <div class='col-md-8 col-md-offset-2'>";
 
 // TODO Clean up the SELECT * query
-$opts = [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY];
+// TODO wrap query execution in try/catch block
 $query = "SELECT * FROM Persons WHERE id_person = :id_person;";
 $data = ['id_person' => $id_person];
-$sth = $cxn->prepare($query, $opts);
+$sth = $cxn->prepare($query);
 $sth->execute($data);
 
 if ($sth->rowCount()==1) {
@@ -76,7 +73,7 @@ $query = "SELECT id_group, "
         . "FROM Groups, Kingdoms "
         . "WHERE Groups.id_kingdom = Kingdoms.id_kingdom "
         . "Order By In_Kingdom, Name_Group;";
-$sth = $cxn->prepare($query, $opts);
+$sth = $cxn->prepare($query);
 $sth->execute();
 while ($row = $sth->fetch()) {
     echo '<option value="'.$row["id_group"].'"';
@@ -186,7 +183,6 @@ echo '</form>';
 
 
 echo "<p>";
-echo "</div></div>";
 //echo "Permissions for herald is ".permissions("Herald")."<br>";
 //echo var_dump($_SESSION);
 
@@ -259,14 +255,18 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') // we got here through a form
     $data['id_person'] = $id_person;
 
     
-    $sth = $cxn->prepare($update, $opts);
+    $sth = $cxn->prepare($update);
     try {
       $sth->execute($data);
     } catch ( PDOException $e) {
+      $error = 'Error updating record';
       if ( DEBUG ) {
-        throw new MyDatabaseException( $e->getMessage(), (int)$e->getCode());
+        $message = $e->getMessage();
+        $code = (int)$e->getCode();
+        $error = $error . $message . $code;
+        bs_alert($error, 'danger');
       } else {
-        echo "<p>Error updating record.</p>";
+        bs_alert($error, 'danger');
       }
     }   
 
