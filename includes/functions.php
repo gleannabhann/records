@@ -17,13 +17,16 @@
         render("apology.php", ["message" => $message]);
         exit;
     }
-    /* Bootstrap Alert - compatible with bootstrap 3, 4, and 5
+
+    /** 
+     * Bootstrap Alert - compatible with bootstrap 3, 4, and 5
      * accepts any $message and one of the bootstrap alert $level names 
      * echoes the alert wrapped in a <div> with the correct classes
      * possible levels (& default bootstrap colors) are: 
      * 'success' (green), 'info' (blue), 'warning' (yellow), 'danger' (red) 
      * these colors may be different if your bootstrap theme is different 
-     * and this styling won't work if you don't have Bootstrap installed */
+     * and this styling won't work if you don't have Bootstrap installed 
+     */
     function bs_alert($message, $level) {
       echo "<div class='alert alert-$level center-block'>";
       echo "<p class='text-center'>$message</p>";
@@ -228,23 +231,27 @@
       }
       if  ($sth->rowCount() != '0') {
             //echo "Record updated successfully";
-            $log = "INSERT INTO Transaction_Log VALUES ('',NOW(),"
-                  . " :web_user ,0, :query)";
+            $log_query = "INSERT INTO Transaction_Log VALUES (NULL,NOW(),"
+                       . " :web_user ,0, :query)";
             $webuser = get_webuser();
-            $query = addslashes($query);
-            $data = [':web_user' => $webuser, ':query' => $query];
+            $query = $query . " Vars: " . json_encode($data);
+            //$query = addslashes($query);
+            if (DEBUG) {
+              echo "<p>Concatenated and escaped query to log is<br>$query</p>";
+            }
+            $log_data = [':web_user' => $webuser, ':query' => $query];
             try {
-            $sth_log = $cxn->prepare($log);
-            $sth_log->execute($data);
+            $sth_log = $cxn->prepare($log_query);
+            $sth_log->execute($log_data);
 
             // echo "<p>Updating the transaction log with: " . $log;
             } catch (PDOException $e) {
               $message = $e->getMessage();
               $code = (int)$e->getCode();
               // send the information to the error log
-              error_log("Functions.php::update_query() failed to log the transaction. Query was '$query'. Data was '$data'. Error message: $message. Error code: $code.");
+              error_log("Functions.php::update_query() failed to log the transaction. Transaction to log was '$query'. Vars were ". json_encode($data). ". Error message: $message. Error code: $code.");
               if (DEBUG) {
-                throw new Exception("Functions.php::update_query() failed to log the transaction. Query was '$query'. Data was '$data'. Error message: $message. Error code: $code.");
+                throw new Exception("Functions.php::update_query() failed to log the transaction. Query was '$log'. Data was ". json_encode($data).". Error message: $message. Error code: $code.");
               }
             }
         }        

@@ -218,6 +218,12 @@ if (permissions("Herald")>=  3) {
           }
           bs_alert($error, 'danger');
           exit_with_footer(); 
+        } catch (Exception $e) {
+          $message = $e->getMessage();
+          $error = "Error updating record. Please contact the system administrator.";
+          if (DEBUG) {
+            $error = "Unspecified error in calling update_query(). $message ";
+          }
         }
         echo "<div class='alert alert-success center-block'>";
           echo "<p class='text-center'>Record Updated!</p>";
