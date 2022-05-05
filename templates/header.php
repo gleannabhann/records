@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<?php if (isset($_SESSION['initiated'])) validate_session();
+<?php 
+if (DEBUG) {
+  $start_time = microtime(TRUE);
+}
+if (isset($_SESSION['initiated'])) validate_session();
 $cxn = open_db_browse();
 ?>
 

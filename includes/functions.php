@@ -213,22 +213,12 @@
      * TODO: query cleaning?
      */
     function update_query($cxn, $query, $data=null){
-      try {
         $sth = $cxn->prepare($query);
         if (isset($data)) {
           $sth->execute($data);
         } else {
           $sth->execute();
         }
-      } catch (PDOException $e) {
-            $message = $e->getMessage();
-            $code = (int)$e->getCode();
-            if (DEBUG) {
-            throw new Exception("Functions.php::update_query() failed to complete. The query was '$query'. The data was $data. The error message is $message, with code $code");
-            } else {
-            throw new Exception("Could not Update.");
-            }
-      }
       if  ($sth->rowCount() != '0') {
             //echo "Record updated successfully";
             $log_query = "INSERT INTO Transaction_Log VALUES (NULL,NOW(),"
@@ -249,9 +239,9 @@
               $message = $e->getMessage();
               $code = (int)$e->getCode();
               // send the information to the error log
-              error_log("Functions.php::update_query() failed to log the transaction. Transaction to log was '$query'. Vars were ". json_encode($data). ". Error message: $message. Error code: $code.");
+              error_log("Functions.php::update_query() failed to log the transaction '$log_query' / Vars: ". json_encode($data). ". Error msg: $message. Error code: $code.");
               if (DEBUG) {
-                throw new Exception("Functions.php::update_query() failed to log the transaction. Query was '$log'. Data was ". json_encode($data).". Error message: $message. Error code: $code.");
+                throw new PDOException("Functions.php::update_query() failed to log the transaction: '$log_query' / Vars: ". json_encode($log_data)." Error msg: $message. Error code: $code.");
               }
             }
         }        
@@ -329,9 +319,9 @@
        $time_updated = time() - $_SESSION['UPDATED'];
        $time_refreshed = time() - $_SESSION['REFRESHED'];
        if (DEBUG){
-          echo "Time since creation". $time_creation . "(604800)<br/>";
-          echo "Time since update". $time_updated. "(7200)<br/>";
-          echo "Time since refresh". $time_refreshed. "(1800)<br/>";
+          //echo "Time since creation". $time_creation . "(604800)<br/>";
+          //echo "Time since update". $time_updated. "(7200)<br/>";
+          //echo "Time since refresh". $time_refreshed. "(1800)<br/>";
        }
        if ((time() - $_SESSION['CREATED'] > MAX_SESSION) || (isset($_SESSION['UPDATED']) && (time() - $_SESSION['UPDATED'] > MAX_INACTIVE ))) {
          // log out current user, if any

@@ -1,5 +1,10 @@
 <!DOCTYPE html>
-<?php if (isset($_SESSION['initiated'])) {
+<?php 
+if (DEBUG) {
+  $start_time = microtime(TRUE);
+}
+
+if (isset($_SESSION['initiated'])) {
     validate_session();
 }
 // connect to the db

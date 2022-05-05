@@ -168,18 +168,28 @@ if ($matches > 0) {
                 FROM Persons_Authorizations, Authorizations, Combat, Persons_CombatCards
                 WHERE Persons_CombatCards.id_person=:id_person
                 AND Persons_CombatCards.active_authorize='Yes'
-                AND Persons_Authorizations.id_person=:id_person
+                AND Persons_Authorizations.id_person=:id_pers
                 AND curdate()<= expire_authorize
                 AND Authorizations.id_combat=Combat.id_combat
                 AND Persons_Authorizations.id_auth=Authorizations.id_auth
                 AND Persons_CombatCards.id_combat = Combat.id_combat
                 ORDER by name_combat, Authorizations.id_auth";
-$data = ['id_person' => $id_person];
+$data = [':id_person' => $id_person, ':id_pers' => $id_person];
     if (DEBUG) {
         echo "Authorization query is:$query<p>";
     }
+try {
 $sth = $cxn->prepare($query);
 $sth->execute($data);
+} catch (PDOException $e) {
+  $error = "Could not fetch Authorizations. ";
+  if (DEBUG) {
+    $message = $e->getMessage();
+    $code = $e->getCode();
+    $error = $error . " $message / $code ";
+  }
+  bs_alert($error, 'warning');
+}
 $matches = $sth->rowCount();
     if ($matches > 0) {
        $ocombat = "";
@@ -202,18 +212,28 @@ $matches = $sth->rowCount();
                 FROM Persons_Marshals, Marshals, Combat, Persons_CombatCards
                 WHERE Persons_CombatCards.id_person=:id_person
                 AND Persons_CombatCards.active_marshal='Yes'
-                AND Persons_Marshals.id_person=:id_person
+                AND Persons_Marshals.id_person=:id_pers
                 AND curdate()<= Persons_CombatCards.expire_marshal
                 AND Marshals.id_combat=Combat.id_combat
                 AND Persons_Marshals.id_marshal=Marshals.id_marshal
                 AND Persons_CombatCards.id_combat = Combat.id_combat
                 ORDER by name_combat, Marshals.id_marshal";
-    $data = ['id_person' => $id_person];
+    $data = [':id_person' => $id_person, ':id_pers' => $id_person];
     if (DEBUG) {
         echo "Marshal Warrants query is:$query<p>";
     }
+    try {
     $sth = $cxn->prepare($query);
     $sth->execute($data);
+    } catch (PDOException $e) {
+      $error = "Could not fetch Marshal Warrants. ";
+      if (DEBUG) {
+        $message = $e->getMessage;
+        $code = $e->getCode();
+        $error = $error . "$message / $code";
+      }
+      bs_alert($error, 'warning');
+    }
     $matches= $sth->rowCount();
     if ($matches > 0) {
        $ocombat = "";
@@ -249,8 +269,18 @@ $query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_eve
          AND Persons.id_person = :id_person order by date_award";
 
 $data = ['id_person' => $id_person];
+try {
 $sth = $cxn->prepare($query);
 $sth->execute($data);
+} catch (PDOException $e) {
+  $error = "Could not fetch Awards. ";
+  if (DEBUG) {
+    $message = $e->getMessage();
+    $code = $e->getCode();
+    $error = $error . "$message / $code";
+  }
+  bs_alert($error, 'warning');
+}
 echo "<table class='table table-condensed table-bordered'>
 <thead><td class='text-left'><strong>Award</strong></td>
 <td class='text-left'><strong>Event</strong></td>
