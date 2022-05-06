@@ -16,18 +16,33 @@ if($_SERVER['REQUEST_METHOD'] == "POST")  {
 
     $cxn = open_db_browse();
     $query=$_POST["query"];
-    $data = mysqli_query ($cxn, $query) 
-        or die ("Couldn't execute query to build report.");
+    $data=$_POST['data'];
+    try {
+      $sth = $cxn->prepare($query);
+      $sth->execute($data);
+    } catch (PDOException $e) {
+    //$data = mysqli_query ($cxn, $query) 
+    $error = "Couldn't execute query to build report. ";
+    if (DEBUG) {
+      $message = $e->getMessage();
+      $code = $e->getCode();
+      $error = $error . "($message / $code)";
+    }
+    bs_alert($error, 'warning');
+    }
+
     // prepare and output the column headings
-    $fields = mysqli_fetch_fields($data);
+    foreach(range(0, $sth->columnCount() -1) as $i) {
+         $fields[] = $sth->getColumnMeta($i);
+             }
     $i=0;
     foreach ($fields as $field) {
-        $headers[$i]=$field->name;
+        $headers[$i]=$field['name'];
         $i++;
     }
     fputcsv($output, $headers);
 
-    while ($row = mysqli_fetch_assoc($data)) {
+    while ($row = $sth->fetch()) {
         fputcsv($output, $row);
     }
 }
