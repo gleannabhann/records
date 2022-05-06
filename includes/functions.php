@@ -9,6 +9,17 @@
 
     require_once("constants.php");
 
+    /* when passed $msg, a human-friendly error message, and $exception, a 
+     * PDOException object, this function returns $msg with the exception's
+     * message
+     * and error code appended to the end. */
+    function add_pdo_exception($msg, $exception) {
+      $message = $exception->getMessage();
+      $code = $exception->getCode();
+      $msg = $msg . " ($message / $code)";
+      return $msg;
+    }
+
     /**
      * Apologizes to user with message.
      */
