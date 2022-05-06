@@ -34,7 +34,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Ruby")>=3)){ //port
 $uploadOk = 1; // set the "OK" flag to 1. Future IF tests may change it to 0
 
 // declare some variables
-$blazon = sanitize_mysql($_POST["blazon"]);
+$blazon = $_POST["blazon"];
 $fname = $_FILES["imagefile"]["name"];
 $fsize = $_FILES["imagefile"]["size"];
 $ftype = $_FILES["imagefile"]["type"];
@@ -86,23 +86,38 @@ $image = NULL;
         $query = "INSERT INTO Armorials"
             . "(id_armorial,blazon_armorial,image_armorial,"
                 . "fname_armorial,fsize_armorial,ftype_armorial, timestamp_armorial) "
-            . "VALUES (NULL, '$blazon', '$image', '$fname', $fsize, '$ftype', NOW() )";
-
-        $result = update_query($cxn, $query);
-        if ($result !== 1) {
-            echo "Error updating record: " . mysqli_error($cxn);
-        } else {
-            echo "Successfully added ". $fname ." to the database<p>";
-            echo button_link("awards.php", "Return to awards page"); // TODO Identify where we should send users with this button
-            echo "or continue adding new devices below<p>";
+            . "VALUES (NULL, :blazon, :image, :fname, :fsize, :ftype, NOW() )";
+        $data = [':blazon' => $blazon, ':image' => $image, ':fname' => $fname, ':fsize' => $fsize, ':ftype' => $ftype];
+        if (DEBUG) {
+          echo "<p>Query is:<br/>$query.<br/>Vars:<br/><ul><li>Blazon: $blazon</li>";
+          echo "<li>Filename is: $fname</li><li>Fsize is: $fsize</li><li>Ftype is: $ftype</li>";
+          echo "<li>Image:";
+          display_image($image, $ftype, 150, $blazon, $blazon);
+          echo "</li></ul>";
         }
+        // create a wrapper for results so they're same width as the form
+        echo "<div class='row'><div class='col-sm-12 col-md-8 col-md-offset-2'>";
+       
+        try {
+          $result = update_query($cxn, $query, $data);
+          $link = button_link("awards.php", "Return to awards page"); //TODO Identify where we should send users with this button
+          $message = "<strong>Success!</strong> We added ". $fname ." to the database";
+          $message .= "<br/>$link<br/>or continue adding new devices below";
+          bs_alert($message, 'success');
+
+        } catch (PDOException $e) {
+          $error = "<strong>Warning!</strong> We couldn't upload $fname. ";
+          if (DEBUG) { $error = add_pdo_exception($error, $e); }
+          bs_alert($error, 'danger');
+        } 
+        echo "</div></div>"; // close the results wrapper
       }
 
   /* footer.php will close the database connection for us */
 }
 ?>
 
-<div class='row'><div class='col-md-8 col-md-offset-2'>
+<div class='row'><div class='col-sm-12 col-md-8 col-md-offset-2'>
 <?php if ($id_person > 0) {
     echo button_link("edit_person.php?id=$id_person", "Return to Edit Person Page");
 }   ?>     

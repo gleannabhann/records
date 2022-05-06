@@ -113,7 +113,18 @@ $cxn = open_db_browse();
       <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="main-nav">
       <ul class="nav navbar-nav">
-      <li class='nav-item'><a class='navbar-brand' href="/public/awards.php">Awards</a></li>
+      <?php
+        if (permissions("Herald") >= 2) {
+          // Herald role with "add" permission level or greater
+          echo "<li class='dropdown'><a href='#' class='dropdown-toggle nav-link navbar-brand' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>Awards <span class='caret'></span></a>";
+          echo "<ul class='dropdown-menu'>";
+          echo "<li><a class='dropdown-item' href='/public/awards.php'>View</a></li>";
+          echo "<li><a class='dropdown-item' href='/public/add_award.php'>Add a New Award</a></li>";
+          echo "</ul></li>";
+        } else {
+          // all other roles
+          echo "<li class='nav-item'><a class='navbar-brand' href='/public/awards.php'>Awards</a></li>";
+        }?>
       <li class='nav-item'><a class='navbar-brand' href="/public/combat.php">Combat</a></li>
       <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
       <li class='nav-item'><a class='navbar-brand' href="/public/list_site.php">Campgrounds</a></li>

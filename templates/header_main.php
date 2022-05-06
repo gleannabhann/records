@@ -106,11 +106,32 @@ $cxn = open_db_browse();
       <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-            <li><a class="navbar-brand"  href="/public/awards.php">Awards</a></li>
-            <li><a class="navbar-brand"  href="/public/combat.php">Combat</a></li>
-            <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
-            <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
-            <?php
+
+        <?php
+        if (permissions("Herald") >= 2) {
+          // Herald role with "add" permission level (or greater)
+          echo "<li class='dropdown'><a href='#'class='dropdown-toggle"
+            . " nav-link navbar-brand' data-toggle='dropdown' role='button'"
+            . " aria-haspopup='true' aria-expanded='false'>Awards <span "
+            . " class='caret'></span></a>";
+          echo "<ul class='dropdown-menu'>";
+          echo "<li><a class='dropdown-item' href='/public/awards.php'>"
+             . "View</a></li>";
+          echo "<li><a
+                class='dropdown-item'
+                href='/public/add_award.php'>Add
+                a New Award</a></li>";
+          echo "</ul></li>";
+          } else {
+            //all other roles 
+            echo "<li class='nav-item'><a class='navbar-brand' "
+               . "href='/public/awards.php'>Awards</a></li>";
+         }?>
+
+          <li><a class="navbar-brand"  href="/public/combat.php">Combat</a></li>
+          <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
+          <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
+          <?php
             if (isset($_SESSION["id"]))
             {
                echo '<li><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
@@ -120,7 +141,7 @@ $cxn = open_db_browse();
               // correct perm
               echo '<li><a class="navbar-brand" href="/public/key.php">Invite</a></li>';
             }
-            ?>      
+          ?>      
 
           <!-- (disabled until needed) <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
