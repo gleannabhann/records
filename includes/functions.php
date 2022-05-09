@@ -90,8 +90,15 @@
         ];
     try {
     $connection =  new PDO($dsn, USERNAME, PASSWORD, $options);
-    } catch (\PDOException $e) {
-      throw new \PDOException ($e->getMessage(), (int)$e->getCode());
+    } catch (PDOException $e) {
+      $msg = "DB Connection Failure.";
+      $vars = ['exc_msg' => $e->getMessage(), 'exc_code' => $e->getCode()];
+      $arr = ['message' => $msg, 'vars' => $vars];
+      $message = json_encode($arr);
+      error_log($message);
+      if (DEBUG) {
+        error_log($message, 3, DEBUG_DEST);
+      }  
     }
         return $connection;
     }
@@ -236,10 +243,6 @@
                        . " :web_user ,0, :query)";
             $webuser = get_webuser();
             $query = $query . " Vars: " . json_encode($data);
-            //$query = addslashes($query);
-            if (DEBUG) {
-              echo "<p>Concatenated and escaped query to log is<br>$query</p>";
-            }
             $log_data = [':web_user' => $webuser, ':query' => $query];
             try {
             $sth_log = $cxn->prepare($log_query);
@@ -250,9 +253,17 @@
               $message = $e->getMessage();
               $code = (int)$e->getCode();
               // send the information to the error log
-              error_log("Functions.php::update_query() failed to log the transaction '$log_query' / Vars: ". json_encode($data). ". Error msg: $message. Error code: $code.");
+              $msg = "functions.php/update_query() tx log failure";
+              $vars = ['log_query' => $log_query, 'log_data' => $data, 'exc_msg' => $message, 'exc_code' => $code];
+              $arr = ['message' => $msg, 'vars' => $vars];
+              $err = json_encode($arr);
+              error_log($err);
               if (DEBUG) {
-                throw new PDOException("Functions.php::update_query() failed to log the transaction: '$log_query' / Vars: ". json_encode($log_data)." Error msg: $message. Error code: $code.");
+                $msg = "transact log fail";
+                $vars = ['exc_msg' => $message, 'exc_code' => $code];
+                $arr = ['message' => $msg, 'vars' => $vars];
+                $err = json_encode($arr);
+                error_log($err, 3, DEBUG_DEST);
               }
             }
         }        

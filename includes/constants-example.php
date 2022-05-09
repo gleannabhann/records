@@ -36,9 +36,11 @@
     // where index.php and README.md reside
     define("ROOTDIR", "/path/to/index/file/");
     
-    // Do you want extra info for debugging? Set 1 for yes, 0 for no
-    define ("DEBUG", "1");
-
+    // where to send custom "debug" level messages
+    // will be deprecated in v.2.0 in favor of a logging framework plugin 
+    define ("DEBUG", "1"); // 0 = off, 1 = on
+    define ("DEBUG_DEST", "/var/log/apache2/debug.log"); 
+    
     /* Session expiration settings *
      * MAX_SESSION is the absolute maximum length a session should be 
      * allowed to continue.

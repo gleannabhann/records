@@ -21,25 +21,10 @@ Website disclaimer:  *All external links are not part of the Kingdom of Gleann A
             </footer>
           </div>
 <?php
-if (DEBUG) {
-  if (isset($_SESSION)) {
-    echo "Session details:<br/>";
-    print_r($_SESSION);
-  }
-}
 
 // close the database connection
 // but only if it hasn't already been closed
-if (isset($cxn)) {
-  $cxn = null;
-}
-if (DEBUG) {
-  $end_time = microtime(TRUE);
-  $time_taken =($end_time - $start_time)*1000;
-  $time_taken = round($time_taken,5);
-   
-  echo 'Page generated in '.$time_taken.' seconds.';
-}
+if (isset($cxn)) { $cxn = null; }
 ?>
 
         </div>
