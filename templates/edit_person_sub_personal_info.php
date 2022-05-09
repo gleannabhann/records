@@ -170,9 +170,7 @@ echo '</td></tr>';
 // birthdate_person
 if (isset($_POST["birthdate_person"]) && is_string($_POST["birthdate_person"])) {
     $birthdate_person = $_POST["birthdate_person"];
-} else {
-    $birthdate_person = $person["membership_expire_person"];
-}
+} 
 echo '<tr><td class="text-right">Birthdate (required for youth fighters):</td><td> <input type="date" class="date" name="birthdate_person" value="'
     . $birthdate_person . '"> (format if no datepicker: yyyy-mm-dd)</td></tr>';
 
