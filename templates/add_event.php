@@ -6,8 +6,8 @@
 if (DEBUG){
   // create array of message and vars
   $arr = ['message' => 'session', 'vars' => $_SESSION];
-  // convert array to json
-  $message = json_encode($arr);
+  // convert array to json with a newline appended to the end
+  $message = json_encode($arr) . "\n";
   // post the json to the debug log
   error_log($message, 3, DEBUG_DEST);
 }
@@ -70,7 +70,7 @@ if (permissions("Herald")>=  3) {
         $msg = 'add_event.php insert query is';
         $vars = ['query' => $query, 'data' => $data];
         $arr = ['message' => $msg, 'vars' => $vars];
-        $message = json_encode($arr);
+        $message = json_encode($arr) . "\n";
         error_log($message, 3, DEBUG_DEST);
       }
       try {
@@ -87,7 +87,7 @@ if (permissions("Herald")>=  3) {
             $vars = ['exc_msg' => $e->getMessage(), 'exc_code' => $e->getCode()];
             $arr = ['message' => $friendly_message, 'exception' => $vars];
             $message = json_encode($arr);
-            error_log($message, 3, DEBUG_DEST);
+            error_log($message, 3, DEBUG_DEST) . "\n";
           }
           bs_alert($friendly_message, 'danger');
       }
@@ -103,7 +103,7 @@ if (permissions("Herald")>=  3) {
         $msg = "Couldn't fetch the kingdom id";
         $vars = ['exc_msg' => $e->getMessage(), 'exc_code' => $e->getCode()];
         $arr = json_encode($arr);
-        error_log($message, 3, DEBUG_DEST);
+        error_log($message, 3, DEBUG_DEST) . "\n";
       }
     }
     $k_id = $sth->fetch();
@@ -140,7 +140,7 @@ if (permissions("Herald")>=  3) {
         $vars = ['exc_msg' => $e->getMessage(), 'exc_code' => $e->getCode, 'query_details' => $var];
         $arr = ['message' => $err_msg, 'vars' => $vars];
         $message = json_encode($arr);
-        error_log($message, 3, DEBUG_DEST);
+        error_log($message, 3, DEBUG_DEST) . "\n";
       }
       bs_alert($message, 'warning');
       exit_with_footer();

@@ -97,7 +97,7 @@
       $message = json_encode($arr);
       error_log($message);
       if (DEBUG) {
-        error_log($message, 3, DEBUG_DEST);
+        error_log($message, 3, DEBUG_DEST) . "\n";
       }  
     }
         return $connection;
@@ -263,7 +263,7 @@
                 $vars = ['exc_msg' => $message, 'exc_code' => $code];
                 $arr = ['message' => $msg, 'vars' => $vars];
                 $err = json_encode($arr);
-                error_log($err, 3, DEBUG_DEST);
+                error_log($err, 3, DEBUG_DEST) . "\n";
               }
             }
         }        
