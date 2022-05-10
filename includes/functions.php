@@ -58,6 +58,7 @@
 
     /* append information to error.log */
     function log_error($message=null, $vars=null, $e=null, $file=null) {
+      // TODO add "getFile()" and "getLine()" methods to exception if/then
       $datestamp = date("D M d H:i:s.u Y");
       $arr = [];
 
@@ -81,6 +82,7 @@
 
     /* post information at the debug log if DEBUG = 1 and DEBUG_DEST is set */
     function log_debug($message=null, $vars=null, $e=null, $file=null) {
+      // TODO add "getFile()" and "getLine()" methods to exception if/then
       if (DEBUG) {
         if (isset(DEBUG_DEST)) {
           $datestamp = date("D M d H:i:s.u Y");
@@ -110,6 +112,7 @@
  * */
 
     function email_error($message=null, $vars=null, $e=null, $file=null, $email=EMAIL_DEST) {
+      // TODO add "getFile()" and "getLine()" methods to exception if/then
       $datestamp = date("D M d H:i:s.u Y");
       $headers = "From: ADMIN_EMAIL\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=ISO-8859-1"
         if (!isset($file)) { $file = $_SERVER['REQUEST_URI']; }
