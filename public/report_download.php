@@ -21,7 +21,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST")  {
       $sth = $cxn->prepare($query);
       $sth->execute($data);
     } catch (PDOException $e) {
-    //$data = mysqli_query ($cxn, $query) 
     $error = "Couldn't execute query to build report. ";
     if (DEBUG) {
       $message = $e->getMessage();

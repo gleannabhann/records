@@ -5,11 +5,9 @@
 $query = "SELECT id_combat, name_combat FROM Combat";
 $sth_combats = $cxn->prepare($query);
 $sth_combats->execute();
-//$combats = mysqli_query ($cxn, $query);
 $query = "SELECT id_auth, id_combat, name_auth FROM Authorizations"; 
 $sth_auths = $cxn->prepare($query);
 $sth_auths->execute();
-//$auths = mysqli_query ($cxn, $query) or die ("Couldn't execute query to get list of Authorizations.");
 $query = "SELECT id_marshal, id_combat, name_marshal FROM Marshals"; 
 $sth_marshals = $cxn->prepare($query);
 $sth_marshals->execute();
