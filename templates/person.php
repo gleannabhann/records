@@ -355,15 +355,26 @@ echo "</div></div>"; //close row and col divs
 
 /* footer.php will close the db connection */
 ?>
-
+<div class='row'><div class='col-sm-12 col-md-8 col-md-offset-2'>
+<p class='text-center'>
+<a href="http://forms.gleannabhann.net/view.php?id=10117&element_3=Records%20Correction%20for%20<?php echo $name_person .'('.$id_person.')';?>" onclick="window.open(this.href,  null, 'height=750, width=800, toolbar=0, location=0, status=0, scrollbars=1, resizable=1'); return false;">
+Report a Problem with this Record</a>
+</p></div></div>
 <!-- end of php -->
 <!-- Problem report form hosted on forms.gleannabhann.net -->
-<!-- element_3 is the email subject and is initialized with current record's name and id # -->
-<script type="text/javascript">
-//var __machform_url = 'http://forms.gleannabhann.net/embed.php?id=10117&element_3=Records%20Correction%20for%20<?php echo "$name_person ($id_person)"?>';
-//var __machform_height = 751;
-</script>
-<div id="mf_placeholder"></div>
-<script type="text/javascript" src="http://forms.gleannabhann.net/js/jquery.min.js"></script>
-<script type="text/javascript" src="http://forms.gleannabhann.net/js/jquery.ba-postmessage.min.js"></script>
-<script type="text/javascript" src="http://forms.gleannabhann.net/js/machform_loader.js"></script>
+<!-- element_3 is the email subject and is initialized with current record's name and id # -
+
+
+//  &element_3=Records%20Correction%20for%20 echo '$name_person ($id_person)';
+
+
+
+//<div id="mf_placeholder"
+//     data-formurl="https://forms.gleannabhann.net/embed.php?id=10117"
+//     data-formheight="965"
+//     data-paddingbottom="10">
+//</div>
+//<script type="text/javascript" src="https://forms.gleannabhann.net/js/jquery.min.js"></script>
+//<script type="text/javascript" src="https://forms.gleannabhann.net/js/jquery.ba-postmessage.min.js"></script>
+//<script type="text/javascript" src="https://forms.gleannabhann.net/js/machform_loader.js"></script>
+?>
