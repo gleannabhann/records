@@ -62,7 +62,7 @@
       $datestamp = date("D M d H:i:s.u Y");
       $arr = [];
 
-      if (isset($e) {
+      if (isset($e)) {
         $arr['exc'] = ['exc_message' => $e->getMessage(), 'exc_code' => $e->getCode()];
       }
       if (isset($vars)) {
@@ -84,14 +84,14 @@
     function log_debug($message=null, $vars=null, $e=null, $file=null) {
       // TODO add "getFile()" and "getLine()" methods to exception if/then
       if (DEBUG) {
-        if (isset(DEBUG_DEST)) {
+        if (null !== DEBUG_DEST) {
           $datestamp = date("D M d H:i:s.u Y");
           $arr = [];
           $arr['date'] = $datestamp;
           if (isset($message)) {
             $arr['message'] = $message;
           }
-          if (isset($e) {
+          if (isset($e)) {
             $arr['exc'] = ['exc_message' => $e->getMessage(), 'exc_code' => $e->getCode()];
           }
           if (isset($vars)) {
@@ -114,7 +114,7 @@
     function email_error($message=null, $vars=null, $e=null, $file=null, $email=EMAIL_DEST) {
       // TODO add "getFile()" and "getLine()" methods to exception if/then
       $datestamp = date("D M d H:i:s.u Y");
-      $headers = "From: ADMIN_EMAIL\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=ISO-8859-1"
+      $headers = "From: ADMIN_EMAIL\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=ISO-8859-1";
         if (!isset($file)) { $file = $_SERVER['REQUEST_URI']; }
       $subj = "Error on $file\n$headers";
       $log = "<p>This message was automatically generated from $file at $datestamp. </p>";
