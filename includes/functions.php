@@ -56,6 +56,97 @@
         exit;
     }
 
+    /* append information to error.log */
+    function log_error($message=null, $vars=null, $e=null, $file=null) {
+      $datestamp = date("D M d H:i:s.u Y");
+      $arr = [];
+
+      if (isset($e) {
+        $arr['exc'] = ['exc_message' => $e->getMessage(), 'exc_code' => $e->getCode()];
+      }
+      if (isset($vars)) {
+        $arr['vars'] = $vars;
+      }
+
+      $log = "[$datestamp] ";
+      if (isset($file)) {
+        $log .= "[$file] "; 
+      }
+      if (isset($message)){
+        $log .= $message;
+      }
+      $log .= "json_encode($arr) . \n";
+      error_log($log);
+    }
+
+    /* post information at the debug log if DEBUG = 1 and DEBUG_DEST is set */
+    function log_debug($message=null, $vars=null, $e=null, $file=null) {
+      if (DEBUG) {
+        if (isset(DEBUG_DEST)) {
+          $datestamp = date("D M d H:i:s.u Y");
+          $arr = [];
+          $arr['date'] = $datestamp;
+          if (isset($message)) {
+            $arr['message'] = $message;
+          }
+          if (isset($e) {
+            $arr['exc'] = ['exc_message' => $e->getMessage(), 'exc_code' => $e->getCode()];
+          }
+          if (isset($vars)) {
+            $arr['vars'] = $vars;
+          }
+          $log = json_encode($arr) . "\n";
+          error_log($log, 3, DEBUG_DEST);
+
+        }
+      }
+    }
+
+/* *
+ * generate email to devs. If email address not passed, 
+ * defaults to the address set in EMAIL_DEST 
+ * use to notify devs of critical errors that require 
+ * immediate attention
+ * */
+
+    function email_error($message=null, $vars=null, $e=null, $file=null, $email=EMAIL_DEST) {
+      $datestamp = date("D M d H:i:s.u Y");
+      $headers = "From: ADMIN_EMAIL\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=ISO-8859-1"
+        if (!isset($file)) { $file = $_SERVER['REQUEST_URI']; }
+      $subj = "Error on $file\n$headers";
+      $log = "<p>This message was automatically generated from $file at $datestamp. </p>";
+      $log .= "<p>Is DEBUG set? " . (boolval(DEBUG) ? 'True' : 'False') . "</p>";
+      if (isset($message)) {
+        $log .= "<p>Message: $message</p>";
+      } else {
+        $log .= "<p>Message: (no message included)</p>";
+      }
+      if (isset($e)) {
+        $e_msg = $e->getMessage();
+        $e_code = $e->getCode();
+        $log .= "<p>Exception information:</p><p>File: $file</p><p>Message: $e_msg<br/>Code: $e_code</p>";
+      } else {
+        $log .= "<p>Exception info not provided.</p>";
+      }
+      if (isset($vars)) {
+        $arr = json_encode(
+             $vars,
+             JSON_UNESCAPED_SLASHES | 
+             JSON_UNESCAPED_UNICODE | 
+             JSON_PRETTY_PRINT | 
+             JSON_PARTIAL_OUTPUT_ON_ERROR | 
+             JSON_INVALID_UTF8_SUBSTITUTE 
+        ); 
+        $log .= "<p>Vars:<br/>$arr</p>";
+      } else {
+        $log .= "<p>Vars not provided</p>";
+      }
+
+      error_log($log, 1, $email, $subj);
+    }
+
+
+
     /**
      * Logs out current user, if any.  Based on Example #1 at
      * http://us.php.net/manual/en/function.session-destroy.php.
