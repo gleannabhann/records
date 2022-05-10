@@ -6,8 +6,6 @@ if (permissions("Herald")<3){
     exit_with_footer();
 }
 
-$cxn = open_db_browse();
-
 if (($_SERVER['REQUEST_METHOD'] == 'POST') && (permissions("Herald")>=3)){
   // We have a form submission.  
   // Note: we allow for addition of multiple awards which is why the blank

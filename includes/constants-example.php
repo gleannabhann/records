@@ -38,8 +38,13 @@
     
     // where to send custom "debug" level messages
     // will be deprecated in v.2.0 in favor of a logging framework plugin 
+    // in order for this to work as set up here, the server 
+    // user that is responsible for the web process (ie "www-data")
+    // must be able to write to the directory /var/log/php/ so that it 
+    // can create the log file if one doesn't exist.
+    // Don't expose debug log files to /var/www/ if you can help it.
     define ("DEBUG", "1"); // 0 = off, 1 = on
-    define ("DEBUG_DEST", "/var/log/apache2/debug.log"); 
+    define ("DEBUG_DEST", "/var/log/php/debug.log"); 
     
     /* Session expiration settings *
      * MAX_SESSION is the absolute maximum length a session should be 

@@ -14,7 +14,7 @@ echo "
 
 // NOTE: DO NOT AT THIS POINT USE ANY CLASS REFERENCES
 // configuration
-
+$cxn = open_db_browse();
 
 echo form_title("Fighter Authorization Card");
 echo "<div><p><a href=\"combat.php\">Return to the Combat Page</a></p></div>";
@@ -36,11 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit_with_footer();
 }
 
-if (DEBUG) {
-    echo form_subsubtitle("Now using values mem_num=$mem_num and id_combat=$id_combat");
-}
-/* header.php and header_main.php open the database connection for us */
-
 // Confirm that there is a fighter authorization card on file for this person and combat type
 $query = "SELECT Persons.id_person, id_person_combat_card, Combat.id_combat, name_combat "
         . "FROM Persons, Persons_CombatCards, Combat "
@@ -49,9 +44,6 @@ $query = "SELECT Persons.id_person, id_person_combat_card, Combat.id_combat, nam
         . "AND Combat.id_combat = Persons_CombatCards.id_combat "
         . "AND Combat.id_combat=:id_combat;";
 $data = [':mem_num' => $mem_num, ':id_combat' => $id_combat];
-if (DEBUG){
-    echo "Find person query is: $query<p>";
-}
 $sth = $cxn->prepare($query);
 $sth->execute($data);
 
@@ -77,10 +69,6 @@ $query_fighter="SELECT name_person, name_mundane_person, membership_person,
     AND id_combat=:id_combat
     AND Persons.id_person=:id_person";
 $data = [':id_combat' => $id_combat, ':id_person' => $id_person];
-
-if (DEBUG) {
-    echo "Find fighter query is:$query_fighter<p>";
-}
 $sth = $cxn->prepare($query_fighter);
 $sth->execute($data);
 $rowf = $sth->fetch(PDO::FETCH_ASSOC);
@@ -94,10 +82,6 @@ $query_auth="SELECT A.id_auth, A.name_auth, A.id_combat, PA.id_person_auth
     ON A.id_auth=PA.id_auth AND id_person=:id_person
     WHERE A.id_combat=:id_combat";
 $data = [':id_person' => $id_person, ':id_combat' => $id_combat];
-
-if (DEBUG) {
-    echo "Find authorization query is:$query_auth<p>";
-}
 $sth_auth = $cxn->prepare($query_auth);
 $sth_auth->execute($data);
 
@@ -106,9 +90,6 @@ $query_marshal="SELECT M.id_marshal, M.name_marshal, M.id_combat, PM.id_person_m
     ON M.id_marshal=PM.id_marshal AND id_person=:id_person
     WHERE M.id_combat=:id_combat";
 $data = [':id_person' => $id_person, ':id_combat' => $id_combat];
-if (DEBUG) {
-    echo "Find marshal query is:$query_marshal<p>";
-}
 $sth_marshal = $cxn->prepare($query_marshal);
 $sth_marshal->execute($data);
 
