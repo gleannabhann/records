@@ -119,11 +119,6 @@ if (!isset($_GET["initial"]) && !isset($_GET["award"]) && isset($_GET["group"]))
     }
     $sth = $cxn->prepare($query);
     $sth->execute($data);
-    // Note: Not sure why this query is executed twice into two variables, so
-    // we're going to comment it out for now
-    //$result = mysqli_query ($cxn, $query)
-    //$data = mysqli_query ($cxn, $query) 
-    //    or die ("Couldn't execute query to build report.");
     echo '<table class="sortable table table-condensed table-bordered">';
     echo '<thead>';
     foreach (range(0, $sth->ColumnCount() -1) as $index)

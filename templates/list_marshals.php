@@ -31,7 +31,7 @@ if (DEBUG) {echo "Warrants query: $q_warr<p>";}
 try {
   $sth_warrs = $cxn->prepare($q_warr);
   $sth_warrs->execute($d_warr);
-//$warrs = mysqli_query ($cxn, $q_warr) 
+
 } catch (PDOException $e) {
   $error = "Couldn't execute query to find warrants to build report. ";
   if (DEBUG) {
@@ -88,7 +88,6 @@ $data = [':ic' => $ic, ':id_combat' => $ic];
     try {
       $sth_result = $cxn->prepare($query);
       $sth_result->execute($data);
-      //$data = mysqli_query ($cxn, $query) 
       } catch (PDOException $e) {
       $error = "Couldn't execute query to build table. ";
       if (DEBUG) {

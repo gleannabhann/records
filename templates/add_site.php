@@ -8,88 +8,88 @@ if (permissions("Sites")>=  3) {
 //    - reset the form?
    if ($_SERVER['REQUEST_METHOD'] ==  'POST') {
       // Build the update query
-       
+       $data = [];
        $query_head = "INSERT INTO Sites (name_site";
        $query_tail = " VALUES (";
        
-       $name_site =   sanitize_mysql($_POST["name_site"]);
-       $query_tail = $query_tail."'$name_site'";
+       $data[':name_site'] = $_POST["name_site"];
+       $query_tail = $query_tail. ":name_site";
        
        $varname = "url_site";
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) && is_string($_POST[$varname])) {
-            $url_site =   sanitize_mysql($_POST[$varname]);
+            $data[':url_site'] = $_POST[$varname];
             $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",'$url_site'";
+            $query_tail = $query_tail.",:url_site";
        }
        
        $varname = "facilities_site";
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) && is_string($_POST[$varname])) {
-            $facilities_site = sanitize_mysql($_POST[$varname]);
+            $data[':facilities_site'] = $_POST[$varname];
             $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",'$facilities_site'";
+            $query_tail = $query_tail.",:facilities_site";
        }
        
        $varname = "capacity_site";
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) && is_numeric($_POST[$varname])) {
-            $capacity_site = $_POST[$varname];
+            $data[':capacity_site'] = $_POST[$varname];
             $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",$capacity_site";
+            $query_tail = $query_tail.",:capacity_site";
        }
        
        $varname = "rates_site";
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) && is_string($_POST[$varname])) {
-            $rates_site =   sanitize_mysql($_POST[$varname]);
+            $data[':rates_site'] = $_POST[$varname];
             $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",'$rates_site'";
+            $query_tail = $query_tail.",:rates_site";
        }
 
        $varname = "contact_site";
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) && is_string($_POST[$varname])) {
-            $contact_site =   sanitize_mysql($_POST[$varname]);
+            $data[':contact_site'] = $_POST[$varname];
             $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",'$contact_site'";
+            $query_tail = $query_tail.",:contact_site";
        }
 
        $varname = "lat_site";
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) && is_numeric($_POST[$varname])) {
-            $lat_site = $_POST[$varname];
+            $data[':lat_site'] = $_POST[$varname];
             $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",$lat_site";
+            $query_tail = $query_tail.",:lat_site";
        }
        
        $varname = "long_site";
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) && is_numeric($_POST[$varname])) {
-            $long_site = $_POST[$varname];
+            $data[':long_site'] = $_POST[$varname];
             $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",$long_site";
+            $query_tail = $query_tail.",:long_site";
        }
        
        $varname = "street_site";
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) && is_string($_POST[$varname])) {
-            $street_site =   sanitize_mysql($_POST[$varname]);
+            $data[':street_site'] = $_POST[$varname];
             $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",'$street_site'";
+            $query_tail = $query_tail.",:street_site";
        }
 
        $varname = "city_site";
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) && is_string($_POST[$varname])) {
-            $city_site =   sanitize_mysql($_POST[$varname]);
+            $data[':city_site'] =  $_POST[$varname];
             $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",'$city_site'";
+            $query_tail = $query_tail.",:city_site";
        }
 
        $varname = "state_site";
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) && is_string($_POST[$varname])) {
-            $state_site =   sanitize_mysql($_POST[$varname]);
+            $data[':state_site'] = $_POST[$varname]);
             $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",'$state_site'";
+            $query_tail = $query_tail.",:state_site";
        }
 
        $varname = "zip_site";
        if (isset($_POST[$varname]) && !empty($_POST[$varname]) && is_string($_POST[$varname])) {
-            $zip_site =   sanitize_mysql($_POST[$varname]);
+            $data[':zip_site'] =  $_POST[$varname]);
             $query_head = $query_head.",$varname";
-            $query_tail = $query_tail.",'$zip_site'";
+            $query_tail = $query_tail.",:zip_site";
        }
 
 //       $varname = "area_site";
@@ -117,7 +117,8 @@ if (permissions("Sites")>=  3) {
        }
        if (!empty($area_site)){
            $query_head=$query_head.",area_site";
-           $query_tail=$query_tail.",'$area_site'";
+           $query_tail=$query_tail.",:area_site";
+           $data['area_site'] = $area_site;
        }
        
        $query_head=$query_head.",active_site) ";
@@ -131,16 +132,22 @@ if (permissions("Sites")>=  3) {
        
        $query = $query_head.$query_tail;
        //echo "Query is $query<br>";
-       $cxn = open_db_browse();
-       $result=update_query($cxn, $query);
-       if ($result !== 1) {
-           echo "Error updating record: " . mysqli_error($cxn);
-       } else {
-           echo "Successfully added $name_site to the List of known sites.<br>";
-           echo '<a href="./list_site.php">Return to List of Sites</a><br>';
-           echo 'Continue adding new sites below:';
-       }
-       $cxn = null; /* close the db connection */
+       try {
+         $result=update_query($cxn, $query, $data);
+         echo "<div class='row'><div class='col-sm-12 col-md-8 col-md-offset-2'>";
+         $msg = "Successfully added $name_site to the List of known sites.</p><p>"
+              . "<a href="./list_site.php">Return to List of Sites</a></p></p>"
+              . "Continue adding new sites below:";
+        bs_alert($msg, 'success');
+         echo "</div></div>";
+       } catch (PDOException $e) {
+         $msg = "Could not add the site";
+        if (DEBUG) {
+          $vars = ['query' => $query, 'data' => $data];
+          log_debug($msg, $vars, $e);
+        }
+      }
+       
 
            
    }
