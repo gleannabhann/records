@@ -1,4 +1,5 @@
 <?php
+
 // This page changes armorial links and takes the following optional parameters
 // ip -> id_person (always used)
 // ia -> id_armorial (only used for *new* links)
@@ -19,7 +20,7 @@ if (isset($_GET["ip"])) { // Need person's id for return button
     exit_with_footer();
 }
 
-if (isset($_GET["act"])){ // Need to know what to do
+if (isset($_GET["act"])) { // Need to know what to do
     $act = $_GET["act"];
 } else {
     bs_alert("<span class='error'>This page has been accessed with incorrect parameters.</span>", 'warning');
@@ -57,7 +58,8 @@ switch ($act) { // This will set the update/insert query, or exit the page if no
             $update = "Updated Record to delete this link.";
         } else {
             bs_alert('<span class="error">Need a valid ipa</span>', 'warning');
-            exit_with_footer();          }
+            exit_with_footer();
+        }
         break;
     case "add_device" :
         $query = "INSERT INTO Persons_Armorials (id_person, id_armorial, type_armorial) "
@@ -85,8 +87,8 @@ switch ($act) { // This will set the update/insert query, or exit the page if no
 /* header opens the db connection for us */
 
 if (DEBUG) {
-  echo "<p>Update query is: $query<br>";
-  echo "Vars are " . json_encode($data) . "</p>";
+    echo "<p>Update query is: $query<br>";
+    echo "Vars are " . json_encode($data) . "</p>";
 }
 $result = update_query($cxn, $query, $data);
 if ($result !== 1) {
@@ -96,4 +98,3 @@ if ($result !== 1) {
 }
 echo button_link("edit_person.php?id=$ip", "Return to Edit Person page");
 /* footer closes the db connection */
-?>

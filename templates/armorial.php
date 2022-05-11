@@ -1,4 +1,5 @@
 <?php
+
 /* connect to the database */
 $cxn = open_db_browse();
 
@@ -30,7 +31,7 @@ echo form_subtitle("Search on a Partial Name");
             . "AND date_event_stop <= curdate() "
             . "ORDER BY date_event_start DESC "
             . "LIMIT 6;";
-    $result = mysqli_query ($cxn, $query) or die ("Couldn't execute event_info query");
+    $result = mysqli_query($cxn, $query) or die("Couldn't execute event_info query");
 
     echo "<table class='table table-condensed table-bordered'>
     <thead>
@@ -46,15 +47,13 @@ echo form_subtitle("Search on a Partial Name");
     if (DEBUG) {
         echo "Query to list devices is: $q_new</br>";
     }
-    $new_links = mysqli_query ($cxn, $q_new)
-            or die ("Couldn't execute query to find existing links");
+    $new_links = mysqli_query($cxn, $q_new)
+            or die("Couldn't execute query to find existing links");
     echo "</div> </div>";
-    while ($row = mysqli_fetch_assoc($new_links)){
+    while ($row = mysqli_fetch_assoc($new_links)) {
         extract($row);
         var_dump($row);
-
-
-        }
+    }
 
         echo "<tr>";
         echo "<td >";
@@ -71,7 +70,6 @@ echo form_subtitle("Search on a Partial Name");
                 default:
                     echo "No image";
             }
-            
         }
         echo "</td>";
         echo "<td >$blazon</td>";
@@ -86,4 +84,3 @@ include "warning.php"; // includes the warning text about paper precedence
 
 
 $cxn = null; /* close the db connection */
-?>

@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<?php 
+<?php
 if (DEBUG) {
-  $start_time = microtime(TRUE);
+    $start_time = microtime(true);
 }
-if (isset($_SESSION['initiated'])) validate_session();
+if (isset($_SESSION['initiated'])) {
+    validate_session();
+}
 $cxn = open_db_browse();
 ?>
 
@@ -115,28 +117,27 @@ $cxn = open_db_browse();
       <ul class="nav navbar-nav">
       <?php
         if (permissions("Herald") >= 2) {
-          // Herald role with "add" permission level or greater
-          echo "<li class='dropdown'><a href='#' class='dropdown-toggle nav-link navbar-brand' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>Awards <span class='caret'></span></a>";
-          echo "<ul class='dropdown-menu'>";
-          echo "<li><a class='dropdown-item' href='/public/awards.php'>View</a></li>";
-          echo "<li><a class='dropdown-item' href='/public/add_award.php'>Add a New Award</a></li>";
-          echo "</ul></li>";
+            // Herald role with "add" permission level or greater
+            echo "<li class='dropdown'><a href='#' class='dropdown-toggle nav-link navbar-brand' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>Awards <span class='caret'></span></a>";
+            echo "<ul class='dropdown-menu'>";
+            echo "<li><a class='dropdown-item' href='/public/awards.php'>View</a></li>";
+            echo "<li><a class='dropdown-item' href='/public/add_award.php'>Add a New Award</a></li>";
+            echo "</ul></li>";
         } else {
-          // all other roles
-          echo "<li class='nav-item'><a class='navbar-brand' href='/public/awards.php'>Awards</a></li>";
+            // all other roles
+            echo "<li class='nav-item'><a class='navbar-brand' href='/public/awards.php'>Awards</a></li>";
         }?>
       <li class='nav-item'><a class='navbar-brand' href="/public/combat.php">Combat</a></li>
       <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
       <li class='nav-item'><a class='navbar-brand' href="/public/list_site.php">Campgrounds</a></li>
         <?php
-        if (isset($_SESSION["id"]))
-        {
-           echo '<li class="nav-item"><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
+        if (isset($_SESSION["id"])) {
+            echo '<li class="nav-item"><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
         }
         if (permissions("Admin")>=5) {
-          // put link to invite a new user on the navbar if user
-          // has correct perm
-          echo '<li><a class="navbar-brand"
+            // put link to invite a new user on the navbar if user
+            // has correct perm
+            echo '<li><a class="navbar-brand"
           href="/public/key.php">Invite</a></li>';
         }
         ?>           <!--
@@ -167,13 +168,11 @@ $cxn = open_db_browse();
 
 
           <?php
-          if (isset($_SESSION["id"]))
-          {
-            echo '<li class="nav-item navbar-brand">Logged in as '.$_SESSION["webuser_name"].'</li>';
-            echo '<li class="nav-item"><a class="navbar-brand" href="logout.php">Logout</a></li>';
-          }
-          else {
-            echo '<li class="nav-item"><a class="navbar-brand" href="login.php">Log In</a></li>';
+          if (isset($_SESSION["id"])) {
+              echo '<li class="nav-item navbar-brand">Logged in as '.$_SESSION["webuser_name"].'</li>';
+              echo '<li class="nav-item"><a class="navbar-brand" href="logout.php">Logout</a></li>';
+          } else {
+              echo '<li class="nav-item"><a class="navbar-brand" href="login.php">Log In</a></li>';
           }
           ?>
           <li class="nav-item dropdown">

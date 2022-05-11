@@ -5,5 +5,3 @@
 
     // render portfolio
     render("add_event.php", ["title" => "Add a New Event"]);
-
-?>

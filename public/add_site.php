@@ -5,5 +5,3 @@
 
     // render portfolio
     render("add_site.php", ["title" => "Add a Site"]);
-
-?>

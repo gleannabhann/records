@@ -15,12 +15,14 @@ echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
 echo "<div class='center-block'>";
 echo form_title("Active Marshals for each Combat Category:");
 $query="SELECT id_combat, name_combat from Combat";
-if (DEBUG) {echo "Combat query: $query<p>";}
+if (DEBUG) {
+    echo "Combat query: $query<p>";
+}
 $sth = $cxn->prepare($query);
 $sth->execute();
 
-echo "<div class='list-group'><ul type='none'>"; 
-while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
+echo "<div class='list-group'><ul type='none'>";
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     extract($row);
     echo "<li><a href='list_marshals.php?id=$id_combat'>$name_combat: Active Marshals</a></li>";
 }
@@ -36,10 +38,12 @@ echo "<table class='table table-condensed table-bordered'>";
 echo '<tr><td class="text-right">Combat Type:</td><td> <select name="id_combat" >';
     $query="SELECT id_combat, name_combat FROM Combat ORDER BY name_combat";
     // Build up the drop down list
-    if (DEBUG) {echo "Combat query: $query<p>";}
+    if (DEBUG) {
+        echo "Combat query: $query<p>";
+    }
     $sth = $cxn->prepare($query);
     $sth->execute();
-    while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
+    while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
         extract($row);
         echo '<option value="'.$row["id_combat"].'"';
         echo '>'.$row["name_combat"].'</option>';
@@ -81,4 +85,3 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     echo "$name_person</a> has an expiring authorization for <b>$name_combat</b> on $expire_authorize"
             . "</li>";
 }
-

@@ -1,4 +1,5 @@
 <?php
+
 /* header.php and header_main.php connect to the database for us */
 
 echo "<div class='row'><div class='col-xs-12 col-sm-8 col-md-6 col-md-offset-2' >";
@@ -37,8 +38,8 @@ echo form_subtitle("Search on a Partial Name");
     </thead>";
     $sth = $cxn->prepare($query);
     $sth->execute();
-    while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
-      extract($row);
+    while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+        extract($row);
 
         echo "<tr>";
         echo "<td ><a href='event.php?id=$id_event'>$name_event</a></td>";
@@ -69,14 +70,14 @@ echo form_subtitle("Search on a Partial Name");
     echo '<select name="id_group" ><option value="-1" selected>'.HOST_KINGDOM.'</option>';
     $sth = $cxn->prepare($query);
     $sth->execute();
-    
+
     while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
         echo '<option value="'.$row["id_group"].'">'.$row["Name_Group"].'</option>';
     }
     echo "</td></tr>";
     echo "</table>";
     echo '<input type="submit" value="Show Awards" class="btn btn-primary">';
-    
+
     echo '</form>';
 echo "</div>";
 
@@ -108,4 +109,3 @@ echo "<div> <!-- ./col-md-3 --></div> <!-- ./row -->";
 
 
 /* footer.php closes the db connection */
-?>

@@ -1,4 +1,5 @@
 <?php
+
 if (permissions("Herald")>=  3) {
     if ((isset($_GET['id'])) && (is_numeric($_GET['id'])) && (isset($_SESSION['id']))) {
         // We got here through the edit link on person.php
@@ -8,7 +9,7 @@ if (permissions("Herald")>=  3) {
         // We got here from form submission
         // echo "Arrived as form submission";
         $id_event = $_POST['id'];
-    } else  {
+    } else {
         bs_alert('This page has been accessed in error.', 'warning');
         exit_with_footer();
     }
@@ -21,41 +22,41 @@ if (permissions("Herald")>=  3) {
     $data = [':id_event' => $id_event];
     $sth = $cxn->prepare($query);
     try {
-      $sth->execute($data);
+        $sth->execute($data);
     } catch (PDOException $e) {
-      $error = "Unable to locate event in database.";
-      if (DEBUG) {
-        $message = $e->getMessage();
-        $code = (int)$e->getCode();
-        $error = $error . " $message / $code ";
-      } 
-      bs_alert($error, 'danger');
-      exit_with_footer();
+        $error = "Unable to locate event in database.";
+        if (DEBUG) {
+            $message = $e->getMessage();
+            $code = (int)$e->getCode();
+            $error = $error . " $message / $code ";
+        }
+        bs_alert($error, 'danger');
+        exit_with_footer();
     }
 
     if ($sth->rowCount()==1) {
-      // get the event information
-      $event= $sth->fetch();
+        // get the event information
+        $event= $sth->fetch();
     } else {
         exit_with_footer();
     }
     $query = "SELECT * FROM Appdata WHERE app_id=1";
     try {
-      $sth = $cxn->prepare($query);
-      $sth->execute();
-      $appdata = $sth->fetch();
+        $sth = $cxn->prepare($query);
+        $sth->execute();
+        $appdata = $sth->fetch();
     } catch (PDOException $e) {
-      $error ="Unable to find information about the Host Kingdom. ";
-      if (DEBUG) {
-        $message = $e->getMessage();
-        $code = (int)$e->getCode();
-        $error = $error . "$message / $code";
-      }
-      bs_alert($error, 'danger');
-      exit_with_footer();
+        $error ="Unable to find information about the Host Kingdom. ";
+        if (DEBUG) {
+            $message = $e->getMessage();
+            $code = (int)$e->getCode();
+            $error = $error . "$message / $code";
+        }
+        bs_alert($error, 'danger');
+        exit_with_footer();
     }
 
-    // get groups array    
+    // get groups array
     $query= "SELECT id_group, name_group, name_kingdom,"
             . "Groups.id_kingdom =:k_id as In_Kingdom "
             . "FROM Groups, Kingdoms "
@@ -73,19 +74,19 @@ if (permissions("Herald")>=  3) {
             . "AND active_site=1 "
             . "ORDER BY name_site;";
     try {
-    $sth_sites = $cxn->prepare($query);
-    $sth_sites->execute();
+        $sth_sites = $cxn->prepare($query);
+        $sth_sites->execute();
     } catch (PDOException $e) {
-      $error = "Problem fetching list of sites.";
-      if (DEBUG) {
-        $message = $e->getMessage;
-        $code = (int)$e->getCode;
-        $error = $error . " $message / $code ";
-      }
-      bs_alert($error, 'warning');
-      exit_with_footer();
+        $error = "Problem fetching list of sites.";
+        if (DEBUG) {
+            $message = $e->getMessage;
+            $code = (int)$e->getCode;
+            $error = $error . " $message / $code ";
+        }
+        bs_alert($error, 'warning');
+        exit_with_footer();
     }
-        
+
     echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
     // Build the form, populating fields based on the post variable or database variable
     echo form_title("Editing Event Information")."\n";
@@ -178,60 +179,59 @@ if (permissions("Herald")>=  3) {
 
     // init our params array
     $data = [];
-    if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // First, update local variables
         // Build Update Query
         $update = "UPDATE Events SET name_event=:name_event";
         $data[':name_event'] = $name_event;
         if ($date_event_start != $event["date_event_start"]) {
-          $update = $update . ", date_event_start = :date_event_start";
-          $data[':date_event_start'] = $date_event_start;
+            $update = $update . ", date_event_start = :date_event_start";
+            $data[':date_event_start'] = $date_event_start;
         }
         if ($date_event_stop != $event["date_event_stop"]) {
-          $update = $update . ", date_event_stop = :date_event_stop";
-          $data[':date_event_stop'] = $date_event_stop;
+            $update = $update . ", date_event_stop = :date_event_stop";
+            $data[':date_event_stop'] = $date_event_stop;
         }
         if ($id_group != $event["id_group"]) {
-          $update = $update . ", id_group=:id_group";
-          $data[':id_group'] = $id_group;
+            $update = $update . ", id_group=:id_group";
+            $data[':id_group'] = $id_group;
         }
         if ($id_site != $event["id_site"]) {
-          $update = $update . ", id_site=:id_site";
-          $data[':id_site'] = $id_site;
+            $update = $update . ", id_site=:id_site";
+            $data[':id_site'] = $id_site;
         }
         $update = $update." WHERE id_event=:id_event";
         $data[':id_event'] = $id_event;
-        if (DEBUG){
-          echo "Update Query is:<p>$update";
-          echo "<p>Vars are<br>";
-          print_r($data);
-          echo "</p>";
+        if (DEBUG) {
+            echo "Update Query is:<p>$update";
+            echo "<p>Vars are<br>";
+            print_r($data);
+            echo "</p>";
         }
         try {
-          $result=update_query($cxn, $update, $data);
+            $result=update_query($cxn, $update, $data);
         } catch (PDOException $e) {
-          $error = "Error updating record. Please contact the system Administrator.";
-          if (DEBUG) {
-            $message = $e->getMessage();
-            $code = (int)$e->getCode();
-            $error = $error . " $message / $code ";
-          }
-          bs_alert($error, 'danger');
-          exit_with_footer(); 
+            $error = "Error updating record. Please contact the system Administrator.";
+            if (DEBUG) {
+                $message = $e->getMessage();
+                $code = (int)$e->getCode();
+                $error = $error . " $message / $code ";
+            }
+            bs_alert($error, 'danger');
+            exit_with_footer();
         } catch (Exception $e) {
-          $message = $e->getMessage();
-          $error = "Error updating record. Please contact the system administrator.";
-          if (DEBUG) {
-            $error = "Unspecified error in calling update_query(). $message ";
-          }
+            $message = $e->getMessage();
+            $error = "Error updating record. Please contact the system administrator.";
+            if (DEBUG) {
+                $error = "Unspecified error in calling update_query(). $message ";
+            }
         }
         echo "<div class='alert alert-success center-block'>";
-          echo "<p class='text-center'>Record Updated!</p>";
+        echo "<p class='text-center'>Record Updated!</p>";
         echo "</div>";
-        
-      }
-exit_with_footer();
-    /* footer.php will close the db connection for us */
+    }
+    exit_with_footer();
+/* footer.php will close the db connection for us */
 } else {
     // We don't have sufficient permissions for this page.
     echo "<div class='alert alert-warning center-block'>";
@@ -240,5 +240,3 @@ exit_with_footer();
     echo '</div>';
     exit_with_footer();
 }
-
-?>

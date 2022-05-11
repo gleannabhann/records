@@ -5,5 +5,3 @@
 
     // render portfolio
     render("submit_campsite_report.php", ["title" => "Report a New Site"]);
-
-?>

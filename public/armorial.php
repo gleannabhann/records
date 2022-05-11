@@ -5,5 +5,3 @@
 
     // render portfolio
     render("armorial.php", ["title" => "Armorial"]);
-
-?>

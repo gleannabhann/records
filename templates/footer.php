@@ -24,7 +24,9 @@ Website disclaimer:  *All external links are not part of the Kingdom of Gleann A
 
 // close the database connection
 // but only if it hasn't already been closed
-if (isset($cxn)) { $cxn = null; }
+if (isset($cxn)) {
+    $cxn = null;
+}
 ?>
 
         </div>

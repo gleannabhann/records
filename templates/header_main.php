@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<?php 
+<?php
 if (DEBUG) {
-  $start_time = microtime(TRUE);
+    $start_time = microtime(true);
 }
 
 if (isset($_SESSION['initiated'])) {
@@ -109,37 +109,36 @@ $cxn = open_db_browse();
 
         <?php
         if (permissions("Herald") >= 2) {
-          // Herald role with "add" permission level (or greater)
-          echo "<li class='dropdown'><a href='#'class='dropdown-toggle"
+            // Herald role with "add" permission level (or greater)
+            echo "<li class='dropdown'><a href='#'class='dropdown-toggle"
             . " nav-link navbar-brand' data-toggle='dropdown' role='button'"
             . " aria-haspopup='true' aria-expanded='false'>Awards <span "
             . " class='caret'></span></a>";
-          echo "<ul class='dropdown-menu'>";
-          echo "<li><a class='dropdown-item' href='/public/awards.php'>"
+            echo "<ul class='dropdown-menu'>";
+            echo "<li><a class='dropdown-item' href='/public/awards.php'>"
              . "View</a></li>";
-          echo "<li><a
+            echo "<li><a
                 class='dropdown-item'
                 href='/public/add_award.php'>Add
                 a New Award</a></li>";
-          echo "</ul></li>";
-          } else {
-            //all other roles 
+            echo "</ul></li>";
+        } else {
+            //all other roles
             echo "<li class='nav-item'><a class='navbar-brand' "
                . "href='/public/awards.php'>Awards</a></li>";
-         }?>
+        }?>
 
           <li><a class="navbar-brand"  href="/public/combat.php">Combat</a></li>
           <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
           <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
           <?php
-            if (isset($_SESSION["id"]))
-            {
-               echo '<li><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
+            if (isset($_SESSION["id"])) {
+                echo '<li><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
             }
             if (permissions("Admin")>=5) {
-              // put link to invite a new user on the navbar if user has
-              // correct perm
-              echo '<li><a class="navbar-brand" href="/public/key.php">Invite</a></li>';
+                // put link to invite a new user on the navbar if user has
+                // correct perm
+                echo '<li><a class="navbar-brand" href="/public/key.php">Invite</a></li>';
             }
           ?>      
 
@@ -170,13 +169,11 @@ $cxn = open_db_browse();
 
             <!-- display logout button if user is logged in -->
             <?php
-            if (isset($_SESSION["id"]))
-            {
-              echo '<li class="navbar-brand" >Logged in as '.$_SESSION["webuser_name"].'</li>';
-              echo '<li><a href="public/logout.php" class="navbar-brand">Logout</a></li>';
-            }
-            else {
-              echo '<li><a href="public/login.php" class="navbar-brand">Log In</a></li>';
+            if (isset($_SESSION["id"])) {
+                echo '<li class="navbar-brand" >Logged in as '.$_SESSION["webuser_name"].'</li>';
+                echo '<li><a href="public/logout.php" class="navbar-brand">Logout</a></li>';
+            } else {
+                echo '<li><a href="public/login.php" class="navbar-brand">Log In</a></li>';
             }
             ?>
 

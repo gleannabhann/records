@@ -8,7 +8,7 @@ $sth = $cxn->prepare($query);
 $sth->execute($data);
 
 if ($sth->rowCount()==1) {
-   $person=  $sth->fetch(PDO::FETCH_ASSOC);
+    $person=  $sth->fetch(PDO::FETCH_ASSOC);
 } else {
     exit_with_footer();
 }
@@ -77,7 +77,9 @@ $sth = $cxn->prepare($query);
 $sth->execute();
 while ($row = $sth->fetch()) {
     echo '<option value="'.$row["id_group"].'"';
-    if ($row["id_group"]==$id_group) echo ' selected';
+    if ($row["id_group"]==$id_group) {
+        echo ' selected';
+    }
     echo '>'.$row["Name_Group"].'</option>';
 }
 echo '</select></td></tr>';
@@ -89,7 +91,7 @@ if (isset($_POST["email"]) && is_string($_POST["email"])) {
 }
 echo '<tr><td class="text-right">Email address:</td><td> <input type="email" name="email" value =" '
     . $email . '"</td></tr>';
-// phone_person       
+// phone_person
 if (isset($_POST["phone"]) && is_string($_POST["phone"])) {
     $phone = $_POST["phone"];
 } else {
@@ -107,7 +109,7 @@ if (isset($_POST["street"]) && is_string($_POST["street"])) {
 echo '<tr><td class="text-right">Street Address:</td>'
     .'<td><input type="text" name="street" value="'.$street.'" size="50" maxlength="128"></td>'
     .'</tr>';
-// city_person        
+// city_person
 if (isset($_POST["city"]) && is_string($_POST["city"])) {
     $city = $_POST["city"];
 } else {
@@ -116,7 +118,7 @@ if (isset($_POST["city"]) && is_string($_POST["city"])) {
 echo '<tr><td class="text-right">City:</td>'
     .'<td><input type="text" name="city" value="'.$city.'"size="45" maxlength="45"></td>'
     .'</tr>';
-// state_person        
+// state_person
 if (isset($_POST["state"]) && is_string($_POST["state"])) {
     $state = $_POST["state"];
 } else {
@@ -144,9 +146,11 @@ if (isset($_POST["waiver_person"]) && is_string($_POST["waiver_person"])) {
 echo '<tr><td class="text-right">Waiver on File with Sheriff:</td><td>';
 echo '<select name="waiver_person" >';
 $waivers =  ['Yes', 'No', 'Parent' ];
-foreach ($waivers as $value ) {
+foreach ($waivers as $value) {
     echo '<option value="'.$value.'"';
-    if ($waiver_person==$value) echo ' selected';
+    if ($waiver_person==$value) {
+        echo ' selected';
+    }
     echo '>'.$value.'</option>';
 }
 echo '</td></tr>';
@@ -160,9 +164,11 @@ if (isset($_POST["youth_person"]) && is_string($_POST["youth_person"])) {
 echo '<tr><td class="text-right">Youth Fighter:</td><td>';
 echo '<select name="youth_person" >';
 $youths =  ['Yes', 'No' ];
-foreach ($youths as $value ) {
+foreach ($youths as $value) {
     echo '<option value="'.$value.'"';
-    if ($youth_person==$value) echo ' selected';
+    if ($youth_person==$value) {
+        echo ' selected';
+    }
     echo '>'.$value.'</option>';
 }
 echo '</td></tr>';
@@ -170,7 +176,7 @@ echo '</td></tr>';
 // birthdate_person
 if (isset($_POST["birthdate_person"]) && is_string($_POST["birthdate_person"])) {
     $birthdate_person = $_POST["birthdate_person"];
-} 
+}
 echo '<tr><td class="text-right">Birthdate (required for youth fighters):</td><td> <input type="date" class="date" name="birthdate_person" value="'
     . $birthdate_person . '"> (format if no datepicker: yyyy-mm-dd)</td></tr>';
 
@@ -189,8 +195,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') // we got here through a form
         && (permissions("Any")>=3)         // and we have editorial permissions
         && (isset($_POST["form_name"]))    // and the form name is set
         && ($_POST["form_name"]=="edit_personal_info") // and we used *this* form
-        ){
-    
+        ) {
     $data = ['sca_name' => $sca_name];
     $update = "UPDATE Persons SET";
     $update=$update." name_person=:sca_name";
@@ -200,19 +205,19 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') // we got here through a form
     }
     if ($mem_num!=$person["membership_person"]) {
         $update=$update.", membership_person=:mem_num";
-        $data['mem_num'] = $mem_num;    
+        $data['mem_num'] = $mem_num;
     }
     if ($mem_exp!=$person["membership_expire_person"]) {
         $update=$update.", membership_expire_person=:mem_exp";
         $data['mem_exp'] = $mem_exp;
     }
     if ($id_group!=$person["id_group"]) {
-        $update=$update.", id_group=:id_group";     
+        $update=$update.", id_group=:id_group";
         $data['id_group'] = $id_group;
     }
     if ($email!=$person["email_person"]) {
         $update=$update.", email_person=:email";
-        $data['email'] = $email;      
+        $data['email'] = $email;
     }
     if ($phone!=$person["phone_person"]) {
         $update=$update.", phone_person=:phone";
@@ -220,7 +225,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') // we got here through a form
     }
     if ($street!=$person["street_person"]) {
         $update=$update.", street_person=:street";
-        $data['street'] = $street;      
+        $data['street'] = $street;
     }
     if ($city!=$person["city_person"]) {
         $update=$update.", city_person=:city";
@@ -232,44 +237,39 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST') // we got here through a form
     }
     if ($zip!=$person["postcode_person"]) {
         $update=$update.", postcode_person=:zip";
-        $data['zip'] = $zip; 
+        $data['zip'] = $zip;
     }
 
     if ($waiver_person!=$person["waiver_person"]) {
         $update=$update.", waiver_person=:waiver_person";
         $data['waiver_person'] = $waiver_person;
     }
-    
+
     if ($youth_person!=$person["youth_person"]) {
-      $update=$update.", youth_person=:youth_person";
-      $data['youth_person'] = $youth_person;
+        $update=$update.", youth_person=:youth_person";
+        $data['youth_person'] = $youth_person;
     }
-    
+
     if ($birthdate_person!= $person["birthdate_person"]) {
-      $update=$update.", birthdate_person=:birthdate_person";
-      $data['birthdate_person'] = $birthdate_person;
+        $update=$update.", birthdate_person=:birthdate_person";
+        $data['birthdate_person'] = $birthdate_person;
     }
     $update=$update. " WHERE id_person=:id_person";
     $data['id_person'] = $id_person;
 
-    
+
     $sth = $cxn->prepare($update);
     try {
-      $sth->execute($data);
-    } catch ( PDOException $e) {
-      $error = 'Error updating record';
-      if ( DEBUG ) {
-        $message = $e->getMessage();
-        $code = (int)$e->getCode();
-        $error = $error . $message . $code;
-        bs_alert($error, 'danger');
-      } else {
-        bs_alert($error, 'danger');
-      }
-    }   
-
+        $sth->execute($data);
+    } catch (PDOException $e) {
+        $error = 'Error updating record';
+        if (DEBUG) {
+            $message = $e->getMessage();
+            $code = (int)$e->getCode();
+            $error = $error . $message . $code;
+            bs_alert($error, 'danger');
+        } else {
+            bs_alert($error, 'danger');
+        }
+    }
 }
-
-
-
-?>

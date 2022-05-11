@@ -27,7 +27,7 @@ if (DEBUG) {
     echo "Query to database is: $query<p>";
 }
 $sth->execute($data);
-$result = $sth->fetchAll() or die ("Couldn't execute query");
+$result = $sth->fetchAll() or die("Couldn't execute query");
 foreach ($result as $row) {
     extract($row);
     echo "<div class='page-header'>".form_title($name_person);
@@ -35,11 +35,11 @@ foreach ($result as $row) {
     include("../templates/warning.php"); // includes the warning text about paper precedence
     echo "</small>";
     if ((permissions("Herald")>= 3) or (permissions("Marshal")>=3)) {
-      // TODO: Make this link more visible?
-    echo "<br>".button_link(
-        "./edit_person.php?id=$id_person",
-        "Edit $name_person's record"
-    );
+        // TODO: Make this link more visible?
+        echo "<br>".button_link(
+            "./edit_person.php?id=$id_person",
+            "Edit $name_person's record"
+        );
     }
     echo "<br/><a href='#combat'>Skip to Combat</a> | <a href='#awards'>Skip to Awards</a>";
     echo "</div>"; //close page header div
@@ -65,7 +65,7 @@ $sth->execute($data);
 $num_rows = $sth->rowCount();
 
   if ($num_rows > 0) {
-    echo "<h2 class='text-center'>Armorial</h2>";
+      echo "<h2 class='text-center'>Armorial</h2>";
   }
 
 //////////////////////////////////////////////////////
@@ -74,22 +74,23 @@ $num_rows = $sth->rowCount();
   $first_row = $sth->fetch(PDO::FETCH_ASSOC);
 
   if ($num_rows > 0 && $first_row['type_armorial'] != "device") {
-    echo "<div class='row'><div class='col-md-8'><div class='card card-block><div class='card-header'>";
-    if ($num_rows == 1) {
-      echo $name_person . "'s Badge";
-    }
-    else echo $name_person . "'s Badges";
-    echo "</div>"; // close the card header
-    echo "<div class='card-body'>";
+      echo "<div class='row'><div class='col-md-8'><div class='card card-block><div class='card-header'>";
+      if ($num_rows == 1) {
+          echo $name_person . "'s Badge";
+      } else {
+          echo $name_person . "'s Badges";
+      }
+      echo "</div>"; // close the card header
+      echo "<div class='card-body'>";
   }
 
 // otherwise, continue with iterating over all rows
   $result = $sth->fetchAll();
   foreach ($result as $row) {
-    extract($row);
+      extract($row);
 
-    switch ($type_armorial) {
-        case "device" :
+      switch ($type_armorial) {
+        case "device":
             echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
             echo "<div class='card card-block' height='100%'>";
             echo "<div class='card-header'>". $name_person."'s Device</div>";
@@ -98,32 +99,33 @@ $num_rows = $sth->rowCount();
             echo "</div></div></div></div>"; // close card-body, card, column, row
             // if the member also has at least one badge associated, set up the badges row and card
             if ($num_rows > 1) {
-              echo "<div class='row'><div class='col-md-8 col-md-offset-2'><div class='card card-block'><div class='card-header'>";
-              if ($num_rows == 2) {
-                echo $name_person . "'s Badge";
-              }
-              else echo $name_person . "'s Badges";
-              echo "</div>"; // close the card header
+                echo "<div class='row'><div class='col-md-8 col-md-offset-2'><div class='card card-block'><div class='card-header'>";
+                if ($num_rows == 2) {
+                    echo $name_person . "'s Badge";
+                } else {
+                    echo $name_person . "'s Badges";
+                }
+                echo "</div>"; // close the card header
               echo "<div class='card-body'>"; // open the card body
             }
             break;
-        case "badge" :
+        case "badge":
             echo "<div class='col-md-3 col-sm-3'>";
             display_image($image, $ftype, 100, $blazon, $blazon);
             echo "<br/>Personal Badge";
             echo "</div>";
             break;
-        case "household" :
+        case "household":
             echo "<div class='col-md-3 col-sm-3'>";
             display_image($image, $ftype, 100, $blazon, $blazon);
             echo "<br/>Household Badge";
             echo "</div>";
             break;
     }
-}
+  }
 
 if ($num_rows > 0) {
-  echo "</div></div>"; //close card divs
+    echo "</div></div>"; //close card divs
 }
 
 echo "</div></div>"; //close column and row divs
@@ -179,31 +181,31 @@ $data = [':id_person' => $id_person, ':id_pers' => $id_person];
         echo "Authorization query is:$query<p>";
     }
 try {
-$sth = $cxn->prepare($query);
-$sth->execute($data);
+    $sth = $cxn->prepare($query);
+    $sth->execute($data);
 } catch (PDOException $e) {
-  $error = "Could not fetch Authorizations. ";
-  if (DEBUG) {
-    $message = $e->getMessage();
-    $code = $e->getCode();
-    $error = $error . " $message / $code ";
-  }
-  bs_alert($error, 'warning');
+    $error = "Could not fetch Authorizations. ";
+    if (DEBUG) {
+        $message = $e->getMessage();
+        $code = $e->getCode();
+        $error = $error . " $message / $code ";
+    }
+    bs_alert($error, 'warning');
 }
 $matches = $sth->rowCount();
     if ($matches > 0) {
-       $ocombat = "";
-       echo form_subsubtitle("Authorizations on file:");
-       while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-         extract($row);
-         if ($ocombat != $name_combat) {
-            echo "<br><b>$name_combat (expires $expire_authorize)</b>: $name_auth";
-         } else {
-            echo ",&nbsp $name_auth";
-         };
-         $ocombat = $name_combat;
-       }
-       echo "<br>";
+        $ocombat = "";
+        echo form_subsubtitle("Authorizations on file:");
+        while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+            extract($row);
+            if ($ocombat != $name_combat) {
+                echo "<br><b>$name_combat (expires $expire_authorize)</b>: $name_auth";
+            } else {
+                echo ",&nbsp $name_auth";
+            };
+            $ocombat = $name_combat;
+        }
+        echo "<br>";
     }
     echo "<br>";
 
@@ -223,31 +225,31 @@ $matches = $sth->rowCount();
         echo "Marshal Warrants query is:$query<p>";
     }
     try {
-    $sth = $cxn->prepare($query);
-    $sth->execute($data);
+        $sth = $cxn->prepare($query);
+        $sth->execute($data);
     } catch (PDOException $e) {
-      $error = "Could not fetch Marshal Warrants. ";
-      if (DEBUG) {
-        $message = $e->getMessage;
-        $code = $e->getCode();
-        $error = $error . "$message / $code";
-      }
-      bs_alert($error, 'warning');
+        $error = "Could not fetch Marshal Warrants. ";
+        if (DEBUG) {
+            $message = $e->getMessage;
+            $code = $e->getCode();
+            $error = $error . "$message / $code";
+        }
+        bs_alert($error, 'warning');
     }
     $matches= $sth->rowCount();
     if ($matches > 0) {
-       $ocombat = "";
-       echo form_subsubtitle("Marshal's Warrants on file:");
-       while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-         extract($row);
-         if ($ocombat != $name_combat) {
-            echo "<br><b>$name_combat (expires $expire_marshal)</b>: $name_marshal";
-         } else {
-            echo ",&nbsp $name_marshal";
-         };
-         $ocombat = $name_combat;
-       }
-       echo "<br>";
+        $ocombat = "";
+        echo form_subsubtitle("Marshal's Warrants on file:");
+        while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+            extract($row);
+            if ($ocombat != $name_combat) {
+                echo "<br><b>$name_combat (expires $expire_marshal)</b>: $name_marshal";
+            } else {
+                echo ",&nbsp $name_marshal";
+            };
+            $ocombat = $name_combat;
+        }
+        echo "<br>";
     }
     echo "<br>";
     echo "</div></div>"; // close card divs
@@ -270,35 +272,35 @@ $query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_eve
 
 $data = ['id_person' => $id_person];
 try {
-$sth = $cxn->prepare($query);
-$sth->execute($data);
+    $sth = $cxn->prepare($query);
+    $sth->execute($data);
 } catch (PDOException $e) {
-  $error = "Could not fetch Awards. ";
-  if (DEBUG) {
-    $message = $e->getMessage();
-    $code = $e->getCode();
-    $error = $error . "$message / $code";
-  }
-  bs_alert($error, 'warning');
+    $error = "Could not fetch Awards. ";
+    if (DEBUG) {
+        $message = $e->getMessage();
+        $code = $e->getCode();
+        $error = $error . "$message / $code";
+    }
+    bs_alert($error, 'warning');
 }
 echo "<table class='table table-condensed table-bordered'>
 <thead><td class='text-left'><strong>Award</strong></td>
 <td class='text-left'><strong>Event</strong></td>
 <td class='text-left'><strong>Date</strong></td></thead>";
 while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-  extract($row);
-// echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
-  echo "<tr>";
-  echo "<td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>";
-  if ($id_event > 0){
-      echo "<td class='text-left'>"
+    extract($row);
+    // echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
+    echo "<tr>";
+    echo "<td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>";
+    if ($id_event > 0) {
+        echo "<td class='text-left'>"
       . "<a href='event.php?id=$id_event'>$name_event</a>"
       . "</td>";
-  } else {
-      echo "<td></td>";
-  }
-  echo "<td class='text-left'>$date_award</td>";
-  echo "</tr>";
+    } else {
+        echo "<td></td>";
+    }
+    echo "<td class='text-left'>$date_award</td>";
+    echo "</tr>";
 };
 echo "</table>";
 echo "</div></div>"; // close the card divs
@@ -313,7 +315,7 @@ echo "<div class='row'>";
 echo "<div class='col-md-12'>";
 echo "<hr><p>Browse by Name:</p><p>";
 include "alpha.php"; // includes the A-Z link list
-$cxn = NULL; /* close the db connection */
+$cxn = null; /* close the db connection */
 echo "<hr/>";
 echo "</div>";
 echo "<div class='row'>";
@@ -321,35 +323,41 @@ echo "<div class='col-md-12'>";
 // If the submit button was pressed, handle the email.
 if (isset($_POST["msgSubmit"])) {
     //TODO: Need to filter these fields carefully.
-  $name = $_POST['name'];
-  $email = $_POST['email'];
-  $msgBody = wordwrap($_POST['msgBody']);
-  $from = 'forms@records.gleannabhann.net';
-  $to = 'webminister@gleannabhann.net';
-//  $to = 'webminister@gleannabhann.net' . ', ';
-//  $to .= 'obsidian@gleannabhann.net';
-  $subject = $_POST['subject'];
-  $body = "From: $name\n Email: $email\n Message:\n $msgBody";
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $msgBody = wordwrap($_POST['msgBody']);
+    $from = 'forms@records.gleannabhann.net';
+    $to = 'webminister@gleannabhann.net';
+    //  $to = 'webminister@gleannabhann.net' . ', ';
+    //  $to .= 'obsidian@gleannabhann.net';
+    $subject = $_POST['subject'];
+    $body = "From: $name\n Email: $email\n Message:\n $msgBody";
 
-  // check for name
-  if (!$_POST['name']) {
-    $errName = "Please enter your name";
-  } else {$errName = false;}
-  if (!$_POST['email']) {
-    $errEmail = "Please enter your email address";
-  } else {$errEmail = false;}
-  if (!$_POST['msgBody']) {
-    $errMessage = "Please enter information about the discrepancy or error";
-  } else {$errMessage = false;}
-  if (!$errName && !$errEmail && !$errMessage) {
-     if (mail ($to, $subject, $body, $from)) {
-       $emailresult = '<div class="alert alert-success">Thank you! We appreciate your feedback.</div>';
-     } else {
-       $emailresult ='<div class="alert alert-danger">I was unable to send your message. Please try again.</div>';
-     }
-   } else {
-       echo "Error with setting up email.";
-   }
+    // check for name
+    if (!$_POST['name']) {
+        $errName = "Please enter your name";
+    } else {
+        $errName = false;
+    }
+    if (!$_POST['email']) {
+        $errEmail = "Please enter your email address";
+    } else {
+        $errEmail = false;
+    }
+    if (!$_POST['msgBody']) {
+        $errMessage = "Please enter information about the discrepancy or error";
+    } else {
+        $errMessage = false;
+    }
+    if (!$errName && !$errEmail && !$errMessage) {
+        if (mail($to, $subject, $body, $from)) {
+            $emailresult = '<div class="alert alert-success">Thank you! We appreciate your feedback.</div>';
+        } else {
+            $emailresult ='<div class="alert alert-danger">I was unable to send your message. Please try again.</div>';
+        }
+    } else {
+        echo "Error with setting up email.";
+    }
 }
 echo "</div></div>"; //close row and col divs
 

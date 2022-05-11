@@ -11,33 +11,33 @@
 // configuration
 require("../includes/config.php");
 
-// builds the auth card for an individual. 
+// builds the auth card for an individual.
 
 // Initialize Variables
-$sca_name = NULL;
-$mundane_name = NULL;
-$expire_marshal = NULL;
-$expire_authorize = NULL;
-$issue_date = NULL;
-$exp_date = NULL;
+$sca_name = null;
+$mundane_name = null;
+$expire_marshal = null;
+$expire_authorize = null;
+$issue_date = null;
+$exp_date = null;
 $authorizations = [];
 $warrants = [];
-$mem_number = NULL;
-$mem_exp = NULL;
+$mem_number = null;
+$mem_exp = null;
 
 
-/* connect to the database 
+/* connect to the database
  * Normally we would use the connection set by header.php or header_main.php
  * but those documents are not included here
  * */
 
 $cxn = open_db_browse();
 
-	$itl = "<span class=\"italics\">";
-	$itlx = "</span>";
-	$ctr = "<span class=\"center\">";
-	$ctrx = "</span>";
-	$id_person = $_GET["id"];
+    $itl = "<span class=\"italics\">";
+    $itlx = "</span>";
+    $ctr = "<span class=\"center\">";
+    $ctrx = "</span>";
+    $id_person = $_GET["id"];
   $id_combat = 1;
 
 // get authorizations
@@ -47,60 +47,40 @@ ON A.id_auth=PA.id_auth AND id_person=:id_person
 WHERE A.id_combat=:id_combat";
   $data = [':id_person' => $id_person, ':id_combat' => $id_combat];
   $sth = $cxn->prepare($query_auth);
-  $sth->execute($data);  
-  while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
+  $sth->execute($data);
+  while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
       extract($row);
-      if (($row["name_auth"] == "Rapier") && ($row["id_person_auth"] != NULL))
-        {
-
-            $authorizations[] = "Rapier";
-        }
-      if (($row["name_auth"] == "Secondary") && ($row["id_person_auth"] != NULL))
-        {
-
-            $authorizations[] = "Secondary";
-        }
-      if (($row["name_auth"] == "Spear") && ($row["id_person_auth"] != NULL))
-        {
-
-            $authorizations[] = "Spear";
-        }
-      if (($row["name_auth"] == "Cut and Thrust") && ($row["id_person_auth"] != NULL))
-        {
-
-            $authorizations[] = "Cut and Thrust";
-        }
-      if (($row["name_auth"] == "Rapier (Y)") && ($row["id_person_auth"] != NULL))
-        {
-
-            $authorizations[] = "Rapier (Y)";
-        }
-      if (($row["name_auth"] == "Rapier Secondary (Y)") && ($row["id_person_auth"] != NULL))
-        {
-
-            $authorizations[] = "Rapier Secondary (Y)";
-        }
-      if (($row["name_auth"] == "Combat Archery") && ($row["id_person_auth"] != NULL))
-        {
-
-            $authorizations[] = "Combat Archery";
-        }
-      if (($row["name_auth"] == "Armored Combat") && ($row["id_person_auth"] != NULL))
-        {
-
-            $authorizations[] = "Armored Combat";
-        }
-      if (($row["name_auth"] == "Siege Engineer") && ($row["id_person_auth"] != NULL))
-        {
-
-            $authorizations[] = "Siege Engineer";
-        }
-      if (($row["name_auth"] == "Fibreglass Spear") && ($row["id_person_auth"] != NULL))
-        {
-
-            $authorizations[] = "Fibreglass Spear";
-        }
-}
+      if (($row["name_auth"] == "Rapier") && ($row["id_person_auth"] != null)) {
+          $authorizations[] = "Rapier";
+      }
+      if (($row["name_auth"] == "Secondary") && ($row["id_person_auth"] != null)) {
+          $authorizations[] = "Secondary";
+      }
+      if (($row["name_auth"] == "Spear") && ($row["id_person_auth"] != null)) {
+          $authorizations[] = "Spear";
+      }
+      if (($row["name_auth"] == "Cut and Thrust") && ($row["id_person_auth"] != null)) {
+          $authorizations[] = "Cut and Thrust";
+      }
+      if (($row["name_auth"] == "Rapier (Y)") && ($row["id_person_auth"] != null)) {
+          $authorizations[] = "Rapier (Y)";
+      }
+      if (($row["name_auth"] == "Rapier Secondary (Y)") && ($row["id_person_auth"] != null)) {
+          $authorizations[] = "Rapier Secondary (Y)";
+      }
+      if (($row["name_auth"] == "Combat Archery") && ($row["id_person_auth"] != null)) {
+          $authorizations[] = "Combat Archery";
+      }
+      if (($row["name_auth"] == "Armored Combat") && ($row["id_person_auth"] != null)) {
+          $authorizations[] = "Armored Combat";
+      }
+      if (($row["name_auth"] == "Siege Engineer") && ($row["id_person_auth"] != null)) {
+          $authorizations[] = "Siege Engineer";
+      }
+      if (($row["name_auth"] == "Fibreglass Spear") && ($row["id_person_auth"] != null)) {
+          $authorizations[] = "Fibreglass Spear";
+      }
+  }
 
 // get marshal information
 
@@ -112,70 +92,45 @@ $data = [':id_person' => $id_person, ':id_combat' => $id_combat];
 $sth = $cxn->prepare($query_marshal);
 $sth->execute($data);
 
-while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     extract($row);
 
-    if (($row["name_marshal"] == "Rapier Marshal in Training") && ($row["id_person_marshal"] != NULL))
-      {
-
-          $warrants[] = "Rapier Marshal in Training";
-      }
-    if (($row["name_marshal"] == "Rapier Marshal") && ($row["id_person_marshal"] != NULL))
-      {
-
-          $warrants[] = "Rapier";
-      }
-    if (($row["name_marshal"] == "Group Rapier Marshal") && ($row["id_person_marshal"] != NULL))
-      {
-
-          $warrants[] = "Group Rapier";
-      }
-    if (($row["name_marshal"] == "Rapier Authorization Marshal") && ($row["id_person_marshal"] != NULL))
-      {
-
-          $warrants[] = "Rapier Auth";
-      }
-    if (($row["name_marshal"] == "Youth Rapier Marshal") && ($row["id_person_marshal"] != NULL))
-      {
-
-          $warrants[] = "Youth Rapier";
-      }
-    if (($row["name_marshal"] == "Cut and Thrust Marshal") && ($row["id_person_marshal"] != NULL))
-      {
-
-          $warrants[] = "Cut and Thrust";
-      }
-    if (($row["name_marshal"] == "Cut and Thrust Authorization Marshal") && ($row["id_person_marshal"] != NULL))
-      {
-
-          $warrants[] = "Cut and Thrust Auth";
-      }
-    if (($row["name_marshal"] == "Combat Archery Authorization Marshal") && ($row["id_person_marshal"] != NULL))
-      {
-
-          $warrants[] = "Combat Archery Auth";
-      }
-    if (($row["name_marshal"] == "Armored Combat Marshal") && ($row["id_person_marshal"] != NULL))
-      {
-
-          $warrants[] = "Armored Combat";
-      }
-    if (($row["name_marshal"] == "Fiberglass Spear Authorization Marshal") && ($row["id_person_marshal"] != NULL))
-      {
-
-          $warrants[] = "Fiberglass Spear Auth";
-      }
-    if (($row["name_marshal"] == "Siege Marshal") && ($row["id_person_marshal"] != NULL))
-      {
-
-          $warrants[] = "Siege";
-      }
-    if (($row["name_marshal"] == "Siege Authorization Marshal") && ($row["id_person_marshal"] != NULL))
-      {
-
-          $warrants[] = "Siege Auth";
-      }
-
+    if (($row["name_marshal"] == "Rapier Marshal in Training") && ($row["id_person_marshal"] != null)) {
+        $warrants[] = "Rapier Marshal in Training";
+    }
+    if (($row["name_marshal"] == "Rapier Marshal") && ($row["id_person_marshal"] != null)) {
+        $warrants[] = "Rapier";
+    }
+    if (($row["name_marshal"] == "Group Rapier Marshal") && ($row["id_person_marshal"] != null)) {
+        $warrants[] = "Group Rapier";
+    }
+    if (($row["name_marshal"] == "Rapier Authorization Marshal") && ($row["id_person_marshal"] != null)) {
+        $warrants[] = "Rapier Auth";
+    }
+    if (($row["name_marshal"] == "Youth Rapier Marshal") && ($row["id_person_marshal"] != null)) {
+        $warrants[] = "Youth Rapier";
+    }
+    if (($row["name_marshal"] == "Cut and Thrust Marshal") && ($row["id_person_marshal"] != null)) {
+        $warrants[] = "Cut and Thrust";
+    }
+    if (($row["name_marshal"] == "Cut and Thrust Authorization Marshal") && ($row["id_person_marshal"] != null)) {
+        $warrants[] = "Cut and Thrust Auth";
+    }
+    if (($row["name_marshal"] == "Combat Archery Authorization Marshal") && ($row["id_person_marshal"] != null)) {
+        $warrants[] = "Combat Archery Auth";
+    }
+    if (($row["name_marshal"] == "Armored Combat Marshal") && ($row["id_person_marshal"] != null)) {
+        $warrants[] = "Armored Combat";
+    }
+    if (($row["name_marshal"] == "Fiberglass Spear Authorization Marshal") && ($row["id_person_marshal"] != null)) {
+        $warrants[] = "Fiberglass Spear Auth";
+    }
+    if (($row["name_marshal"] == "Siege Marshal") && ($row["id_person_marshal"] != null)) {
+        $warrants[] = "Siege";
+    }
+    if (($row["name_marshal"] == "Siege Authorization Marshal") && ($row["id_person_marshal"] != null)) {
+        $warrants[] = "Siege Auth";
+    }
 }
 
 // get personal information
@@ -189,7 +144,7 @@ $data = [':id_combat' => $id_combat, ':id_person' => $id_person];
 $sth = $cxn->prepare($query_fighter);
 $sth->execute($data);
 
-while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     extract($row);
 
     $sca_name = $row["name_person"];
@@ -198,7 +153,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
     $expire_authorize = $row["expire_authorize"];
     $mem_number = $row["membership_person"];
     $mem_exp = $row["membership_expire_person"];
-  }
+}
 
 
 // make the card
@@ -218,30 +173,26 @@ print "<section id=\"side1\">	<img src=\"ram.jpg\">"
     . "<section id=\"side2\">"
     . "<div id=\"leftcol\">"
     . "<b>Authorized Styles:</b> <br />";
-    if (!$authorizations)
-    {
-      echo "None.";
+    if (!$authorizations) {
+        echo "None.";
     }
-    foreach ($authorizations as $auth)
-    {
-      if ($auth != NULL)
-      {
-        echo $auth . ', ';
-      }
+    foreach ($authorizations as $auth) {
+        if ($auth != null) {
+            echo $auth . ', ';
+        }
     }
   echo "</div><div id=\"rightcol\"><b>Warrants:</b> <br />";
-  if (!$warrants)
-  {
-    echo "None.";
+  if (!$warrants) {
+      echo "None.";
   }
-    foreach ($warrants as $warrant)
-      {
-        if ($warrant != NULL)
-        {echo $warrant . ', ';}
-      }
+    foreach ($warrants as $warrant) {
+        if ($warrant != null) {
+            echo $warrant . ', ';
+        }
+    }
   echo "</div></section>";
 
-/* close the db connection 
+/* close the db connection
  * normally footer.php will do this, however, we are not including the footer
  * in this document, so we have to close it here */
 $sth = null;

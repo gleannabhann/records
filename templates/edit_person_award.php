@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -9,7 +9,7 @@
 if (permissions("Herald")< 3) {
     //echo var_dump($_SESSION);
     echo '<p class="error"> This page has been accessed in error.</p>';
-    exit_with_footer();    
+    exit_with_footer();
 }
 
 if ((isset($_GET['idpa'])) && (is_numeric($_GET['idpa']))
@@ -54,19 +54,19 @@ $query = "SELECT id_event, name_event, date_event_start, date_event_stop "
         . "ORDER BY date_event_start DESC;";
 $sth_events = $cxn->prepare($query);
 try {
-$sth_events->execute();
+    $sth_events->execute();
 } catch (PDOException $e) {
-  if (DEBUG) {
-      $message = $e->getMessage();
-      $code = (int)$e->getCode();
-      echo "<p>Error: PDO Exception.</p>";
-      echo "<p>Message:</p><p>";
-      print_r($message);
-      echo "</p><p>Code:</p><p>";
-      print_r($code);
+    if (DEBUG) {
+        $message = $e->getMessage();
+        $code = (int)$e->getCode();
+        echo "<p>Error: PDO Exception.</p>";
+        echo "<p>Message:</p><p>";
+        print_r($message);
+        echo "</p><p>Code:</p><p>";
+        print_r($code);
     } else {
-    echo "Error: Could not find events.";
-    exit_with_footer();
+        echo "Error: Could not find events.";
+        exit_with_footer();
     }
 }
 
@@ -123,23 +123,23 @@ if ((isset($_POST["date_award"]) && ($date_award != $award["date_award"]))
             . "id_event=:id_event "
             . " WHERE id_person_award = :id_person_award";
     $data = [':date_award' => $date_award, ':id_event' => $id_event, ':id_person_award' => $id_person_award];
-    
+
     if (DEBUG) {
-      echo "Query is:<br>";
-      print_r($update);
-      echo "Data is:<br>";
-      print_r($data);
+        echo "Query is:<br>";
+        print_r($update);
+        echo "Data is:<br>";
+        print_r($data);
     }
     $result=update_query($cxn, $update, $data);
     if ($result !== 1) {
-      echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
-      echo "<div class='center-block alert alert-danger'><p class='center alert alert-danger'>Error updating record: \nPDO::errorInfo():</p>";
-      print_r($cxn->errorInfo());
-      echo "</div></div></div>";
+        echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
+        echo "<div class='center-block alert alert-danger'><p class='center alert alert-danger'>Error updating record: \nPDO::errorInfo():</p>";
+        print_r($cxn->errorInfo());
+        echo "</div></div></div>";
     } else {
-      echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
-      echo "<div class='alert alert-success center-block'>";
-      echo "<p class='text-center'>Update Applied.</p></div></div></div>";
+        echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
+        echo "<div class='alert alert-success center-block'>";
+        echo "<p class='text-center'>Update Applied.</p></div></div></div>";
     }
 } else {
     if (DEBUG) {
@@ -147,4 +147,3 @@ if ((isset($_POST["date_award"]) && ($date_award != $award["date_award"]))
     }
 }
  /* footer.php closes the db connection */
-?>

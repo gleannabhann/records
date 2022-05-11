@@ -23,10 +23,10 @@ echo "<div><p><a href=\"combat.php\">Return to the Combat Page</a></p></div>";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST["mem_num"]) && is_numeric($_POST["mem_num"])) {
-         $mem_num = $_POST["mem_num"];
+        $mem_num = $_POST["mem_num"];
     } else {
-    echo form_subtitle('Must include fighter membership number to print fighter authorization card');
-    exit_with_footer();
+        echo form_subtitle('Must include fighter membership number to print fighter authorization card');
+        exit_with_footer();
     }
     if (isset($_POST["id_combat"])  && is_numeric($_POST["id_combat"])) {
         $id_combat=$_POST["id_combat"];
@@ -50,7 +50,7 @@ $sth->execute($data);
 // Now check: if we returned a result we have id_person.  If not, exit out with card not found.
 // Note: we will return either 1 row, or 0.
 $num_rows= $sth->rowCount();
-if ($num_rows < 1){
+if ($num_rows < 1) {
     echo "Couldn't find authorization card given Combat type and Membership Number.<p>";
     echo '<a id="back" href="combat.php">Back to the Combat Page!</a>';
     exit_with_footer();
@@ -107,9 +107,9 @@ $sth_marshal->execute($data);
         requested to show it to the marshals at any time. </span>";
         echo "</section><section id=\"side2\">
           <div id=\"leftcol\"><b>Authorizations:</b><br/>"; // Authorizations
-                while ($row = $sth_auth->fetch(PDO::FETCH_ASSOC)){
+                while ($row = $sth_auth->fetch(PDO::FETCH_ASSOC)) {
                     echo "* ".$row["name_auth"].": ";
-                    if ($row["id_person_auth"] == NULL) {
+                    if ($row["id_person_auth"] == null) {
                         echo "NO<br/>";
                     } else {
                         echo "YES<br/>";
@@ -117,9 +117,9 @@ $sth_marshal->execute($data);
                 }
                 echo "</div><div id=\"rightcol\">";
                 echo "<b>Warrants:</b> <br />"; // Marshals' Warrants
-                while ($row = $sth_marshal->fetch(PDO::FETCH_ASSOC)){
+                while ($row = $sth_marshal->fetch(PDO::FETCH_ASSOC)) {
                     echo "* ".$row["name_marshal"].": ";
-                    if ($row["id_person_marshal"] == NULL) {
+                    if ($row["id_person_marshal"] == null) {
                         echo "NO<br/>";
                     } else {
                         echo "YES<br/>";
@@ -127,4 +127,3 @@ $sth_marshal->execute($data);
                 }
 
         echo "</div></section>";
-?>

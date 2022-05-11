@@ -23,7 +23,7 @@ echo "<div id='row'><div id='map' class='col-md-10 col-md-offset-1'></div></div>
 
 echo "<div class='row'><div class='col-md-10 col-md-offset-1'><hr/>";
 
-  if (permissions("Sites") >= 3){
+  if (permissions("Sites") >= 3) {
       echo '<p>'.button_link("./add_site.php", "Add a New Site").'</p>';
   } else {
       echo '<p>'.button_link(
@@ -42,8 +42,8 @@ echo "<table class='table table-bordered'>
 <td class='text-left'><strong>Location</strong></td>
 <!--<td class='text-left'><strong>Contact</strong></td> -->";
 // TODO: replace is_logged_in() with is_site_admin() permissions check
-if (permissions("Sites") >= 3){
-  echo  "<td class='text-left'><strong> </strong></td>";
+if (permissions("Sites") >= 3) {
+    echo  "<td class='text-left'><strong> </strong></td>";
 };
 echo " </thead>";
 $sites = [];
@@ -56,18 +56,15 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     extract($row);
     if (($active_site > 0) || (permissions("Sites") >= 3)) {
         //TODO: Indicate if site is inactive
-        if ($street_site != NULL)
-        {
-          $address = $street_site . "<br/>" . $city_site . ", " . $state_site . " " . $zip_site;
+        if ($street_site != null) {
+            $address = $street_site . "<br/>" . $city_site . ", " . $state_site . " " . $zip_site;
         } else {
-          $address = "Address Not on File<br/>" . $area_site;
+            $address = "Address Not on File<br/>" . $area_site;
         }
         // add a row to the array to hand to JS, only if coords are available
         if ($lat_site && $long_site) {
-
-          $site = [$name_site, $lat_site, $long_site, $url_site, $facilities_site, $capacity_site, $rates_site, $address, $contact_site, $id_site, $kingdom_level_site];
-          $sites[] = $site;
-
+            $site = [$name_site, $lat_site, $long_site, $url_site, $facilities_site, $capacity_site, $rates_site, $address, $contact_site, $id_site, $kingdom_level_site];
+            $sites[] = $site;
         }
 
         echo "<tr>";
@@ -81,7 +78,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             }
             echo "<td class='text-left'><a href='".$websiteurl."?id=" . $id_site . "'>" . $name_site . "$kle</a></td>";
         } else {
-                echo "<td class='text-left'><a href='".$websiteurl."?id=" . $id_site . "'>" . $name_site . "$kle (INACTIVE)</a></td>";
+            echo "<td class='text-left'><a href='".$websiteurl."?id=" . $id_site . "'>" . $name_site . "$kle (INACTIVE)</a></td>";
         }
         //if ($url_site !="") echo "<a href=\"$url_site\"> (Website)</a>";
         echo "</td>";
@@ -89,17 +86,14 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
         echo "<td class='text-left'> $capacity_site</td>";
         //echo "<td class='text-left'>$rates_site</td>";
         //echo "<td class='text-left'>$area_site</td>";
-        if ($street_site != NULL)
-        {
-          echo "<td class='text-left'>$address</td>";
+        if ($street_site != null) {
+            echo "<td class='text-left'>$address</td>";
         } else {
-          echo "<td class='danger text-left'>$address</td>";
+            echo "<td class='danger text-left'>$address</td>";
         }
 
         //echo "<td class='text-left'>$contact_site</td>";
-        if (permissions("Sites") >= 3){
-
-
+        if (permissions("Sites") >= 3) {
             echo "<td class='text-left'>".button_link("./edit_site.php?id=$id_site", "Edit")."</td>";
         };
         echo "</tr>";

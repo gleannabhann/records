@@ -5,5 +5,3 @@
 
     // render page
     render("main.php", ["title" => ""]);
-
-?>

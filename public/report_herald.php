@@ -5,5 +5,3 @@
 
     // render portfolio
     render("report_herald.php", ["title" => "Heraldic Reports"]);
-
-?>

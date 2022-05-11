@@ -1,6 +1,7 @@
 <?php
-// To edit an Award 
-if (permissions("Herald")<3){
+
+// To edit an Award
+if (permissions("Herald")<3) {
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();
 }
@@ -15,7 +16,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id'])) && (isset($_SESSION['id'])
     // echo "Arrived as form submission";
     $id_award = $_POST["id"];
     $search = $_POST["name"];
-} else  {
+} else {
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();
 }
@@ -64,8 +65,7 @@ echo '<input type="hidden" name="name" value="'.$search.'">';
 echo "<table class='table table-condensed table-bordered'>";
 
 $varname="name_award";
-if (isset($_POST[$varname]) && is_string($_POST[$varname])) 
-{
+if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
     //echo "Using POST value for name_award<p>";
     $name_award=$_POST[$varname];
     $name_award = str_replace("'", "&#039;", $name_award);
@@ -91,7 +91,9 @@ echo "<tr><td class='text-right'>Group of Award (if any)</td>";
 echo '<td><select name="id_group" ><option value="-1"></option>';
 while ($row= $sth_groups->fetch(PDO::FETCH_ASSOC)) {
     echo '<option value="'.$row["id_group"].'"';
-    if ($row["id_group"]==$id_group) echo ' selected';
+    if ($row["id_group"]==$id_group) {
+        echo ' selected';
+    }
     echo '>'.$row["name_group"].'</option>';
 }
 echo "</td></tr>";
@@ -106,7 +108,9 @@ echo "<tr><td class='text-right'>Kingdom of Award</td>";
 echo '<td><select name="id_kingdom" ><option value="0"></option>';
 while ($row= $sth_kingdoms->fetch(PDO::FETCH_ASSOC)) {
     echo '<option value="'.$row["id_kingdom"].'"';
-    if ($row["id_kingdom"]==$id_kingdom) echo ' selected';
+    if ($row["id_kingdom"]==$id_kingdom) {
+        echo ' selected';
+    }
     echo '>'.$row["name_kingdom"].'</option>';
 }
 echo "</td></tr>";
@@ -122,7 +126,9 @@ echo "<tr><td class='text-right'>Rank of Award</td>";
 echo '<td><select name="id_rank" ><option value="0"></option>';
 while ($row= $sth_ranks->fetch(PDO::FETCH_ASSOC)) {
     echo '<option value="'.$row["id_rank"].'"';
-    if ($row["id_rank"]==$id_rank) echo ' selected';
+    if ($row["id_rank"]==$id_rank) {
+        echo ' selected';
+    }
     echo '>'.$row["name_rank"].'</option>';
 }
 echo "</td></tr>";
@@ -132,7 +138,7 @@ echo '<input type="submit" value="Update Award Information">';
 echo '</form>';
 
 // Now let's update the database if and only if the for was posted
-if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Herald")>=3)){
+if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Herald")>=3)) {
     // Need to replace any apostrophes in the new name
     $name_award = str_replace("'", "&#039;", $name_award);
     //init the data array for the prepared statement
@@ -142,39 +148,36 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Herald")>=3)){
     }
     $update="UPDATE Awards SET name_award=:name_award.";
     $data[':name_award'] = $name_award;
-    if ($id_group!= $award["id_group"]){
-      $update=$update.", id_group=:id_group";
-      $data[':id_group'] = $id_group;
+    if ($id_group!= $award["id_group"]) {
+        $update=$update.", id_group=:id_group";
+        $data[':id_group'] = $id_group;
     }
-    if ($id_kingdom!= $award["id_kingdom"]){
-      $update=$update.", id_kingdom=:id_kingdom";
-      $data[':id_kingdom'] = $id_kingdom;
+    if ($id_kingdom!= $award["id_kingdom"]) {
+        $update=$update.", id_kingdom=:id_kingdom";
+        $data[':id_kingdom'] = $id_kingdom;
     }
-    if ($id_rank!= $award["id_rank"]){
-      $update=$update.", id_rank=:id_rank";
-      $data[':id_rank'] = $id_rank;
+    if ($id_rank!= $award["id_rank"]) {
+        $update=$update.", id_rank=:id_rank";
+        $data[':id_rank'] = $id_rank;
     }
     $update=$update." WHERE id_award=:id_award";
     $data[':id_award'] = $id_award;
     if (DEBUG) {
-       echo "Update query is:<br>$update<p>";
-    } 
+        echo "Update query is:<br>$update<p>";
+    }
     try {
-    $result=update_query($cxn, $update, $data);
-    echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
-    echo "<div class='alert alert-success center-block'>";
-    echo "<p class='text-center'>Success!</p>";
-    echo "</div></div></div>";
+        $result=update_query($cxn, $update, $data);
+        echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
+        echo "<div class='alert alert-success center-block'>";
+        echo "<p class='text-center'>Success!</p>";
+        echo "</div></div></div>";
     } catch (Exception $e) {
-      echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
-      echo "<div class='alert alert-danger center-block'><p class='text-center'>";
-      echo $e;
-      echo "</p></div></div></div>";
-    } 
-
+        echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
+        echo "<div class='alert alert-danger center-block'><p class='text-center'>";
+        echo $e;
+        echo "</p></div></div></div>";
+    }
 }
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 
 /* footer.php closes the db connection */
-
-

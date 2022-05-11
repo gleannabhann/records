@@ -1,4 +1,5 @@
 <?php
+
 // This is the main page for reports.  It checks for permissions and then
 // loads the report_sub_<type>.php file.  We use separate files since different
 // fields might include different secondary parameters.
@@ -15,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') { // this page wasn't reached through 
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();
 }
-    
+
 // note: db connection now established in header.php and header_main.php
 // so it should be available to this document
 
@@ -41,7 +42,7 @@ switch ($report) {
         break;
     default:
         echo '<p class="error"> No report selected.</p>';
-        exit_with_footer();        
+        exit_with_footer();
 }
 
 // Display data in $data

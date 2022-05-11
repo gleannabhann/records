@@ -1,4 +1,5 @@
 <?php
+
 // This page links up the amorials and is available on to the Ruby Herald
 // Set up search filters
 
@@ -41,7 +42,7 @@ if (DEBUG) {
 }
 $sth = $cxn->prepare($q_exist);
 $sth->execute($data);
- 
+
 
 echo form_subtitle("Existing links:");
 echo "<table class='table table-condensed table-bordered'>";
@@ -99,7 +100,7 @@ if ($search_filters=="") {
             $q_new = $q_new . " blazon_armorial like '%$filter%' OR ";
             $q_new = $q_new . " fname_armorial like '%$filter%' OR ";
         }
-    } 
+    }
     $q_new = $q_new . " ABS(TIMESTAMPDIFF(MINUTE,NOW(),timestamp_armorial)) < 15) ";
 }
 if (DEBUG) {
@@ -134,9 +135,6 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_household", "Make household");
     echo '</td>';
     echo "</tr>";
-
 }
 echo "</table>";
 echo "</details>";
-
-?>

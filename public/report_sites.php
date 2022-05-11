@@ -5,5 +5,3 @@
 
     // render portfolio
     render("report_sites.php", ["title" => "Sites Reports"]);
-
-?>

@@ -5,5 +5,3 @@
 
     // render portfolio
     render("add_award.php", ["title" => "Add a New Award"]);
-
-?>

@@ -5,5 +5,3 @@
 
     // render portfolio
     render("edit_person.php", ["title" => "Edit an Individual"]);
-
-?>

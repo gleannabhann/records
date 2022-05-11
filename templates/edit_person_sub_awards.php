@@ -1,4 +1,5 @@
 <?php
+
 // Part of the edit_person.php file
 echo form_title("Editing awards");
 echo button_link("./add_person_award.php?id=".$id_person, "Add a new Award for ".$sca_name);
@@ -18,27 +19,27 @@ echo "<table class='table table-condensed table-bordered'>\n
          and Persons_Awards.id_event = Events.id_event 
          and Persons.id_person = :id_person order by date_award";
 $data = ['id_person' => $id_person];
-if (DEBUG) { echo "Query to list awards is: ".$query."<br>";}
+if (DEBUG) {
+    echo "Query to list awards is: ".$query."<br>";
+}
 $sth = $cxn->prepare($query);
 $sth->execute($data);
 
 while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-  extract($row);
-// echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
-  echo "<tr><td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>";
-  echo "<td class='text-left'>$date_award</td>\n";
-  if ($id_event>0){
-      echo "<td class='text-left'>$name_event</td>";
-  } else {
-      echo "<td></td>";
-  }
-  echo "<td>".button_link("./edit_person_award.php?idpa=".$id_person_award."&id=".$id_person, "Edit Date/Event")."</td>\n";
-  echo "<td>".button_link(
-      "./delete_person_award.php?id=".$id_person."&idpa=".$id_person_award,
-      "Delete Award"
-  )."</td>\n";
-  echo "</tr>";
+    extract($row);
+    // echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
+    echo "<tr><td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>";
+    echo "<td class='text-left'>$date_award</td>\n";
+    if ($id_event>0) {
+        echo "<td class='text-left'>$name_event</td>";
+    } else {
+        echo "<td></td>";
+    }
+    echo "<td>".button_link("./edit_person_award.php?idpa=".$id_person_award."&id=".$id_person, "Edit Date/Event")."</td>\n";
+    echo "<td>".button_link(
+        "./delete_person_award.php?id=".$id_person."&idpa=".$id_person_award,
+        "Delete Award"
+    )."</td>\n";
+    echo "</tr>";
 };
 echo "</table>";
-
-?>

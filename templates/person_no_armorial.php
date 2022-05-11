@@ -25,22 +25,22 @@ $query = "SELECT name_person, name_group, Groups.id_group "
 if (DEBUG) {
     echo "Query to database is: $query<p>";
 }
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
-while ($row = mysqli_fetch_assoc($result))
-  {extract($row);
-  echo "<div class='page-header'>".form_title($name_person);
-  echo form_subtitle("Member of ".live_link("list.php?group=$id_group", "$name_group"));
-  include("../templates/warning.php"); // includes the warning text about paper precedence
-  echo "</small>";
-  if ((permissions("Herald")>= 3) or (permissions("Marshal")>=3)) {
-      // TODO: Make this link more visible?
-    echo "<br>".button_link(
-        "./edit_person.php?id=$id_person",
-        "Edit $name_person's record"
-    );
-  }
-  echo "</div>";
+$result = mysqli_query($cxn, $query)
+or die("Couldn't execute query");
+while ($row = mysqli_fetch_assoc($result)) {
+    extract($row);
+    echo "<div class='page-header'>".form_title($name_person);
+    echo form_subtitle("Member of ".live_link("list.php?group=$id_group", "$name_group"));
+    include("../templates/warning.php"); // includes the warning text about paper precedence
+    echo "</small>";
+    if ((permissions("Herald")>= 3) or (permissions("Marshal")>=3)) {
+        // TODO: Make this link more visible?
+        echo "<br>".button_link(
+            "./edit_person.php?id=$id_person",
+            "Edit $name_person's record"
+        );
+    }
+    echo "</div>";
 };
 echo "
 <div class='row'>
@@ -53,8 +53,8 @@ $query = "SELECT waiver_person, youth_person, birthdate_person
 if (DEBUG) {
     echo "Waiver query is:$query<p>";
 }
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute waiver query");
+$result = mysqli_query($cxn, $query)
+or die("Couldn't execute waiver query");
 $matches = $result->num_rows;
 if ($matches > 0) {
     $row=mysqli_fetch_assoc($result);
@@ -80,22 +80,22 @@ if ($matches > 0) {
     if (DEBUG) {
         echo "Authorization query is:$query<p>";
     }
-    $result = mysqli_query ($cxn, $query)
-    or die ("Couldn't execute authorization query");
+    $result = mysqli_query($cxn, $query)
+    or die("Couldn't execute authorization query");
     $matches = $result->num_rows;
     if ($matches > 0) {
-       $ocombat = "";
-       echo form_subsubtitle("Authorizations on file:");
-       while ($row = mysqli_fetch_assoc($result))
-         {extract($row);
-         if ($ocombat != $name_combat) {
-            echo "<br><b>$name_combat (expires $expire_authorize)</b>: $name_auth";
-         } else {
-            echo ",&nbsp $name_auth";
-         };
-         $ocombat = $name_combat;
-       }
-       echo "<br>";
+        $ocombat = "";
+        echo form_subsubtitle("Authorizations on file:");
+        while ($row = mysqli_fetch_assoc($result)) {
+            extract($row);
+            if ($ocombat != $name_combat) {
+                echo "<br><b>$name_combat (expires $expire_authorize)</b>: $name_auth";
+            } else {
+                echo ",&nbsp $name_auth";
+            };
+            $ocombat = $name_combat;
+        }
+        echo "<br>";
     }
     echo "<br>";
 
@@ -114,29 +114,29 @@ if ($matches > 0) {
     //          FROM Persons_Marshals, Marshals, Combat
     //          WHERE Persons_Marshals.id_marshal = Marshals.id_marshal
     //          AND Marshals.id_combat = Combat.id_combat
-    //          AND id_person = $id_person 
-    //          AND curdate()<= expire_marshal 
+    //          AND id_person = $id_person
+    //          AND curdate()<= expire_marshal
     //          ORDER by name_combat, Marshals.id_marshal";
     if (DEBUG) {
         echo "Marshal Warrants query is:$query<p>";
     }
 
-    $result = mysqli_query ($cxn, $query)
-        or die ("Couldn't execute marshaling query");
+    $result = mysqli_query($cxn, $query)
+        or die("Couldn't execute marshaling query");
     $matches = $result->num_rows;
     if ($matches > 0) {
-       $ocombat = "";
-       echo form_subsubtitle("Marshal's Warrants on file:");
-       while ($row = mysqli_fetch_assoc($result))
-         {extract($row);
-         if ($ocombat != $name_combat) {
-            echo "<br><b>$name_combat (expires $expire_marshal)</b>: $name_marshal";
-         } else {
-            echo ",&nbsp $name_marshal";
-         };
-         $ocombat = $name_combat;
-       }
-       echo "<br>";
+        $ocombat = "";
+        echo form_subsubtitle("Marshal's Warrants on file:");
+        while ($row = mysqli_fetch_assoc($result)) {
+            extract($row);
+            if ($ocombat != $name_combat) {
+                echo "<br><b>$name_combat (expires $expire_marshal)</b>: $name_marshal";
+            } else {
+                echo ",&nbsp $name_marshal";
+            };
+            $ocombat = $name_combat;
+        }
+        echo "<br>";
     }
     echo "<br>";
 //}
@@ -148,25 +148,25 @@ $query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_eve
          AND Awards.id_kingdom = Kingdoms.id_kingdom
          AND Persons_Awards.id_event = Events.id_event 
          AND Persons.id_person = $id_person order by date_award";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
+$result = mysqli_query($cxn, $query) or die("Couldn't execute awards query");
 echo "<table class='table table-condensed table-bordered'>
 <thead><td class='text-left'><strong>Award</strong></td>
 <td class='text-left'><strong>Event</strong></td>
 <td class='text-left'><strong>Date</strong></td></thead>";
-while ($row = mysqli_fetch_assoc($result))
-  {extract($row);
-// echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
-  echo "<tr>";
-  echo "<td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>";
-  if ($id_event > 0){
-      echo "<td class='text-left'>"
+while ($row = mysqli_fetch_assoc($result)) {
+    extract($row);
+    // echo "<tr><td class='text-left'>$name_award - $name_kingdom</td><td class='text-left'>$date_award</tr></td>";
+    echo "<tr>";
+    echo "<td class='text-left'><a href='list.php?award=$id_award'>$name_award</a></td>";
+    if ($id_event > 0) {
+        echo "<td class='text-left'>"
       . "<a href='event.php?id=$id_event'>$name_event</a>"
       . "</td>";
-  } else {
-      echo "<td></td>";
-  }
-  echo "<td class='text-left'>$date_award</td>";
-  echo "</tr>";
+    } else {
+        echo "<td></td>";
+    }
+    echo "<td class='text-left'>$date_award</td>";
+    echo "</tr>";
 };
 echo "</table>";
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
@@ -178,35 +178,41 @@ echo "<hr/>";
 // If the submit button was pressed, handle the email.
 if (isset($_POST["msgSubmit"])) {
     //TODO: Need to filter these fields carefully.
-  $name = $_POST['name'];
-  $email = $_POST['email'];
-  $msgBody = wordwrap($_POST['msgBody']);
-  $from = 'forms@records.gleannabhann.net';
-  $to = 'webminister@gleannabhann.net';
-//  $to = 'webminister@gleannabhann.net' . ', ';
-//  $to .= 'obsidian@gleannabhann.net';
-  $subject = $_POST['subject'];
-  $body = "From: $name\n Email: $email\n Message:\n $msgBody";
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $msgBody = wordwrap($_POST['msgBody']);
+    $from = 'forms@records.gleannabhann.net';
+    $to = 'webminister@gleannabhann.net';
+    //  $to = 'webminister@gleannabhann.net' . ', ';
+    //  $to .= 'obsidian@gleannabhann.net';
+    $subject = $_POST['subject'];
+    $body = "From: $name\n Email: $email\n Message:\n $msgBody";
 
-  // check for name
-  if (!$_POST['name']) {
-    $errName = "Please enter your name";
-  } else {$errName = false;}
-  if (!$_POST['email']) {
-    $errEmail = "Please enter your email address";
-  } else {$errEmail = false;}
-  if (!$_POST['msgBody']) {
-    $errMessage = "Please enter information about the discrepancy or error";
-  } else {$errMessage = false;}
-  if (!$errName && !$errEmail && !$errMessage) {
-     if (mail ($to, $subject, $body, $from)) {
-       $emailresult = '<div class="alert alert-success">Thank you! We appreciate your feedback.</div>';
-     } else {
-       $emailresult ='<div class="alert alert-danger">I was unable to send your message. Please try again.</div>';
-     }
-   } else {
-       echo "Error with setting up email.";
-   }
+    // check for name
+    if (!$_POST['name']) {
+        $errName = "Please enter your name";
+    } else {
+        $errName = false;
+    }
+    if (!$_POST['email']) {
+        $errEmail = "Please enter your email address";
+    } else {
+        $errEmail = false;
+    }
+    if (!$_POST['msgBody']) {
+        $errMessage = "Please enter information about the discrepancy or error";
+    } else {
+        $errMessage = false;
+    }
+    if (!$errName && !$errEmail && !$errMessage) {
+        if (mail($to, $subject, $body, $from)) {
+            $emailresult = '<div class="alert alert-success">Thank you! We appreciate your feedback.</div>';
+        } else {
+            $emailresult ='<div class="alert alert-danger">I was unable to send your message. Please try again.</div>';
+        }
+    } else {
+        echo "Error with setting up email.";
+    }
 }
 
 

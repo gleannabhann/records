@@ -5,5 +5,3 @@
 
     // render portfolio
     render("edit_group.php", ["title" => "Edit a Group"]);
-
-?>

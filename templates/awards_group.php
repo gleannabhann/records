@@ -1,21 +1,21 @@
 <?php
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST["start_date"]) 
+    if (isset($_POST["start_date"])
             && is_string($_POST["start_date"])
             && strlen($_POST["start_date"] > 0)) {
-         $start_date = $_POST["start_date"];
+        $start_date = $_POST["start_date"];
     } else {
-    echo form_subtitle('Must include Beginning of Time Period to list all awards');
-    exit_with_footer();
+        echo form_subtitle('Must include Beginning of Time Period to list all awards');
+        exit_with_footer();
     }
-    if (isset($_POST["end_date"]) 
+    if (isset($_POST["end_date"])
             && is_string($_POST["end_date"])
             && strlen($_POST["end_date"] > 0)) {
-         $end_date = $_POST["end_date"];
+        $end_date = $_POST["end_date"];
     } else {
-    echo form_subtitle('Must include End of Time Period to list all awards');
-    exit_with_footer();
+        echo form_subtitle('Must include End of Time Period to list all awards');
+        exit_with_footer();
     }
     if (isset($_POST["id_group"]) && is_numeric($_POST["id_group"])) {
         $id_group = $_POST["id_group"];
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
     echo form_subtitle("Page accessed in error.");
     exit_with_footer();
-} 
+}
 
 $query = "SELECT "
         . "concat('<a href=''person.php?id=',Persons.id_person,'''>',name_person,'</a>') as 'SCA Name', "
@@ -46,16 +46,16 @@ if ($id_group == -1) {
     $query = $query . " AND Groups.id_kingdom = :host_kingdom_id ";
     $data[':host_kingdom_id'] = $k_id['host_kingdom_id'];
 } else {
-  $query = $query . " AND Groups.id_group = :id_group ";
-  $data[':id_group'] = $id_group;
+    $query = $query . " AND Groups.id_group = :id_group ";
+    $data[':id_group'] = $id_group;
 }
 $query = $query . "ORDER BY date_award;";
 $sth = $cxn->prepare($query);
 $sth->execute($data);
 $fields = [];
-foreach (range (0, $sth->columnCount() -1) as $i) {
-  $col = $sth->getColumnMeta($i);
-  $fields[] = $col['name'];
+foreach (range(0, $sth->columnCount() -1) as $i) {
+    $col = $sth->getColumnMeta($i);
+    $fields[] = $col['name'];
 }
 //    echo "<table class='table table-condensed table-bordered'>";
     echo '<table class="sortable table table-condensed table-bordered">';

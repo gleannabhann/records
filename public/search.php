@@ -5,5 +5,3 @@
 
     // render portfolio
     render("search.php", ["title" => "Search"]);
-
-?>
