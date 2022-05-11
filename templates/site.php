@@ -226,61 +226,66 @@ if (isset($_POST["msgSubmit"])) {
 ?>
 <!-- end of php -->
 <div class="row">
+<div class='col-sm-12 col-md-8 col-md-offset-2'>
   <?php echo form_title("Report a problem with this record") ?>
-  <form class="form-horizontal" role="form" method="post" action="site.php">
-    <div class="form-group">
-      <label for="name" class="col-sm-2 col-md-3 control-label">Name:</label>
-      <div class="input-group col-sm-10 col-md-6">
-        <span style="display: block; width: 100%"><input size="60" type="text" width="100%" class="form-control" id="name" name="name" placeholder="Your Name" value="<?php if (isset($_POST['msgSubmit'])) {
+  <form class="form" role="form" method="post" action="site.php">
+   
+    <div class='form-group'>
+       <div class="input-group">     
+        <span class='input-group-addon' style='width: 80px;'>Name</span><label for="name" class="control-label sr-only">Name:</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" value="<?php if (isset($_POST['msgSubmit'])) {
     echo htmlspecialchars($_POST['name']);
-} ?>"></span>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="email" class="col-sm-2 col-md-3 control-label">Email:</label>
-      <div class="input-group col-sm-10 col-md-6">
-  <input size="60" type="text" width="100%" class="form-control" id="email" name="email" placeholder="example@domain.com" value="<?php if (isset($_POST['msgSubmit'])) {
-    echo htmlspecialchars($_POST['email']);
 } ?>">
+       </div>
+  </div>  
+  <div class='form-group'>
 
+
+         <div class="input-group">
+         <span class='input-group-addon' style='width: 80px;'>Email</span><label for="email" class="control-label sr-only">Email:</label>
+        <input type="text" class="form-control" id="email" name="email" placeholder="example@domain.com" 
+               value="<?php if (isset($_POST['msgSubmit'])) { echo htmlspecialchars($_POST['email']); } ?>">
+
+       </div>
+  </div>  
+  <div class='form-group'>
+
+         <div class="input-group">     
+        <span class='input-group-addon' style='width: 80px;'>Subject</span><label for="subject" class="control-label sr-only">Subject:</label>
+          <input type="text" class="form-control" id="subject" name="subject"
+                 value="<?php echo "Record correction for $name_site (ID $id_site)"; ?>">
       </div>
-    </div>
-    <div class="form-group">
-      <label for="subject" class="col-sm-2 col-md-3 control-label">Subject:</label>
-      <div class="input-group col-sm-10 col-md-6">
-        <input size="60" type="text" class="form-control" id="subject" name="subject"
-             value="<?php
-                         echo "Record correction for $name_site (ID $id_site)";
-                    ?>">
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="msgBody" class="col-sm-2 col-md-3 control-label">Details:</label>
-      <div class="input-group col-sm-10 col-md-6">
-          <textarea cols="62" class="form form-control" rows="4" name="msgBody" placeholder="Tell us what's incorrect about this record." id="msgBody" value="<?php if (isset($_POST['msgSubmit'])) {
-                        echo htmlspecialchars($_POST['msgBody']);
-                    } ?>">
+  </div>  
+  <div class='form-group'>
+
+         <div class="input-group">
+        <span class='input-group-addon' style='width: 80px;'>Details</span>
+        <label for="msgBody" class="control-label sr-only">Details:</label>
+        <textarea cols="62" class="form form-control" rows="4" name="msgBody" placeholder="Tell us what's incorrect about this record." id="msgBody" 
+                  value="<?php if (isset($_POST['msgSubmit'])) { echo htmlspecialchars($_POST['msgBody']); } ?>">
         </textarea>
 
-      </div>
-    </div>
+       </div>
+  </div>  
+  <div class='form-group'>
 
-    <div class="form-group">
-      <div class="input-group col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
+         <div class="input-group">
           <input id="msgSubmit" name="msgSubmit" type="submit" value="Send Report">
         <input type="hidden" name="id"
              value="<?php
                          echo "$id_site";
                     ?>">
          </div>
-    </div>
-    <div class="form-group">
-      <div class="input-group col-sm-10 col-sm-offset-2 col-md-6 col-md-offset-3">
+  </div>  
+  <div class='form-group'>
+
+         <div class="input-group">
         <?php if (isset($emailresult)) {
                         echo $emailresult;
                     } ?>
       </div>
-    </div>
+     </div>
+</div>
   </form>
 </div>
 
