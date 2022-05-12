@@ -225,6 +225,8 @@ if (isset($_POST["msgSubmit"])) {
 
 ?>
 <!-- end of php -->
+<? /*
+
 <div class="row">
 <div class='col-sm-12 col-md-8 col-md-offset-2'>
   <?php echo form_title("Report a problem with this record") ?>
@@ -288,6 +290,8 @@ if (isset($_POST["msgSubmit"])) {
 </div>
   </form>
 </div>
+
+ */ ?>
 
 <script>
 var oldWindow;
