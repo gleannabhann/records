@@ -118,15 +118,15 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Herald")>=3)) {
     }
     $update=$update." WHERE id_group=:id_group";
     $data[':id_group'] = $id_group;
-    if (DEBUG) {
-        echo "Update query is:<br>$update<p>";
-    }
+    try {
     $result=update_query($cxn, $update, $data);
-    if ($result !== 1) {
-        echo "Error updating record: \nPDO::errorInfo():";
-        print_r($cxn->errorInfo());
-    } else {
-        echo "Updated $name_group.";
+    bs_alert("Successfully updated information for <strong>$name_group</strong>.", 'success');
+    } catch (PDOException $e) {
+      $msg = "Could not update information for <strong>$name_group</strong>.";
+      if (DEBUG) {
+        $vars = ['query' => $update, 'data' => $data];
+        log_debug($msg, $vars, $e);
+      } 
     }
 }
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
