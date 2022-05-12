@@ -146,7 +146,7 @@ if (permissions("Sites")>=  3) {
         try {
             $result=update_query($cxn, $query, $data);
             echo "<div class='row'><div class='col-sm-12 col-md-8 col-md-offset-2'>";
-            $msg = "Successfully added $name_site to the List of known sites.</p><p>"
+            $msg = "Successfully added".$data[':name_site']." to the List of known sites.</p><p>"
               . "<a href='./list_site.php'>Return to List of Sites</a></p></p>"
               . "Continue adding new sites below:";
             bs_alert($msg, 'success');

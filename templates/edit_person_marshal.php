@@ -230,8 +230,17 @@ while ($row = $sth->fetch()) {
         }
         echo "<p>";
     }
+    if (isset($dynmdate[$id_marshal])) {
+      $expires = new DateTime($dynmdate[$id_marshal]);
+      $now = new DateTime();
+      $days = intval($now->diff($expires)->format("%r%a"));
+      echo "Days to expiration: $days<br/>";
+    } else {
+      // no expiration date set. We'll set the days to expiration to 0
+      $days = 0;
+    }
     if ($ipcc == null) { // No combat card info means no warrants
-        if (isset($dynmidauth[$id_marshal])) {
+        if (isset($dynmidauth[$id_marshal]) || $days < 0) {
             echo "<li class='bg-warning'>Cannot authorize $name_marshal "
                                 . "until the card information for $name_combat combat "
                                 . "is completed.</li>";

@@ -139,14 +139,21 @@ echo '</form>';
 
 // Now let's update the database if and only if the for was posted
 if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Herald")>=3)) {
-    // Need to replace any apostrophes in the new name
+  if (DEBUG) {
+    $msg = 'POST and awards array vars for edit_award.php';
+    $vars = ['post' => $_POST, 'award' => $award];
+    
+    
+    log_debug($msg, $vars);
+  }
+  
+
+  
+  // Need to replace any apostrophes in the new name
     $name_award = str_replace("'", "&#039;", $name_award);
     //init the data array for the prepared statement
     $data = [];
-    if (DEBUG) {
-        echo "Updated name of award is: $name_award<p>";
-    }
-    $update="UPDATE Awards SET name_award=:name_award.";
+    $update="UPDATE Awards SET name_award=:name_award ";
     $data[':name_award'] = $name_award;
     if ($id_group!= $award["id_group"]) {
         $update=$update.", id_group=:id_group";
@@ -162,9 +169,6 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Herald")>=3)) {
     }
     $update=$update." WHERE id_award=:id_award";
     $data[':id_award'] = $id_award;
-    if (DEBUG) {
-        echo "Update query is:<br>$update<p>";
-    }
     try {
         $result=update_query($cxn, $update, $data);
         echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
@@ -173,9 +177,13 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Herald")>=3)) {
         echo "</div></div></div>";
     } catch (Exception $e) {
         echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
-        echo "<div class='alert alert-danger center-block'><p class='text-center'>";
-        echo $e;
+        $msg = "Could not update Award";
+        bs_alert($msg, 'danger');
         echo "</p></div></div></div>";
+        if (DEBUG) {
+          $vars = ['query' => $update, 'data' => $data];
+          log_debug($msg, $vars, $e);
+        }
     }
 }
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
