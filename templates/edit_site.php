@@ -42,7 +42,7 @@ $data = [':id_site' => $id_site];
 $sth = $cxn->prepare($query);
 $sth->execute($data);
 if ($sth->rowCount() == 1) {
-    $site = $sth->fetch(PDO::FETCH_ASSOC);
+    $site = $sth->fetch();
 } else {
     exit_with_footer();
 }
@@ -51,12 +51,6 @@ $next_item = $id_site; //$next_item refers to the site id that occurrs numerical
 $next_item++;
 $previous_item = $id_site; //$previous item refers to the site id that occurs numerically prior to the current site
 $previous_item--;
-
-/* if either the lat or long variables are null, and $street_site is set, make a geocode request via the
-*  geocode() function.
-*/
-
-
 
 //top navigation buttons: previous, next, return to list
 echo "<div class=\"btn-group\" role=\"group\" aria-label=\"navigation\">\n";
@@ -318,7 +312,7 @@ echo '<div class="form-group"><label for='.$varname.'>Longitude:</label><input t
 
 /*****************************************************************************/
   $varname="active_site";
-  // Note: $_POST["active_site" is *only* set if the checkbox is ticked.
+  // Note: $_POST["active_site"] is *only* set if the checkbox is ticked.
 if (isset($_POST['id'])) { // So check if this was a submission
     if (isset($_POST[$varname])) {
         $active_site=1;
@@ -374,7 +368,11 @@ echo "</div><!-- ./col-md-8 --></div><!-- ./row -->\n"; //close out list and ope
 // let's go ahead and update the database if the Update button was pressed.
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // First, update local variables
-
+    if (DEBUG) {
+      $msg = "edit_site.php vars dump";
+      $vars = get_defined_vars();
+      log_debug($msg, $vars);
+    }
 
     // Process form by updating the database
     $data = [];
@@ -387,7 +385,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $update=$update . ", url_site=:url_site ";
         $data[':url_site'] = $url_site;
     }
-    if ($facilities_site!= $site[":facilities_site"]) {
+    if ($facilities_site!= $site["facilities_site"]) {
         $update=$update . ", facilities_site=:facilities_site ";
         $data[':facilities_site'] = $facilities_site;
     }
@@ -472,10 +470,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (DEBUG) {
         echo "Update query is:<br>$update<p>";
     }
-    $sth = $cxn->prepare($query);
+    try {
+    $sth = $cxn->prepare($update);
     $sth->execute($data);
-    if ($sth->rowCount() !== 1) {
-        echo "Error updating record: " . $sth->errorInfo();
+    } catch (PDOException $e) {
+      $msg = "Could not update the record";
+      echo "<div class='row'><div class='col-sm-12 col-md-8 col-md-offset-2'>";
+      bs_alert($msg, 'danger');
+      echo "</div></div>";
+      if (DEBUG) {
+        $arr = ['query' => $update, 'data' => $data];
+        debug_log($msg, $arr, $e);
+      }
     }
 }
 
