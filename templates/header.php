@@ -172,7 +172,8 @@ $cxn = open_db_browse();
               echo '<li class="nav-item navbar-brand">Logged in as '.$_SESSION["webuser_name"].'</li>';
               echo '<li class="nav-item"><a class="navbar-brand" href="logout.php">Logout</a></li>';
           } else {
-              echo '<li class="nav-item"><a class="navbar-brand" href="login.php">Log In</a></li>';
+            echo '<li class="nav-item"><a class="navbar-brand" href="login.php">Log In</a></li>';
+            echo "<li class='-nav-item'><a class='navbar-brand' href='register.php'>Register</a></li>";
           }
           ?>
           <li class="nav-item dropdown">

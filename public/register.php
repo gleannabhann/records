@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $username = $_POST['username'];
 
         // check for active, unused invite code
-        $query = "SELECT * FROM invites WHERE invite_email=:email AND invite_used=0";
+        $query = "SELECT * FROM Invites WHERE invite_email=:email AND invite_used=0";
         $data = [':email' => $email];
         $sth = $cxn->prepare($query);
         try {
@@ -149,7 +149,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "<h1>Got past query</h1>";
             }
             // update the invitation to show it has been used
-            $query = "UPDATE invites SET invite_used=1 WHERE invite_email=:email";
+            $query = "UPDATE Invites SET invite_used=1 WHERE invite_email=:email";
             $data = [':email' => $email];
             $sth = $cxn->prepare($query);
             $sth->execute($data);

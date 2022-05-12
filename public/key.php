@@ -64,11 +64,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $key = bin2hex($expires_key . $salt_key . $email_key);
 
     // query to delete any pre-existing invitations for this email address
-    $rem_query = "DELETE FROM invites WHERE invite_email=:email";
+    $rem_query = "DELETE FROM Invites WHERE invite_email=:email";
     $rem_data = [':email' => $email];
 
     // query to insert new invitation for this email address
-    $add_query = "INSERT INTO invites (invite_email, invite_key, invite_expires) VALUES (:email, :key, :expires)";
+    $add_query = "INSERT INTO Invites (invite_email, invite_key, invite_expires) VALUES (:email, :key, :expires)";
     $add_data = [':email' => $email, ':key' => $key, ':expires' => $expires];
     try {
         // delete old invites
@@ -82,8 +82,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     } catch (PDOException $e) {
         if (DEBUG) {
-            $error = $e->getMessage;
-            $code = (int)$e->getCode;
+            $error = $e->getMessage();
+            $code = (int)$e->getCode();
             $message = "Error inserting invite key into database. Message: $error / Code: $code";
         } else {
             $message = "Error generating invite. Please try again.";
