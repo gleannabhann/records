@@ -225,7 +225,9 @@ if (isset($_POST["msgSubmit"])) {
 
 ?>
 <!-- end of php -->
-<? /*
+
+
+<?php /*
 
 <div class="row">
 <div class='col-sm-12 col-md-8 col-md-offset-2'>
@@ -291,7 +293,8 @@ if (isset($_POST["msgSubmit"])) {
   </form>
 </div>
 
- */ ?>
+ */ 
+?>
 
 <script>
 var oldWindow;
