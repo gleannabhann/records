@@ -1,4 +1,7 @@
 # Gleann Abhann Hall of Records
+
+_Please note this codebase is still in pre-release, not confirmed stable._
+
 - Order of Precedence for GA Heralds
   - Tracks award dates, events, who gave award, etc.
 - Authorizations for GA Marshallate
