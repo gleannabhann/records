@@ -105,37 +105,56 @@ $cxn = open_db_browse();
 
       <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-
+        <ul class="nav navbar-nav">
+        <li class='nav-item'><a class='navbar-brand' href='/public/awards.php'>Awards</a></li>
+        <li><a class="navbar-brand"  href="/public/combat.php">Combat</a></li>
+        <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
+        <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
         <?php
-        if (permissions("Herald") >= 2) {
-            // Herald role with "add" permission level (or greater)
-            echo "<li class='dropdown'><a href='#'class='dropdown-toggle"
-            . " nav-link navbar-brand' data-toggle='dropdown' role='button'"
-            . " aria-haspopup='true' aria-expanded='false'>Awards <span "
-            . " class='caret'></span></a>";
-            echo "<ul class='dropdown-menu'>";
-            echo "<li><a class='dropdown-item' href='/public/awards.php'>"
-             . "View</a></li>";
-            echo "<li><a
-                class='dropdown-item'
-                href='/public/add_award.php'>Add
-                a New Award</a></li>";
-            echo "</ul></li>";
-        } else {
-            //all other roles
-            echo "<li class='nav-item'><a class='navbar-brand' "
-               . "href='/public/awards.php'>Awards</a></li>";
-        }?>
+          if (isset($_SESSION["id"])) {
+            echo '<li><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
+          }
 
-          <li><a class="navbar-brand"  href="/public/combat.php">Combat</a></li>
-          <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
-          <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
-          <?php
-            if (isset($_SESSION["id"])) {
-                echo '<li><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
-            }
-            if (permissions("Admin")>=5) {
+if (permissions("Admin")>=3 || permissions("Herald")>=3 || permissions("Marshal")>=3 || permissions("Sites")>=3 || permissions("Ruby")>=3) {
+  // show the main menu item
+  echo '<li class="dropdown"><a href="#" class="dropdown-toggle nav-link'
+    .  ' navbar-brand" data-toggle="dropdown" role="button" aria-haspopup="true"'
+    .  ' aria-expanded="false">Add..<span class="caret"</span></a>';
+  echo "<ul class='dropdown-menu'>";
+  // items limited to "Sites"
+  if (permissions("Sites")>=3) {
+    // add_site.php
+    echo "<li><a class='dropdown-item' href='/public/add_site.php'>New Event Site</a></li>";
+  }
+  // items limited to "Ruby"
+  if (permissions("Ruby")>=3) {
+    // add_armorial.php
+    echo "<li><a class='dropdown-item' href='/public/add_armorial.php'>New Device or Badge</a></li>";
+  }
+  // items limited to "Herald"
+  if (permissions("Herald")>=3) {
+    // add_award.php
+    echo "<li><a class='dropdown-item' href='/public/add_award.php'>New Award</a></li>";
+    // add_event.php
+    echo "<li><a class='dropdown-item' href='/public/add_event.php'>New Event</a></li>";
+    // add_group.php
+    echo "<li><a class='dropdown-item' href='/public/add_group.php'>New Group</a></li>";
+  }
+
+  // items limited to "Marshal" or "Herald"
+  if (permissions("Marshal")>=3 || permissions("Herald">=3)) {
+    // add_person.php
+    echo "<li><a class='dropdown-item' href='/public/add_person.php'>New Person</a></li>";
+  }
+  // close the dropdown list-item
+  echo "</ul></li>";
+}
+
+
+
+
+
+          if (permissions("Admin")>=5) {
                 // put link to invite a new user on the navbar if user has
                 // correct perm
                 echo '<li><a class="navbar-brand" href="/public/key.php">Invite</a></li>';
