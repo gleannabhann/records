@@ -290,11 +290,20 @@ if (($site['lat_site'] == null or $site['long_site'] == null) && ($street_site!=
     //pass $address to geocode()
     $result = geocode($address);
 
+    if (DEBUG) {
+      log_debug("geocode result", $result);
+    }
+
     //store the results in the appropriate variables
     //you give one variable and it returns an array containing two items: a lat
-    //value and a long value.
+    //value and a long value. Only do this if the geocode call was successful.
+    if (isset($result)) {
     $lat_site = $result[0];
     $long_site = $result[1];
+    } else {
+    $lat_site = null;
+    $long_site = null;
+    }
 }
 
 

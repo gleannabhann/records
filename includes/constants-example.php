@@ -36,6 +36,21 @@
     // where index.php and README.md reside
     define("ROOTDIR", "/path/to/index/file/");
 
+    // Google Maps API Key
+    // In order to load the Event Site(s) Map, a Google Maps API key is
+    // required.
+    // You should limit the scope of the key to calls originating from your
+    // app's domain because this key will be discoverable via examination of
+    // page source.
+    // example define("MAPSAPI", "your-api-key");
+    define("MAPSAPI", "");
+
+    // Google Analytics tracking code
+    // Place your Google Analytics tracking code here and it will be inserted
+    // into the GA javascript widget in the footer
+    // example define("ANALYTICS", "your-code-here");
+    define("ANALYTICS", "");
+
     // where to send custom "debug" level messages
     // will be deprecated in v.2.0 in favor of a logging framework plugin
     // in order for this to work as set up here, the server

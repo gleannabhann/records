@@ -219,6 +219,6 @@ function populate() {
 addLoadEvent(initMap);
 addLoadEvent(populate);
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDob9AuNmEVae3K6YFLgKzNMdHX8Q-rojc&callback=initMap">
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=<?php if (defined("MAPSAPI")) { echo constant("MAPSAPI"); }?>&callback=initMap">
 </script>
 </div>

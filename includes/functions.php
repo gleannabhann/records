@@ -387,12 +387,18 @@
     */
    function geocode($address)
    {
+      // grab the API key
+      if (defined("MAPSAPI")) {
+        $key = constant("MAPSAPI");
+      } else {
+        $key = null;
+      }
 
       // url encode the address
        $address = urlencode($address);
 
        // google map geocode api url
-       $url = "http://maps.google.com/maps/api/geocode/json?sensor=false&address={$address}";
+       $url = "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&address={$address}&key=$key";
 
        // get the json response
        $geocode_json = file_get_contents($url);
