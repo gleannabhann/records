@@ -6,14 +6,14 @@
               <div class="panel panel-default">
                 <div class="panel-body">
                   <p class="text-center">
-This is an unofficial website for the Kingdom of Gleann Abhann of the Society for Creative Anachronism, Inc, 
-and is maintained by Eowyn de Wever (webminister@gleannabhann.net).  Content copyright 
+This is an official website for the Kingdom of Gleann Abhann of the <a href='https://sca.org'>Society for Creative Anachronism, Inc</a>, 
+and is maintained by Fergus O'Kelly (webminister@gleannabhann.net).  <br/>Content copyright 
 <?php echo date("Y"); ?>, 
 Kingdom of Gleann Abhann.
 <br>
 Content disclaimer: The paper version of all documentation shall take precedence in any case of disagreement between the online and paper versions. 
 <br>
-Website disclaimer:  *All external links are not part of the Kingdom of Gleann Abhann web site. Inclusion of a page or site here is neither implicit nor explicit endorsement of the site. Further, SCA, Inc. is not responsible for content outside of gleanabhann.net.
+Website disclaimer:  *All external links are not part of the Kingdom of Gleann Abhann web site. Inclusion of a page or site here is neither implicit nor explicit endorsement of the site. <br/>Further, SCA, Inc. is not responsible for content outside of gleanabhann.net.
                   </p>
 
                 </div>
