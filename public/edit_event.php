@@ -5,5 +5,3 @@
 
     // render portfolio
     render("edit_event.php", ["title" => "Edit an Event"]);
-
-?>

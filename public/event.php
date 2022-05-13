@@ -5,5 +5,3 @@
 
     // render portfolio
     render("event.php", ["title" => "Event"]);
-
-?>

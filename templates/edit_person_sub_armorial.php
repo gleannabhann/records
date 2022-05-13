@@ -1,8 +1,7 @@
 <?php
+
 // This page links up the amorials and is available on to the Ruby Herald
 // Set up search filters
-echo "<div class='row'>
-        <div class='col-md-8 col-md-offset-2'>";
 
 echo '<form action="edit_person.php" method="post">';
 echo form_title("Adding Armorial Links");
@@ -36,13 +35,14 @@ $q_exist = "SELECT id_person_armorial as ipa, id_person as ip, Armorials.id_armo
         . "fname_armorial as fname, ftype_armorial as ftype "
         . "FROM Persons_Armorials, Armorials "
         . "WHERE Persons_Armorials.id_armorial = Armorials.id_armorial "
-        . "AND id_person = $id_person";
-
+        . "AND id_person = :id_person";
+$data = ['id_person' => $id_person];
 if (DEBUG) {
     echo "Query to list existing links is: $q_exist</br>";
 }
-$curr_links = mysqli_query ($cxn, $q_exist)
-        or die ("Couldn't execute query to find existing links");
+$sth = $cxn->prepare($q_exist);
+$sth->execute($data);
+
 
 echo form_subtitle("Existing links:");
 echo "<table class='table table-condensed table-bordered'>";
@@ -52,7 +52,7 @@ echo "<thead>"
         . "<td>Blazon</td>"
         . "<td>Modifications</td>"
         . "</thead>";
-while ($row = mysqli_fetch_assoc($curr_links)) {
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     extract($row);
     echo "<tr>";
     echo '<td>';
@@ -86,7 +86,7 @@ echo "</table>";
 $q_new = "SELECT id_armorial as ia, blazon_armorial as blazon, image_armorial as image, "
         . "fname_armorial as fname, fsize_armorial as fsize, ftype_armorial as ftype "
         . "FROM Armorials WHERE id_armorial NOT IN "
-        . "(SELECT id_armorial FROM Persons_Armorials where id_person=$id_person) ";
+        . "(SELECT id_armorial FROM Persons_Armorials where id_person=:id_person) ";
 if ($search_filters=="") {
     $q_new = $q_new . "ORDER BY timestamp_armorial DESC LIMIT 10";
 } else {
@@ -100,17 +100,18 @@ if ($search_filters=="") {
             $q_new = $q_new . " blazon_armorial like '%$filter%' OR ";
             $q_new = $q_new . " fname_armorial like '%$filter%' OR ";
         }
-    } 
+    }
     $q_new = $q_new . " ABS(TIMESTAMPDIFF(MINUTE,NOW(),timestamp_armorial)) < 15) ";
 }
 if (DEBUG) {
     echo "Query to list possible new links is: $q_new</br>";
 }
-$new_links = mysqli_query ($cxn, $q_new)
-        or die ("Couldn't execute query to find existing links");
+$sth = $cxn->prepare($q_new);
+$sth->execute($data);
 
 echo form_subtitle("Potential new links based on seach filters:");
 echo form_subsubtitle("(Also includes all files uploaded in last 15 minutes)");
+echo "<details><summary class='btn btn-default' style='cursor: pointer'>Show/Hide Table</summary>";
 echo "<table class='table table-condensed table-bordered'>";
 echo "<thead>"
         . "<td>Thumbnail</td>"
@@ -118,7 +119,7 @@ echo "<thead>"
         . "<td>Blazon</td>"
         . "<td>Modifications</td>"
         . "</thead>";
-while ($row = mysqli_fetch_assoc($new_links)) {
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     extract($row);
     echo "<tr>";
     echo '<td>';
@@ -134,8 +135,6 @@ while ($row = mysqli_fetch_assoc($new_links)) {
     echo button_link("edit_person_armorial_link.php?ip=$id_person&ia=$ia&act=add_household", "Make household");
     echo '</td>';
     echo "</tr>";
-
 }
 echo "</table>";
-echo "</div> </div>"; // class=col-md-8, class=row,
-?>
+echo "</details>";

@@ -1,4 +1,5 @@
 <?php
+
 // This is the main page for reports.  It checks for permissions and then
 // loads the report_sub_<type>.php file.  We use separate files since different
 // fields might include different secondary parameters.
@@ -15,8 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') { // this page wasn't reached through 
     echo '<p class="error"> This page has been accessed in error.</p>';
     exit_with_footer();
 }
-    
-$cxn = open_db_browse(); // Open the db connection which is now live for the subforms
+
+// note: db connection now established in header.php and header_main.php
+// so it should be available to this document
+
 // Generate the report.
 
 // Build the query based on the parameters: this will be a massive if statement.
@@ -39,10 +42,10 @@ switch ($report) {
         break;
     default:
         echo '<p class="error"> No report selected.</p>';
-        exit_with_footer();        
+        exit_with_footer();
 }
 
 // Display data in $data
 include 'report_showtable.php';
 
-mysqli_close ($cxn); // Close the db connection
+// note: footer closes the db connection now

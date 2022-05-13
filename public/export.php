@@ -11,13 +11,13 @@ header('Content-Disposition: attachment; filename=data.csv');
 $output = fopen('php://output', 'w');
 
 // output the column headings
-fputcsv($output, array('Column 1', 'Column 2', 'Column 3'));
+fputcsv($output, ['Column 1', 'Column 2', 'Column 3']);
 
 // fetch the data
-mysql_connect('localhost', 'username', 'password');
-mysql_select_db('database');
-$rows = mysql_query('SELECT field1,field2,field3 FROM table');
-
+$cxn = open_db_browse();
+$query ='SELECT field1,field2,field3 FROM table';
+$sth = $cxn->query($query);
 // loop over the rows, outputting them
-while ($row = mysql_fetch_assoc($rows)) fputcsv($output, $row);
-?>
+while ($row = $sth->fetch()) {
+    fputcsv($output, $row);
+}

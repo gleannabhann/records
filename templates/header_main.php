@@ -1,7 +1,14 @@
 <!DOCTYPE html>
-<?php if (isset($_SESSION['initiated'])) {
+<?php
+if (DEBUG) {
+    $start_time = microtime(true);
+}
+
+if (isset($_SESSION['initiated'])) {
     validate_session();
 }
+// connect to the db
+$cxn = open_db_browse();
 ?>
 <html>
 
@@ -12,12 +19,19 @@
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-            <!-- Bootstrap Overrides -->
 
            <!-- Bootstrap Stylesheet -->
             <link href="/css/bootstrap.min.css" rel="stylesheet">
             <link href="/css/bootstrap-theme.min.css" rel="stylesheet"/>
+
+            <!-- Bootstrap Overrides -->
+            <link href="/css/cards.css" rel="stylesheet"/>
+            <link href="/css/forms.css" rel="stylesheet"/>
+
+            <!-- local stylesheets -->
             <link href="/css/styles.css" rel="stylesheet"/>
+
+
             <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
             <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
             <!--[if lt IE 9]>
@@ -91,17 +105,61 @@
 
       <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-            <li><a class="navbar-brand"  href="/public/awards.php">Awards</a></li>
-            <li><a class="navbar-brand"  href="/public/combat.php">Combat</a></li>
-            <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
-            <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
-            <?php
-            if (isset($_SESSION["id"]))
-            {
-               echo '<li><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
+        <ul class="nav navbar-nav">
+        <li class='nav-item'><a class='navbar-brand' href='/public/awards.php'>Awards</a></li>
+        <li><a class="navbar-brand"  href="/public/combat.php">Combat</a></li>
+        <!-- <li><a class="navbar-brand"  href="/public/auth.php">Authorizations</a></li> -->
+        <li><a class="navbar-brand"  href="/public/list_site.php">Campgrounds</a></li>
+        <?php
+          if (isset($_SESSION["id"])) {
+            echo '<li><a class="navbar-brand" href="/public/reports.php">Reports</a></li>';
+          }
+
+if (permissions("Admin")>=3 || permissions("Herald")>=3 || permissions("Marshal")>=3 || permissions("Sites")>=3 || permissions("Ruby")>=3) {
+  // show the main menu item
+  echo '<li class="dropdown"><a href="#" class="dropdown-toggle nav-link'
+    .  ' navbar-brand" data-toggle="dropdown" role="button" aria-haspopup="true"'
+    .  ' aria-expanded="false">Add..<span class="caret"</span></a>';
+  echo "<ul class='dropdown-menu'>";
+  // items limited to "Sites"
+  if (permissions("Sites")>=3) {
+    // add_site.php
+    echo "<li><a class='dropdown-item' href='/public/add_site.php'>New Event Site</a></li>";
+  }
+  // items limited to "Ruby"
+  if (permissions("Ruby")>=3) {
+    // add_armorial.php
+    echo "<li><a class='dropdown-item' href='/public/add_armorial.php'>New Device or Badge</a></li>";
+  }
+  // items limited to "Herald"
+  if (permissions("Herald")>=3) {
+    // add_award.php
+    echo "<li><a class='dropdown-item' href='/public/add_award.php'>New Award</a></li>";
+    // add_event.php
+    echo "<li><a class='dropdown-item' href='/public/add_event.php'>New Event</a></li>";
+    // add_group.php
+    echo "<li><a class='dropdown-item' href='/public/add_group.php'>New Group</a></li>";
+  }
+
+  // items limited to "Marshal" or "Herald"
+  if (permissions("Marshal")>=3 || permissions("Herald">=3)) {
+    // add_person.php
+    echo "<li><a class='dropdown-item' href='/public/add_person.php'>New Person</a></li>";
+  }
+  // close the dropdown list-item
+  echo "</ul></li>";
+}
+
+
+
+
+
+          if (permissions("Admin")>=5) {
+                // put link to invite a new user on the navbar if user has
+                // correct perm
+                echo '<li><a class="navbar-brand" href="/public/key.php">Invite</a></li>';
             }
-            ?>      
+          ?>      
 
           <!-- (disabled until needed) <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
@@ -130,10 +188,13 @@
 
             <!-- display logout button if user is logged in -->
             <?php
-            if (isset($_SESSION["id"]))
-            {
-              echo '<li class="navbar-brand" >Logged in as '.$_SESSION["webuser_name"].'</li>';
-              echo '<li><a href="public/logout.php" class="navbar-brand">Logout</a></li>';
+            if (isset($_SESSION["id"])) {
+                echo '<li class="navbar-brand" >Logged in as '.$_SESSION["webuser_name"].'</li>';
+                echo '<li><a href="public/logout.php" class="navbar-brand">Logout</a></li>';
+            } else {
+              echo '<li><a href="public/login.php" class="navbar-brand">Log In</a></li>';
+              echo "<li class='-nav-item'><a class='navbar-brand' href='public/register.php'>Register</a></li>";
+
             }
             ?>
 

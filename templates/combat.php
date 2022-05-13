@@ -6,8 +6,8 @@
  */
 
 // Build the Links to the Marshal list pages depending on what is in the database
-/* connect to the database */
-$cxn = open_db_browse();
+/* header.php and header_main.php connect us to the database */
+
 echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
 ///////////////////////////////////////////////////////////////////////////////
 // Main portion of the page
@@ -15,12 +15,14 @@ echo "<div class='row'><div class='col-md-6 col-md-offset-3'>";
 echo "<div class='center-block'>";
 echo form_title("Active Marshals for each Combat Category:");
 $query="SELECT id_combat, name_combat from Combat";
-if (DEBUG) {echo "Combat query: $query<p>";}
-$result = mysqli_query ($cxn, $query) 
-    or die ("Couldn't execute query to find types of combat");
+if (DEBUG) {
+    echo "Combat query: $query<p>";
+}
+$sth = $cxn->prepare($query);
+$sth->execute();
 
-echo "<div class='list-group'><ul type='none'>"; 
-while ($row = mysqli_fetch_assoc($result)){
+echo "<div class='list-group'><ul type='none'>";
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     extract($row);
     echo "<li><a href='list_marshals.php?id=$id_combat'>$name_combat: Active Marshals</a></li>";
 }
@@ -36,10 +38,12 @@ echo "<table class='table table-condensed table-bordered'>";
 echo '<tr><td class="text-right">Combat Type:</td><td> <select name="id_combat" >';
     $query="SELECT id_combat, name_combat FROM Combat ORDER BY name_combat";
     // Build up the drop down list
-    if (DEBUG) {echo "Combat query: $query<p>";}
-    $result = mysqli_query ($cxn, $query) 
-        or die ("Couldn't execute query to find types of combat");
-    while ($row = mysqli_fetch_assoc($result)){
+    if (DEBUG) {
+        echo "Combat query: $query<p>";
+    }
+    $sth = $cxn->prepare($query);
+    $sth->execute();
+    while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
         extract($row);
         echo '<option value="'.$row["id_combat"].'"';
         echo '>'.$row["name_combat"].'</option>';
@@ -69,10 +73,9 @@ $query = "SELECT Persons.id_person, name_person, expire_authorize, PCC.id_combat
         . "AND expire_authorize>= now() "
         . "ORDER BY expire_authorize "
         . "LIMIT 20;";
-
-        
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
-while ($row = mysqli_fetch_assoc($result)) {
+$sth = $cxn->prepare($query);
+$sth->execute();
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     extract($row);
     if (permissions("Marshal")>=3) {
         echo "<li><a href='edit_person.php?id=$id_person'>";
@@ -82,4 +85,3 @@ while ($row = mysqli_fetch_assoc($result)) {
     echo "$name_person</a> has an expiring authorization for <b>$name_combat</b> on $expire_authorize"
             . "</li>";
 }
-

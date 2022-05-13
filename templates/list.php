@@ -1,40 +1,48 @@
 <div class="container">
 <?php
-/* connect to the database */
-$cxn = open_db_browse();
+/* header.php and header_main.php connect to the database for us */
+
 /*#######################################################################################*/
 // This section wil list persons beginning with initial if initial is passed
+echo "<!-- names beginning with initial results -->";
 if (isset($_GET["initial"])) {
-    $Initial = $_GET["initial"];
-    echo "<div class='page-header'><h1>Names beginning with $Initial</h1><small>";
+    $initial = $_GET["initial"];
+    echo "<div class='page-header'><h1>Names beginning with $initial</h1><small>";
     include "warning.php"; // includes the warning text about paper precedence
     echo "</small></div>"; //Customize the page header
-    echo "<div class='row'><div class='col-md-8 offset-md-2'>";
+    echo "<div class='row justify-content-center'><div class='col-md-8 col-md-offset-2'>";
     include "alpha.php"; // includes the A-Z link list
     echo "<div class='list-group'><ul type='none'>"; // make the list pretty with formatting
-    $query = "select id_person, name_person from Persons "
-            . "where upper(substring(name_person,1,1)) ='$Initial'"
-            . "order by name_person";
-    $result = mysqli_query ($cxn, $query)
-    or die ("Couldn't execute query");
-    while ($row = mysqli_fetch_assoc($result)) {
-    //    extract($row);
-        $Name = $row['name_person'];
-        $ID = $row['id_person'];
-        $link = "<li class='list-group-item text-left'><a href='./person.php?id=$ID'>$Name</a></li>";
-    //    $link = "<li> $Name </li>";
-        echo "$link";
+    $initial = strtolower($initial);
+    $query = "select id_person, name_person from Persons where substring(name_person,1,1) = :initial order by name_person";
+    $data = ['initial' => $initial];
+    $sth = $cxn->prepare($query);
+    try {
+        $sth->execute($data);
+        while ($row = $sth->fetch()) {
+            //    extract($row);
+            $Name = $row['name_person'];
+            $ID = $row['id_person'];
+            $link = "<li class='list-group-item text-left'><a href='./person.php?id=$ID'>$Name</a></li>";
+            //    $link = "<li> $Name </li>";
+            echo "$link";
+        }
+    } catch (PDOException $e) {
+        $msg = "Could not fetch the list of names beginning with $initial.";
+        bs_alert($msg, 'danger');
     }
     echo "</ul></div> <!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 }
 /*#######################################################################################*/
 // This section will list persons with a given award if award is passed
-if (!isset($_GET["initial"]) && isset($_GET["award"])){
+echo "<!-- award results -->";
+if (!isset($_GET["initial"]) && isset($_GET["award"])) {
     $award = $_GET["award"];
-    $query = "select name_award from Awards where id_award=$award";
-    $result = mysqli_query ($cxn, $query)
-    or die ("Couldn't execute query");
-    $row = mysqli_fetch_assoc($result);
+    $query = "select name_award from Awards where id_award=:award";
+    $data = ['award' => $award];
+    $sth = $cxn->prepare($query);
+    $sth->execute($data);
+    $row = $sth->fetch();
     $name_award = $row['name_award'];
     echo "<div class='page-header'><h1>Persons who hold the award $name_award</h1></div>"; //Customize the page header
     echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
@@ -42,34 +50,41 @@ if (!isset($_GET["initial"]) && isset($_GET["award"])){
     if (permissions("Herald")>= 3) {
         $query = "SELECT concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') as 'SCA Name', ";
     } else {
-        $query = "SELECT concat('<a href=''person.php?id=',Persons.id_person,'''>',name_person,'</a>') as 'SCA Name', ";        
+        $query = "SELECT concat('<a href=''person.php?id=',Persons.id_person,'''>',name_person,'</a>') as 'SCA Name', ";
     }
     $query = $query . " date_award as 'Date Awarded'"
             . "from Persons, Persons_Awards "
             . "where Persons.id_person = Persons_Awards.id_person "
-            . "and Persons_Awards.id_award=$award "
+            . "and Persons_Awards.id_award=:award "
             . "order by name_person";
+    $data = ['award' => $award];
     if (DEBUG) {
         echo "Group Query is: $query<p>";
-    }    
-    $result = mysqli_query ($cxn, $query)
-    or die ("Couldn't execute query");
-    $data = mysqli_query ($cxn, $query) 
-        or die ("Couldn't execute query to build report.");
-    $fields = mysqli_fetch_fields($data);
-     echo '<table class="sortable table table-condensed table-bordered">';
+    }
+    $sth = $cxn->prepare($query);
+    $sth->execute($data);
+    // open the table and table header
+    echo '<table class="sortable table table-condensed table-bordered">';
     echo '<thead>';
-        foreach ($fields as $field) {
-            echo '<th>'.$field->name.'</th>';
-        }
-        echo '</thead>';
-    while ($row = mysqli_fetch_assoc($data)) {
+    // given the total number of columns -1, request the column metadata for
+    // that column's index and echo the column name as the next table header
+    // cell
+    foreach (range(0, $sth->columnCount() -1) as $index) {
+        $col = $sth->getColumnMeta($index);
+        echo '<th>'.$col['name'].'</th>';
+    }
+    // then close the table header
+    echo '</thead>';
+    echo '<tbody>';
+    // build the table rows
+    while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
         echo '<tr>';
         foreach ($row as $field) {
             echo '<td>'.$field.'</td>';
         }
         echo '</tr>';
     }
+    echo '</tbody>';
     echo '</table>';
     echo "</div></div> <!-- ./col-md-8 -->"; //close out open divs
     echo "<p>";
@@ -78,53 +93,56 @@ if (!isset($_GET["initial"]) && isset($_GET["award"])){
 }
 /*#######################################################################################*/
 // This section will list persons in a given group if group is passed
-if (!isset($_GET["initial"]) && !isset($_GET["award"]) && isset($_GET["group"])){
+echo "<!-- group result -->";
+if (!isset($_GET["initial"]) && !isset($_GET["award"]) && isset($_GET["group"])) {
     $group = $_GET["group"];
-    $query = "select name_group from Groups where id_group=$group";
-    $result = mysqli_query ($cxn, $query)
-    or die ("Couldn't execute query");
-    $row = mysqli_fetch_assoc($result);
+    $query = "select name_group from Groups where id_group=:group";
+    $data = ['group' => $group];
+    $sth = $cxn->prepare($query);
+    $sth->execute($data);
+    $row = $sth->fetch(PDO::FETCH_ASSOC);
     $name_group = $row['name_group'];
     echo "<div class='page-header'><h1>Persons who belong to $name_group</h1></div>"; //Customize the page header
     echo "<div class='row'><div class='col-md-8 col-md-offset-2'>";
     if (permissions("Herald")>= 3) {
         $query = "SELECT concat('<a href=''edit_person.php?id=',Persons.id_person,'''>',name_person,'</a>') as 'SCA Name' ";
+        echo button_link("./edit_group.php?id=$group", "Edit this Group");
     } else {
-        $query = "SELECT concat('<a href=''person.php?id=',Persons.id_person,'''>',name_person,'</a>') as 'SCA Name' ";        
+        $query = "SELECT concat('<a href=''person.php?id=',Persons.id_person,'''>',name_person,'</a>') as 'SCA Name' ";
     }
     $query = $query. " FROM Persons
-              WHERE  Persons.id_group = $group ORDER BY 'SCA name'";
-    
+              WHERE  Persons.id_group = :group ORDER BY 'SCA name'";
+    $data = ['group' => $group];
     if (DEBUG) {
         echo "Group Query is: $query<p>";
     }
-    $result = mysqli_query ($cxn, $query)
-    or die ("Couldn't execute query");
-    $data = mysqli_query ($cxn, $query) 
-        or die ("Couldn't execute query to build report.");
-    $fields = mysqli_fetch_fields($data);
-     echo '<table class="sortable table table-condensed table-bordered">';
+    $sth = $cxn->prepare($query);
+    $sth->execute($data);
+    echo '<table class="sortable table table-condensed table-bordered">';
     echo '<thead>';
-        foreach ($fields as $field) {
-            echo '<th>'.$field->name.'</th>';
-        }
-        echo '</thead>';
-    while ($row = mysqli_fetch_assoc($data)) {
+    foreach (range(0, $sth->ColumnCount() -1) as $index) {
+        $col = $sth->getColumnMeta($index);
+        echo '<th>'.$col['name'].'</th>';
+    }
+    echo '</thead>';
+    echo '<tbody>';
+
+    while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
         echo '<tr>';
         foreach ($row as $field) {
             echo '<td>'.$field.'</td>';
         }
         echo '</tr>';
     }
+    echo '</tbody>';
     echo '</table>';
     echo "</div></div> <!-- ./col-md-8 -->"; //close out list and open divs
-    echo "<p>";
+    echo "<hr>";
     include "alpha.php"; // includes the A-Z link list
     include "warning.php"; // includes the warning text about paper precedence
-    
 }
 /*#######################################################################################*/
-mysqli_close ($cxn); /* close the db connection */
+/* footer.php closes the db connection */
 ?>
 </div>
 

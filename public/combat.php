@@ -5,5 +5,3 @@
 
     // render portfolio
     render("combat.php", ["title" => "Combat"]);
-
-?>

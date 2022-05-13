@@ -32,18 +32,25 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
 }
 
 // initialize the array
-$person = array();
-$awards = array();
+$person = [];
+$awards = [];
 
 //fetch the person's name
 $query = "SELECT name_person, name_group, Groups.id_group "
         . "FROM Persons, Groups "
-        . "WHERE Persons.id_person = $id_person "
+        . "WHERE Persons.id_person = :id_person "
         . "AND Persons.id_group=Groups.id_group";
+$data = [':id_person' => $id_person];
+try {
+  $sth = $cxn->prepare($query);
+  $sth->execute($data);
+} catch (PDOException $e) {
+  $error = ['message' => 'Could not complete the query'];
+  echo json_encode($error);
+  exit;
+}
 
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
-$row = mysqli_fetch_assoc($result);
+$row = $sth->fetch();
 $person["person"] = $row;
 
 /* query: select a person's awards in the database  */
@@ -53,9 +60,18 @@ $query = "SELECT  Awards.id_award, name_award, date_award,name_kingdom, name_eve
          AND Persons_Awards.id_award = Awards.id_award
          AND Awards.id_kingdom = Kingdoms.id_kingdom
          AND Persons_Awards.id_event = Events.id_event
-         AND Persons.id_person = $id_person order by date_award";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
-while ($row = mysqli_fetch_assoc($result))
+         AND Persons.id_person = :id_person order by date_award";
+$data = [':id_person' => $id_person];
+try {
+  $sth = $cxn->prepare($query);
+  $sth->execute($data);
+} catch (PDOException $e) {
+  $error = ['message' => 'Could not complete the query'];
+  echo json_encode($error);
+  exit;
+} 
+
+while ($row = $sth->fetch())
   {
   extract($row);
   $awards[] = $row;

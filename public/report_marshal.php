@@ -5,5 +5,3 @@
 
     // render portfolio
     render("report_marshal.php", ["title" => "Marshal's Reports"]);
-
-?>

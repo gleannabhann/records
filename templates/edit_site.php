@@ -1,16 +1,17 @@
 <?php
+
 // Purpose: to display all data for event site we're about to edit,
 // Privileges needed: permissions("Sites")>= 3
 
 if (permissions("Sites")>= 3) {
-   if ((isset($_GET['id'])) && (is_numeric($_GET['id'])) && (isset($_SESSION['id']))) {
-       // We got here through the edit link on list_site.php
-       $id_site = $_GET["id"];
-   } elseif ((isset($_POST['id'])) && (is_numeric($_POST['id'])) && (isset($_SESSION['id']))) {
-       // We got here from form submission
-       // echo "Arrived as form submission";
-       $id_site = $_POST['id'];
-   }
+    if ((isset($_GET['id'])) && (is_numeric($_GET['id'])) && (isset($_SESSION['id']))) {
+        // We got here through the edit link on list_site.php
+        $id_site = $_GET["id"];
+    } elseif ((isset($_POST['id'])) && (is_numeric($_POST['id'])) && (isset($_SESSION['id']))) {
+        // We got here from form submission
+        // echo "Arrived as form submission";
+        $id_site = $_POST['id'];
+    }
 } else {
     // We don't have sufficient permissions for this page.
     echo '<p class="error"> This page has been accessed in error.</p>';
@@ -18,15 +19,14 @@ if (permissions("Sites")>= 3) {
     exit_with_footer();
 }
 
-
-
-$cxn = open_db_browse();
+/* header.php and header_main.php open the database connection for us */
 
 //obtain a count of how many site records are in the db
 $query = "SELECT COUNT(*) from Sites";
-$result = mysqli_query($cxn, $query) or die ("Couldn't execute query to find max count");
-if (mysqli_num_rows($result)==1) {
-   $max_item_result= mysqli_fetch_assoc($result);
+$sth = $cxn->prepare($query);
+$sth->execute();
+if ($sth->rowCount() == 1) {
+    $max_item_result= $sth->fetch(PDO::FETCH_ASSOC);
 } else {
     exit_with_footer();
 }
@@ -37,10 +37,12 @@ $max_item = $max_item_result['COUNT(*)'];
 echo "<div class='row'><div class='col-md-6 col-md-offset-3 col-xs-12 col-sm-12'>\n";
 
 //look up the information for the site we want to edit
-$query = "SELECT * from Sites where id_site = $id_site";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query to find site info");
-if (mysqli_num_rows($result)==1) {
-   $site= mysqli_fetch_assoc($result);
+$query = "SELECT * from Sites where id_site = :id_site";
+$data = [':id_site' => $id_site];
+$sth = $cxn->prepare($query);
+$sth->execute($data);
+if ($sth->rowCount() == 1) {
+    $site = $sth->fetch();
 } else {
     exit_with_footer();
 }
@@ -49,12 +51,6 @@ $next_item = $id_site; //$next_item refers to the site id that occurrs numerical
 $next_item++;
 $previous_item = $id_site; //$previous item refers to the site id that occurs numerically prior to the current site
 $previous_item--;
-
-/* if either the lat or long variables are null, and $street_site is set, make a geocode request via the
-*  geocode() function.
-*/
-
-
 
 //top navigation buttons: previous, next, return to list
 echo "<div class=\"btn-group\" role=\"group\" aria-label=\"navigation\">\n";
@@ -98,21 +94,29 @@ echo '<div class="form-group"><label for='.$varname.'>Name of Site:</label><inpu
 /*****************************************************************************/
 $varname="kingdom_level_site";
 if (isset($_POST['id'])) { //
-    if (isset($_POST[$varname])) { $kingdom_level_site = 'Yes';}
-    else {$kingdom_level_site='No';}
+    if (isset($_POST[$varname])) {
+        $kingdom_level_site = 'Yes';
+    } else {
+        $kingdom_level_site='No';
+    }
     //$active_site=$_POST[$varname];
 } else {
     $kingdom_level_site=$site[$varname];
 }
 echo '<div class="form-group"><label for='.$varname.'>Kingdom Level Event Site?</label><input type="checkbox" '
      . 'name="'.$varname.'" value="Yes"';
-if ($kingdom_level_site == 'Yes') { echo ' checked="checked" </div>';}
+if ($kingdom_level_site == 'Yes') {
+    echo ' checked="checked" </div>';
+}
 
 /*****************************************************************************/
 $varname="verify_phone_site";
 if (isset($_POST['id'])) { //
-    if (isset($_POST[$varname])) { $verify_phone_site = $_POST[$varname];}
-    else {$verify_phone_site = NULL;}
+    if (isset($_POST[$varname])) {
+        $verify_phone_site = $_POST[$varname];
+    } else {
+        $verify_phone_site = null;
+    }
 } else {
     $verify_phone_site=$site[$varname];
 }
@@ -123,8 +127,11 @@ echo '<div class="form-group"><label for='.$varname.'>Verified by Phone?</label>
 /*****************************************************************************/
 $varname="verify_web_site";
 if (isset($_POST['id'])) { //
-    if (isset($_POST[$varname])) { $verify_web_site = $_POST[$varname];}
-    else {$verify_web_site = NULL;}
+    if (isset($_POST[$varname])) {
+        $verify_web_site = $_POST[$varname];
+    } else {
+        $verify_web_site = null;
+    }
 } else {
     $verify_web_site=$site[$varname];
 }
@@ -135,8 +142,11 @@ echo '<div class="form-group"><label for='.$varname.'>Verified the Website?</lab
 /*****************************************************************************/
 $varname="verify_visit_site";
 if (isset($_POST['id'])) { //
-    if (isset($_POST[$varname])) { $verify_visit_site = $_POST[$varname];}
-    else {$verify_visit_site = NULL;}
+    if (isset($_POST[$varname])) {
+        $verify_visit_site = $_POST[$varname];
+    } else {
+        $verify_visit_site = null;
+    }
 } else {
     $verify_visit_site=$site[$varname];
 }
@@ -260,33 +270,41 @@ echo '<div class="form-group"><label for='.$varname.'>Zip Code:</label><input ty
 /*****************************************************************************/
 $varname="lat_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-  $lat_site=$_POST[$varname];
+    $lat_site=$_POST[$varname];
 } else {
-  $lat_site=$site[$varname];
+    $lat_site=$site[$varname];
 }
 
 $varname="long_site";
 if (isset($_POST[$varname]) && is_string($_POST[$varname])) {
-  $long_site=$_POST[$varname];
+    $long_site=$_POST[$varname];
 } else {
-  $long_site=$site[$varname];
+    $long_site=$site[$varname];
 }
 
 //check to see if either lat or lng is NULL and update if the address is not null
-if (($site['lat_site'] == NULL OR $site['long_site'] == NULL) && ($street_site!=NULL))
-  {
+if (($site['lat_site'] == null or $site['long_site'] == null) && ($street_site!=null)) {
     //combine the address fields into a standard USPS address
     $address = $street_site.", ".$city_site.", ".$state_site." ".$zip_site;
 
     //pass $address to geocode()
     $result = geocode($address);
 
+    if (DEBUG) {
+      log_debug("geocode result", $result);
+    }
+
     //store the results in the appropriate variables
     //you give one variable and it returns an array containing two items: a lat
-    //value and a long value.
+    //value and a long value. Only do this if the geocode call was successful.
+    if (isset($result)) {
     $lat_site = $result[0];
     $long_site = $result[1];
-  }
+    } else {
+    $lat_site = null;
+    $long_site = null;
+    }
+}
 
 
 echo '<div class="form-group"><label for='.$varname.'>Latitude:</label><input type="number" step="any" '
@@ -303,17 +321,22 @@ echo '<div class="form-group"><label for='.$varname.'>Longitude:</label><input t
 
 /*****************************************************************************/
   $varname="active_site";
-  // Note: $_POST["active_site" is *only* set if the checkbox is ticked.
+  // Note: $_POST["active_site"] is *only* set if the checkbox is ticked.
 if (isset($_POST['id'])) { // So check if this was a submission
-    if (isset($_POST[$varname])) { $active_site=1;}
-    else {$active_site=0;}
+    if (isset($_POST[$varname])) {
+        $active_site=1;
+    } else {
+        $active_site=0;
+    }
     //$active_site=$_POST[$varname];
 } else {
     $active_site=$site[$varname];
 }
 echo '<div class="form-group"><label for='.$varname.'>Active?</label><input type="checkbox" '
      . 'name="'.$varname.'" value="Yes"';
-if ($active_site>0) { echo ' checked="checked" ';}
+if ($active_site>0) {
+    echo ' checked="checked" ';
+}
 echo '> <br/>"Active" means site is available for rental for SCA events.
 If site becomes unavailable due to change in management or for other reasons,
 uncheck box. Listing will remain in the database in case it becomes available again
@@ -337,11 +360,12 @@ if ($next_item < $max_item) {
 }
 
 $query="SELECT id_site, verified_site from Sites order by verified_site desc, id_site;";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute query");
-if (mysqli_num_rows($result)>=1) {
-   $next_site= mysqli_fetch_assoc($result);
+$sth = $cxn->prepare($query);
+$sth->execute();
+if ($sth->rowCount() >= 1) {
+    $next_site= $sth->fetch(PDO::FETCH_ASSOC);
 
-  //  echo button_link("./edit_site.php?id=".$next_site["id_site"],
+    //  echo button_link("./edit_site.php?id=".$next_site["id_site"],
   //                   "Next Site Needed to Verify");
 }
 
@@ -351,60 +375,99 @@ echo "</div><!-- ./col-md-8 --></div><!-- ./row -->\n"; //close out list and ope
 
 // Now that the variables are all populated,
 // let's go ahead and update the database if the Update button was pressed.
-if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-// First, update local variables
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // First, update local variables
+    if (DEBUG) {
+      $msg = "edit_site.php vars dump";
+      $vars = get_defined_vars();
+      log_debug($msg, $vars);
+    }
 
-
-// Process form by updating the database
-
+    // Process form by updating the database
+    $data = [];
     $update = "UPDATE Sites SET ";
-    if (!empty($name_site))
-        { $update=$update . "name_site='" . mysqli_real_escape_string($cxn,$name_site) . "'" ;}
-    if ($url_site != $site["url_site"] )
-        {$update=$update . ", url_site='" . mysqli_real_escape_string($cxn,$url_site) ."' ";}
-    if ($facilities_site!= $site["facilities_site"])
-        {$update=$update . ", facilities_site='" . mysqli_real_escape_string($cxn,$facilities_site) ."' ";}
-    if ($capacity_site !=$site["capacity_site"])
-        {$update=$update . ", capacity_site='" . mysqli_real_escape_string($cxn,$capacity_site) ."' ";}
-    if ($rates_site != $site["rates_site"])
-        {$update=$update . ", rates_site='" . mysqli_real_escape_string($cxn,$rates_site) ."' ";}
-    if ($area_site != $site["area_site"])
-        {$update=$update . ", area_site='" . mysqli_real_escape_string($cxn,$area_site) ."' ";}
-    if ($contact_site != $site["contact_site"])
-        {$update=$update . ", contact_site='" . mysqli_real_escape_string($cxn,$contact_site) ."' ";}
-    if ($lat_site !=$site["lat_site"])
-        {if (!empty($lat_site))
-            {$update=$update . ", lat_site=" . $lat_site ." ";}
-            else {$update=$update . ", lat_site=NULL ";}
+    if (!empty($name_site)) {
+        $update=$update . "name_site=:name_site " ;
+        $data[':name_site'] = $name_site;
+    }
+    if ($url_site != $site["url_site"]) {
+        $update=$update . ", url_site=:url_site ";
+        $data[':url_site'] = $url_site;
+    }
+    if ($facilities_site!= $site["facilities_site"]) {
+        $update=$update . ", facilities_site=:facilities_site ";
+        $data[':facilities_site'] = $facilities_site;
+    }
+    if ($capacity_site !=$site["capacity_site"]) {
+        $update=$update . ", capacity_site=:capacity_site ";
+        $data[':capacity_site'] = $capacity_site;
+    }
+    if ($rates_site != $site["rates_site"]) {
+        $update=$update . ", rates_site=:rates_site ";
+        $data[':rates_site'] = $rates_site;
+    }
+    if ($area_site != $site["area_site"]) {
+        $update=$update . ", area_site=:area_site ";
+        $data[':area_site'] = $area_site;
+    }
+    if ($contact_site != $site["contact_site"]) {
+        $update=$update . ", contact_site=:contact_site ";
+        $data[':contact_site'] = $contact_site;
+    }
+    if ($lat_site !=$site["lat_site"]) {
+        if (!empty($lat_site)) {
+            $update=$update . ", lat_site=:lat_site ";
+            $data[':lat_site'] = $lat_site;
+        } else {
+            $update=$update . ", lat_site=NULL ";
         }
-    if ($long_site !=$site["long_site"])
-        {if (!empty($long_site))
-            {$update=$update . ", long_site=" . $long_site ." ";}
-            else {$update=$update . ", long_site=NULL ";}
+    }
+    if ($long_site !=$site["long_site"]) {
+        if (!empty($long_site)) {
+            $update=$update . ", long_site=:long_site ";
+            $data[':long_site'] = $long_site;
+        } else {
+            $update=$update . ", long_site=NULL ";
         }
-    if ($street_site!= $site["street_site"])
-        {$update=$update . ", street_site='" . mysqli_real_escape_string($cxn,$street_site) ."' ";}
-    if ($city_site != $site["city_site"])
-        {$update=$update . ", city_site='" . mysqli_real_escape_string($cxn,$city_site) ."' ";}
-    if ($state_site != $site["state_site"])
-        {$update=$update . ", state_site='" . mysqli_real_escape_string($cxn,$state_site) ."' ";}
-    if ($zip_site!= $site["zip_site"])
-        {$update=$update . ", zip_site='" . mysqli_real_escape_string($cxn,$zip_site) ."' ";}
-    if ($active_site!= $site["active_site"])
-        {$update=$update . ", active_site=$active_site ";}
+    }
+    if ($street_site!= $site["street_site"]) {
+        $update=$update . ", street_site=:street_site ";
+        $data[':street_site'] = $street_site;
+    }
+    if ($city_site != $site["city_site"]) {
+        $update=$update . ", city_site=:city_site ";
+        $data[':city_site'] = $city_site;
+    }
+    if ($state_site != $site["state_site"]) {
+        $update=$update . ", state_site=:state_site ";
+        $data[':state_site'] = $state_site;
+    }
+    if ($zip_site!= $site["zip_site"]) {
+        $update=$update . ", zip_site=:zip_site ";
+        $data[':zip_site'] = $zip_site;
+    }
+    if ($active_site!= $site["active_site"]) {
+        $update=$update . ", active_site=:active_site ";
+        $data[':active_site'] = $active_site;
+    }
     if ($kingdom_level_site != $site["kingdom_level_site"]) {
-        $update=$update.", kingdom_level_site='$kingdom_level_site' ";
+        $update=$update.", kingdom_level_site=:kingdom_level_site ";
+        $data[':kingdom_level_site'] = $kingdom_level_site;
     }
     if ($verify_phone_site != $site["verify_phone_site"]) {
-        $update=$update . ", verify_phone_site='$verify_phone_site' ";
+        $update=$update . ", verify_phone_site=:verify_phone_site ";
+        $data[':verify_phone_site'] = $verify_phone_site;
     }
     if ($verify_web_site != $site["verify_web_site"]) {
-        $update=$update . ", verify_web_site='$verify_web_site' ";
+        $update=$update . ", verify_web_site=:verify_web_site ";
+        $data[':verify_web_site'] = $verify_web_site;
     }
     if ($verify_visit_site != $site["verify_visit_site"]) {
-        $update=$update . ", verify_visit_site='$verify_visit_site' ";
+        $update=$update . ", verify_visit_site=:verify_visit_site ";
+        $data[':verify_visit_site'] = $verify_visit_site;
     }
-    $update=$update. ", verified_site=curdate() WHERE id_site=" .$id_site;
+    $update=$update. ", verified_site=curdate() WHERE id_site=:id_site";
+    $data[':id_site'] = $id_site;
 
     /* Testing code
     echo "<p>Query is " . $update . "<p>";
@@ -416,12 +479,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     if (DEBUG) {
         echo "Update query is:<br>$update<p>";
     }
-    $result=update_query($cxn, $update);
-    if ($result !== 1) {
-      echo "Error updating record: " . mysqli_error($cxn);
+    try {
+    $sth = $cxn->prepare($update);
+    $sth->execute($data);
+    } catch (PDOException $e) {
+      $msg = "Could not update the record";
+      echo "<div class='row'><div class='col-sm-12 col-md-8 col-md-offset-2'>";
+      bs_alert($msg, 'danger');
+      echo "</div></div>";
+      if (DEBUG) {
+        $arr = ['query' => $update, 'data' => $data];
+        debug_log($msg, $arr, $e);
+      }
     }
 }
 
 
-mysqli_close ($cxn); /* close the db connection */
-?>
+/* footer.php closes the db connection */

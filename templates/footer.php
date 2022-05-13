@@ -6,21 +6,28 @@
               <div class="panel panel-default">
                 <div class="panel-body">
                   <p class="text-center">
-This is an unofficial website for the Kingdom of Gleann Abhann of the Society for Creative Anachronism, Inc, 
-and is maintained by Eowyn de Wever (webminister@gleannabhann.net).  Content copyright 
+This is an official website for the Kingdom of Gleann Abhann of the <a href='https://sca.org'>Society for Creative Anachronism, Inc</a>, 
+and is maintained by Fergus O'Kelly (webminister@gleannabhann.net).  <br/>Content copyright 
 <?php echo date("Y"); ?>, 
 Kingdom of Gleann Abhann.
 <br>
 Content disclaimer: The paper version of all documentation shall take precedence in any case of disagreement between the online and paper versions. 
 <br>
-Website disclaimer:  *All external links are not part of the Kingdom of Gleann Abhann web site. Inclusion of a page or site here is neither implicit nor explicit endorsement of the site. Further, SCA, Inc. is not responsible for content outside of gleanabhann.net.
+Website disclaimer:  *All external links are not part of the Kingdom of Gleann Abhann web site. Inclusion of a page or site here is neither implicit nor explicit endorsement of the site. <br/>Further, SCA, Inc. is not responsible for content outside of gleanabhann.net.
                   </p>
 
                 </div>
               </div>
             </footer>
           </div>
+<?php
 
+// close the database connection
+// but only if it hasn't already been closed
+if (isset($cxn)) {
+    $cxn = null;
+}
+?>
 
         </div>
 
@@ -33,7 +40,7 @@ Website disclaimer:  *All external links are not part of the Kingdom of Gleann A
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-69055504-2', 'auto');
+ga('create', '<?php if (defined("ANALYTICS")) {echo constant("ANALYTICS");}?>', 'auto');
   ga('send', 'pageview');
 
 </script>

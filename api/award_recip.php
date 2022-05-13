@@ -35,30 +35,42 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
 }
 
 // initialize the array
-$persons = array();
-$award = array();
+$persons = [];
+$award = [];
 
 //fetch the award's name
-$query = "SELECT name_award, name_group, Groups.id_group "
+$q_award = "SELECT name_award, name_group, Groups.id_group "
         . "FROM Awards, Groups "
-        . "WHERE Awards.id_award = $id_award "
+        . "WHERE Awards.id_award = :id_award "
         . "AND Awards.id_group=Groups.id_group";
-
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
-$row = mysqli_fetch_assoc($result);
-$award["award"] = $row;
+$d_award = [':id_award' => $id_award];
 
 /* query: select an award's recipients in the database  */
-$query = "SELECT  Persons.id_person, name_person, date_award,name_kingdom, name_event, Events.id_event
+$q_persons = "SELECT  Persons.id_person, name_person, date_award,name_kingdom, name_event, Events.id_event
           FROM Persons, Persons_Awards, Awards, Kingdoms, Events
           WHERE Persons_Awards.id_person = Persons.id_person
          AND Awards.id_award = Persons_Awards.id_award
          AND Awards.id_kingdom = Kingdoms.id_kingdom
          AND Persons_Awards.id_event = Events.id_event
-         AND Awards.id_award = $id_award order by date_award";
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
-while ($row = mysqli_fetch_assoc($result))
+         AND Awards.id_award = :id_award order by date_award";
+$d_persons = [':id_award' => $id_award];
+
+try {
+  $sth_award = $cxn->prepare($q_award);
+  $sth_award->execute($d_award);
+  
+  $sth_persons = $cxn->prepare($q_persons);
+  $sth_persons->execute($d_persons);
+
+} catch (PDOException $e) {
+  // they're expecting json, so let's give them some
+  $error = ['message' => 'Could not fetch the data'];
+  echo json_encode($error);
+}
+// transfer the award array from the db
+$award["award"] = $sth_award->fetch();
+// transfer the persons rows from the db
+while ($row = $sth_persons->fetch())
   {
   extract($row);
   $persons[] = $row;

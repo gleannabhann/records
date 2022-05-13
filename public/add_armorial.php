@@ -5,5 +5,3 @@
 
     // render portfolio
     render("add_armorial.php", ["title" => "Add a New Device or Badge"]);
-
-?>

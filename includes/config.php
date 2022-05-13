@@ -1,10 +1,8 @@
 <?php
 
     /**
+     * Order of Precedence
      * config.php
-     *
-     * Computer Science 50
-     * Problem Set 7
      *
      * Configures pages.
      */
@@ -21,13 +19,8 @@
     session_start();
 
    // require authentication for most pages
-    if (preg_match("{^(edit|add|delete)}", $_SERVER["PHP_SELF"]))
-    {
-        if (empty($_SESSION["id"]))
-        {
+    if (preg_match("{^(edit|add|delete)}", $_SERVER["PHP_SELF"])) {
+        if (empty($_SESSION["id"])) {
             redirect("/index.php");
         }
     }
-    
-
-?>

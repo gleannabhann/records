@@ -1,7 +1,7 @@
 <?php
 
 
-if (permissions("Ruby")<3){
+if (permissions("Ruby")<3) {
     // We don't have permission to add images so let's just exit now.
     echo '<p class="error"> This page has been accessed in error; it is available only to Ruby Heralds</p>';
     exit_with_footer();
@@ -23,32 +23,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 
-if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Ruby")>=3)){ //portion commented out for testing
-  $cxn = open_db_browse();
+if (($_SERVER['REQUEST_METHOD'] == 'POST')  && (permissions("Ruby")>=3)) { //portion commented out for testing
+
+    /* note: db connection created by header.php or header_main.php */
 
     // We have a form submission.
     // Note: we allow for addition of multiple devices which is why the blank
     //        form will reappear at the bottom of the page
 
-$uploadOk = 1; // set the "OK" flag to 1. Future IF tests may change it to 0
+    $uploadOk = 1; // set the "OK" flag to 1. Future IF tests may change it to 0
 
-// declare some variables
-$blazon = sanitize_mysql($_POST["blazon"]);
-$fname = $_FILES["imagefile"]["name"];
-$fsize = $_FILES["imagefile"]["size"];
-$ftype = $_FILES["imagefile"]["type"];
-$imgheight = NULL;
-$imgwidth = NULL;
-$image = NULL;
+    // declare some variables
+    $blazon = $_POST["blazon"];
+    $fname = $_FILES["imagefile"]["name"];
+    $fsize = $_FILES["imagefile"]["size"];
+    $ftype = $_FILES["imagefile"]["type"];
+    $imgheight = null;
+    $imgwidth = null;
+    $image = null;
 
-// Check if image file is an actual image or fake image
+    // Check if image file is an actual image or fake image
 
     $check = getimagesize($_FILES["imagefile"]["tmp_name"]);
 
 
-    if($check !== false) {
-      $imgwidth = $check[0];
-      $imgheight = $check[1];
+    if ($check !== false) {
+        $imgwidth = $check[0];
+        $imgheight = $check[1];
 
         $uploadOk = 1;
     } else {
@@ -58,22 +59,22 @@ $image = NULL;
 
     // Check file size
     if ($_FILES["imagefile"]["size"] > 500000) {
-       echo "<p class='error'>Sorry, your file is too large. Max file size is 500kb</p>";
-       $uploadOk = 0;
-    }
-    if ($imgheight > 300 || $imgwidth > 300){
-      echo "<p class='error'>Sorry, your file exceeds the maximum dimensions of 300x300 pixels.</p>";
-      $uploadOk = 0;
-    }
-    // Allow only certain file formats
-    if($ftype != "image/jpg" 
-            && $ftype != "image/png" 
-            && $ftype != "image/jpeg" 
-            && $ftype != "image/gif" ) {
-        echo "<p class='error'>Sorry, only JPG, JPEG, PNG & GIF files are allowed. The file you attempted to upload is " . var_dump($ftype) . "</p>";
+        echo "<p class='error'>Sorry, your file is too large. Max file size is 500kb</p>";
         $uploadOk = 0;
     }
-// read the image file into a string
+    if ($imgheight > 300 || $imgwidth > 300) {
+        echo "<p class='error'>Sorry, your file exceeds the maximum dimensions of 300x300 pixels.</p>";
+        $uploadOk = 0;
+    }
+    // Allow only certain file formats
+    if ($ftype != "image/jpg"
+            && $ftype != "image/png"
+            && $ftype != "image/jpeg"
+            && $ftype != "image/gif") {
+        echo "<p class='error'>Sorry, only JPG, JPEG, PNG & GIF files are allowed. The file you attempted to upload is " . json_encode($ftype) . "</p>";
+        $uploadOk = 0;
+    }
+    // read the image file into a string
     $image = file_get_contents($_FILES["imagefile"]["tmp_name"]);
     $image = base64_encode($image);
 
@@ -85,25 +86,41 @@ $image = NULL;
         $query = "INSERT INTO Armorials"
             . "(id_armorial,blazon_armorial,image_armorial,"
                 . "fname_armorial,fsize_armorial,ftype_armorial, timestamp_armorial) "
-            . "VALUES (NULL, '$blazon', '$image', '$fname', $fsize, '$ftype', NOW() )";
-
-        $result = update_query($cxn, $query);
-        if ($result !== 1) {
-            echo "Error updating record: " . mysqli_error($cxn);
-        } else {
-            echo "Successfully added ". $fname ." to the database<p>";
-            echo button_link("awards.php", "Return to awards page"); // TODO Identify where we should send users with this button
-            echo "or continue adding new devices below<p>";
+            . "VALUES (NULL, :blazon, :image, :fname, :fsize, :ftype, NOW() )";
+        $data = [':blazon' => $blazon, ':image' => $image, ':fname' => $fname, ':fsize' => $fsize, ':ftype' => $ftype];
+        if (DEBUG) {
+            echo "<p>Query is:<br/>$query.<br/>Vars:<br/><ul><li>Blazon: $blazon</li>";
+            echo "<li>Filename is: $fname</li><li>Fsize is: $fsize</li><li>Ftype is: $ftype</li>";
+            echo "<li>Image:";
+            display_image($image, $ftype, 150, $blazon, $blazon);
+            echo "</li></ul>";
         }
-      }
+        // create a wrapper for results so they're same width as the form
+        echo "<div class='row'><div class='col-sm-12 col-md-8 col-md-offset-2'>";
 
-mysqli_close ($cxn);
+        try {
+            $result = update_query($cxn, $query, $data);
+            $link = button_link("awards.php", "Return to awards page"); //TODO Identify where we should send users with this button
+            $message = "<strong>Success!</strong> We added ". $fname ." to the database";
+            $message .= "<br/>$link<br/>or continue adding new devices below";
+            bs_alert($message, 'success');
+        } catch (PDOException $e) {
+            $error = "<strong>Warning!</strong> We couldn't upload $fname. ";
+            if (DEBUG) {
+                $error = add_pdo_exception($error, $e);
+            }
+            bs_alert($error, 'danger');
+        }
+        echo "</div></div>"; // close the results wrapper
+    }
+
+    /* footer.php will close the database connection for us */
 }
 ?>
 
-<div class='row'><div class='col-md-8 col-md-offset-2'>
+<div class='row'><div class='col-sm-12 col-md-8 col-md-offset-2'>
 <?php if ($id_person > 0) {
-    echo button_link("edit_person.php?id=$id_person","Return to Edit Person Page");
+    echo button_link("edit_person.php?id=$id_person", "Return to Edit Person Page");
 }   ?>     
 <form action="add_armorial.php" method="post" enctype="multipart/form-data">
   <?php echo form_title("Adding a New Device or Badge"); ?>

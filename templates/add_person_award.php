@@ -1,10 +1,10 @@
 <?php
-/* 
+/*
  * Adds another award for the person whose id is passed in.
  */
 if (permissions("Herald")< 3) {
     echo '<p class="error"> This page has been accessed in error.</p>';
-    exit_with_footer();    
+    exit_with_footer();
 }
 
 if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
@@ -20,8 +20,8 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
     exit_with_footer();
 }
 
-$cxn = open_db_browse();
-if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // TODO: We need to filter these variables much more carefully!
     $id_person = $_POST['id'];
     $id_award = $_POST["id_award"];
@@ -30,47 +30,112 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     $date_added = date("Y-m-d");
     $id_kingdom = $_POST["id_kingdom"];
     $id_event = $_POST["id_event"];
-    
-    $update = "INSERT INTO Persons_Awards VALUES "
-            . "(NULL, $id_person, $id_award,"
-            . "'$date_award','$date_exp','$date_added', $id_kingdom, $id_event )";
-    //echo "Update Query is ".$update;
-    $result=update_query($cxn, $update);
-    if ($result !== 1) {echo "Error updating record: " . mysqli_error($cxn);}
 
+    // preload the data array
+    $data = [
+      ':id_person' => $id_person,
+      ':id_award' => $id_award,
+      ':date_award' => $date_award,
+      ':date_added' => $date_added,
+      ':id_kingdom' => $id_kingdom,
+      ':id_event' => $id_kingdom,
+    ];
+    // if no expiration date was set, we need to form the query differently
+    if ($date_exp == '') {
+        // no exp date
+        $update = "INSERT INTO Persons_Awards VALUES "
+              . "(NULL, :id_person, :id_award,"
+              . ":date_award, NULL, :date_added, :id_kingdom, :id_event)";
+    } else {
+        $update = "INSERT INTO Persons_Awards VALUES "
+              . "(NULL, :id_person, :id_award,"
+              . ":date_award, :date_exp, :date_added, :id_kingdom, :id_event)";
+        $data[':date_exp'] = $date_exp;
+    }
+    try {
+        $result=update_query($cxn, $update, $data);
+        // update was successful, let's tell the user
+        $f_msg = "Success! Award added!";
+        echo "<div class='row'><div class='col-sm-12 col-md-8 col-md-offset-2'>";
+        bs_alert($f_msg, 'success');
+        echo "</div></div>";
+    } catch (PDOException $e) {
+        $f_msg = "Couldn't add the Award.";
+        echo "<div class='row'><div class='col-sm-12 col-md-8 col-md-offset-2'>";
+        bs_alert($f_msg, 'danger');
+        echo "</div></div>";
+        if (DEBUG) {
+            $vars = ['query' => $update, 'data' => $data];
+            log_debug($f_msg, $vars, $e);
+        }
+    }
 }
 
-$query = "SELECT name_person FROM Persons where id_person=".$id_person;
-$result = mysqli_query ($cxn, $query) or die ("Couldn't execute personal query");
-if (mysqli_num_rows($result)==1) {
-   $person=  mysqli_fetch_array($result);
-} else {
-    echo "Unable to find person in the database";
-    exit_with_footer();
+// TODO: rewrite q_kingdom to lookup the host kingdom id inline
+
+$q_person = "SELECT name_person FROM Persons where id_person=:id_person";
+$data = [':id_person' => $id_person];
+$q_k_id = "SELECT host_kingdom_id FROM Appdata where app_id=1";
+try {
+    $sth_person = $cxn->prepare($q_person);
+    $sth_person->execute($data);
+    $sth_k_id = $cxn->query($q_k_id);
+    $k_id = $sth_k_id->fetch();
+    $person = $sth_person->fetch();
+} catch (PDOException $e) {
+    $f_msg = "Couldn't fetch data to build the form";
+    echo "<div class='row'><div class='col-sm-12 col-md-8 col-md-offset-2'>";
+    bs_alert($f_msg, 'danger');
+    echo "</div></div>";
+    if (DEBUG) {
+        $vars = ['q_person' => $q_person, 'data' => $data, 'q_k_id' => $q_k_id];
+        log_debug($f_msg, $vars, $e);
+    }
+    // no point continuing
+    exit_with_footer;
 }
 
-$query = "SELECT id_award, name_kingdom,"
+
+$q_awards = "SELECT id_award, name_kingdom,"
         . "CONCAT(name_award,' (',name_kingdom,')') as Name_Award, "
-        . "Awards.id_kingdom !=".HOST_KINGDOM_ID." as In_Kingdom "
+        . "Awards.id_kingdom != :host_k_id as In_Kingdom "
         . "FROM Awards, Kingdoms "
         . "WHERE Awards.id_kingdom = Kingdoms.id_kingdom "
         . "ORDER BY In_Kingdom, name_kingdom, Name_Award;";
-//echo $query;
-$awards = mysqli_query ($cxn, $query) or die ("Couldn't execute awards query");
+$d_awards = [':host_k_id' => $k_id['host_kingdom_id']];
 
-$query = "SELECT id_event, name_event, date_event_start, date_event_stop "
+$q_events = "SELECT id_event, name_event, date_event_start, date_event_stop "
         . "FROM Events ORDER BY date_event_start DESC";
-$events=mysqli_query ($cxn, $query) or die ("Couldn't execute list of events query");
+$q_kingdoms ="SELECT id_kingdom, name_kingdom from Kingdoms;";
+try {
+    $sth_awards = $cxn->prepare($q_awards);
+    $sth_awards->execute($d_awards);
+    $sth_events = $cxn->query($q_events);
+    $sth_kingdoms = $cxn->query($q_kingdoms);
+} catch (PDOException $e) {
+    $f_msg = "Couldn't fetch data to build the form";
+    echo "<div class='row'><div class='col-sm-12 col-md-8 col-md-offset-2'>";
+    bs_alert($f_msg, 'danger');
+    echo "</div></div>";
+    if (DEBUG) {
+        $vars = [
+      'q_awards' => $q_awards,
+      'd_awards' => $d_awards,
+      'q_events' => $q_events,
+      'q_kingdoms' => $q_kingdoms,
+    ];
+        log_debug($f_msg, $vars, $e);
+    }
+    // no point continuing
+    exit_with_footer;
+}
 
-$query="SELECT id_kingdom, name_kingdom from Kingdoms;";
-$kingdoms = mysqli_query ($cxn, $query) or die ("Couldn't execute list of kingdoms query");
-        
 echo "<div class='row'>
   <div class='col-md-8 col-md-offset-2'>";
 echo '<form action="add_person_award.php" method="post">';
 echo form_title('Adding a New Award for '.
         '<a href="edit_person.php?id='.$id_person.'">'
-        . $person["name_person"].'</a>'); 
+        . $person["name_person"].'</a>');
 echo '<input type="hidden" name="id" value="'.$id_person.'">';
 echo "<table class='table table-condensed table-bordered'>";
 // Date the award was handed out
@@ -101,9 +166,11 @@ if (isset($_POST["id_award"]) && is_numeric($_POST["id_award"])) {
     $id_award = -1;
 }
 echo '<tr><td class="text-right">Award:</td><td> <select name="id_award" >';
-while ($row= mysqli_fetch_array($awards)) {
+while ($row= $sth_awards->fetch()) {
     echo '<option value="'.$row["id_award"].'"';
-    if ($row["id_award"]==$id_award) echo ' selected';
+    if ($row["id_award"]==$id_award) {
+        echo ' selected';
+    }
     echo '>'.$row["Name_Award"].'</option>';
 }
 echo '</select></td></tr>';
@@ -115,7 +182,7 @@ if (isset($_POST["id_event"]) && is_numeric($_POST["id_event"])) {
     $id_event = -1;
 }
 echo '<tr><td class="text-right">Event:</td><td> <select name="id_event" >';
-while ($row= mysqli_fetch_array($events)) {
+while ($row= $sth_events->fetch()) {
     echo '<option value="'.$row["id_event"].'"';
     if ($row["id_event"]==$id_event) {
         echo ' selected';
@@ -129,12 +196,14 @@ echo "</select></td></tr>";
 if (isset($_POST["id_kingdom"]) && is_numeric($_POST["id_kingdom"])) {
     $id_kingdom = $_POST["id_kingdom"];
 } else {
-    $id_kingdom = HOST_KINGDOM_ID;
+    $id_kingdom = $k_id['host_kingdom_id'];
 }
 echo '<tr><td class="text-right">Awarded in:</td><td> <select name="id_kingdom" >';
-while ($row= mysqli_fetch_array($kingdoms)) {
+while ($row= $sth_kingdoms->fetch()) {
     echo '<option value="'.$row["id_kingdom"].'"';
-    if ($row["id_kingdom"]==$id_kingdom) echo ' selected';
+    if ($row["id_kingdom"]==$id_kingdom) {
+        echo ' selected';
+    }
     echo '>'.$row["name_kingdom"].'</option>';
 }
 echo '</select></td></tr>';
@@ -147,7 +216,4 @@ if (!isset($_POST["id"])) { // Allow submit button only if this is new.
 }
 
 
-echo "<p>";      
-mysqli_close ($cxn); /* close the db connection */
-?>
-
+echo "<p>";

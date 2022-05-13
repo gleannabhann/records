@@ -5,5 +5,3 @@
 
     // render portfolio
     render("edit_site.php", ["title" => "Edit Site"]);
-
-?>

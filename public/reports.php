@@ -5,5 +5,3 @@
 
     // render portfolio
     render("reports.php", ["title" => "Reports"]);
-
-?>

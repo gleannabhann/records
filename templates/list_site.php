@@ -2,12 +2,12 @@
 
 <?php
 
-/* connect to the database */
-$cxn = open_db_browse();
+/* header.php and header_main.php connect to the database for us */
+
 $query = "select @rn:=@rn+1 as row_number, s.* from Sites s, (SELECT @rn:=0) r "
         . "order by active_site desc, state_site, name_site;";
-$result = mysqli_query ($cxn, $query)
-or die ("Couldn't execute query");
+$sth = $cxn->prepare($query);
+$sth->execute();
 /*#######################################################################################*/
 // This will list all the sites in the database.
 // If the user is logged in with the Sites rolytype, will also include edit/delete/add buttons
@@ -23,11 +23,13 @@ echo "<div id='row'><div id='map' class='col-md-10 col-md-offset-1'></div></div>
 
 echo "<div class='row'><div class='col-md-10 col-md-offset-1'><hr/>";
 
-  if (permissions("Sites") >= 3){
-      echo '<p>'.button_link("./add_site.php","Add a New Site").'</p>';
+  if (permissions("Sites") >= 3) {
+      echo '<p>'.button_link("./add_site.php", "Add a New Site").'</p>';
   } else {
-      echo '<p>'.button_link("./submit_campsite_report.php",
-                            "Report a New Site").'</p>';
+      echo '<p>'.button_link(
+          "./submit_campsite_report.php",
+          "Report a New Site"
+      ).'</p>';
   }
 echo "<table class='table table-bordered'>
 <thead>
@@ -40,32 +42,29 @@ echo "<table class='table table-bordered'>
 <td class='text-left'><strong>Location</strong></td>
 <!--<td class='text-left'><strong>Contact</strong></td> -->";
 // TODO: replace is_logged_in() with is_site_admin() permissions check
-if (permissions("Sites") >= 3){
-  echo  "<td class='text-left'><strong> </strong></td>";
+if (permissions("Sites") >= 3) {
+    echo  "<td class='text-left'><strong> </strong></td>";
 };
 echo " </thead>";
-$sites = array();
+$sites = [];
 if (permissions("Sites") >= 3) {
     $websiteurl = "/public/edit_site.php";
 } else {
     $websiteurl = "/public/site.php";
 }
-while ($row = mysqli_fetch_assoc($result)) {
+while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     extract($row);
     if (($active_site > 0) || (permissions("Sites") >= 3)) {
         //TODO: Indicate if site is inactive
-        if ($street_site != NULL)
-        {
-          $address = $street_site . "<br/>" . $city_site . ", " . $state_site . " " . $zip_site;
+        if ($street_site != null) {
+            $address = $street_site . "<br/>" . $city_site . ", " . $state_site . " " . $zip_site;
         } else {
-          $address = "Address Not on File<br/>" . $area_site;
+            $address = "Address Not on File<br/>" . $area_site;
         }
         // add a row to the array to hand to JS, only if coords are available
         if ($lat_site && $long_site) {
-
-          $site = array($name_site, $lat_site, $long_site, $url_site, $facilities_site, $capacity_site, $rates_site, $address, $contact_site, $id_site, $kingdom_level_site);
-          $sites[] = $site;
-
+            $site = [$name_site, $lat_site, $long_site, $url_site, $facilities_site, $capacity_site, $rates_site, $address, $contact_site, $id_site, $kingdom_level_site];
+            $sites[] = $site;
         }
 
         echo "<tr>";
@@ -79,7 +78,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             }
             echo "<td class='text-left'><a href='".$websiteurl."?id=" . $id_site . "'>" . $name_site . "$kle</a></td>";
         } else {
-                echo "<td class='text-left'><a href='".$websiteurl."?id=" . $id_site . "'>" . $name_site . "$kle (INACTIVE)</a></td>";
+            echo "<td class='text-left'><a href='".$websiteurl."?id=" . $id_site . "'>" . $name_site . "$kle (INACTIVE)</a></td>";
         }
         //if ($url_site !="") echo "<a href=\"$url_site\"> (Website)</a>";
         echo "</td>";
@@ -87,17 +86,14 @@ while ($row = mysqli_fetch_assoc($result)) {
         echo "<td class='text-left'> $capacity_site</td>";
         //echo "<td class='text-left'>$rates_site</td>";
         //echo "<td class='text-left'>$area_site</td>";
-        if ($street_site != NULL)
-        {
-          echo "<td class='text-left'>$address</td>";
+        if ($street_site != null) {
+            echo "<td class='text-left'>$address</td>";
         } else {
-          echo "<td class='danger text-left'>$address</td>";
+            echo "<td class='danger text-left'>$address</td>";
         }
 
         //echo "<td class='text-left'>$contact_site</td>";
-        if (permissions("Sites") >= 3){
-
-
+        if (permissions("Sites") >= 3) {
             echo "<td class='text-left'>".button_link("./edit_site.php?id=$id_site", "Edit")."</td>";
         };
         echo "</tr>";
@@ -107,7 +103,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 echo "</table>";
 echo "</div><!-- ./col-md-8 --></div><!-- ./row -->"; //close out list and open divs
 #######################################################################################*/
-mysqli_close ($cxn); /* close the db connection */
+/* footer.php closes the db connection */
 
 ?>
 
@@ -223,6 +219,6 @@ function populate() {
 addLoadEvent(initMap);
 addLoadEvent(populate);
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDob9AuNmEVae3K6YFLgKzNMdHX8Q-rojc&callback=initMap">
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=<?php if (defined("MAPSAPI")) { echo constant("MAPSAPI"); }?>&callback=initMap">
 </script>
 </div>

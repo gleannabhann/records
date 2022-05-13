@@ -1,21 +1,21 @@
 <?php
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST["start_date"]) 
+    if (isset($_POST["start_date"])
             && is_string($_POST["start_date"])
             && strlen($_POST["start_date"] > 0)) {
-         $start_date = $_POST["start_date"];
+        $start_date = $_POST["start_date"];
     } else {
-    echo form_subtitle('Must include Beginning of Time Period to list all awards');
-    exit_with_footer();
+        echo form_subtitle('Must include Beginning of Time Period to list all awards');
+        exit_with_footer();
     }
-    if (isset($_POST["end_date"]) 
+    if (isset($_POST["end_date"])
             && is_string($_POST["end_date"])
             && strlen($_POST["end_date"] > 0)) {
-         $end_date = $_POST["end_date"];
+        $end_date = $_POST["end_date"];
     } else {
-    echo form_subtitle('Must include End of Time Period to list all awards');
-    exit_with_footer();
+        echo form_subtitle('Must include End of Time Period to list all awards');
+        exit_with_footer();
     }
     if (isset($_POST["id_group"]) && is_numeric($_POST["id_group"])) {
         $id_group = $_POST["id_group"];
@@ -25,11 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
     echo form_subtitle("Page accessed in error.");
     exit_with_footer();
-} 
-$cxn = open_db_browse();
-
-if (DEBUG) {
-    echo "We will be working with timerange $start_date to $end_date, and group $id_group<br>";
 }
 
 $query = "SELECT "
@@ -40,31 +35,36 @@ $query = "SELECT "
         . "WHERE Persons.id_group=Groups.id_group "
         . "AND Persons_Awards.id_person = Persons.id_person "
         . "AND Persons_Awards.id_award = Awards.id_award "
-        . "AND date_Award >= '$start_date' "
-        . "AND date_award <= '$end_date' ";
+        . "AND date_Award >= :start_date "
+        . "AND date_award <= :end_date ";
+$data = [':start_date' => $start_date, ':end_date' => $end_date];
 if ($id_group == -1) {
-    $query = $query . " AND Groups.id_kingdom = ".HOST_KINGDOM_ID." ";
+    $k_query = "SELECT host_kingdom_id FROM Appdata where app_id=1";
+    // TODO wrap this in a try catch block
+    $sth = $cxn->query($k_query);
+    $k_id = $sth->fetch();
+    $query = $query . " AND Groups.id_kingdom = :host_kingdom_id ";
+    $data[':host_kingdom_id'] = $k_id['host_kingdom_id'];
 } else {
-        $query = $query . " AND Groups.id_group = $id_group ";
+    $query = $query . " AND Groups.id_group = :id_group ";
+    $data[':id_group'] = $id_group;
 }
 $query = $query . "ORDER BY date_award;";
-
-if (DEBUG) {
-    echo "Awards query is:</br>$query";
+$sth = $cxn->prepare($query);
+$sth->execute($data);
+$fields = [];
+foreach (range(0, $sth->columnCount() -1) as $i) {
+    $col = $sth->getColumnMeta($i);
+    $fields[] = $col['name'];
 }
-
-$data = mysqli_query ($cxn, $query) 
-        or die ("Couldn't execute query to build report.");
-//    echo form_title($report_name);
-    $fields = mysqli_fetch_fields($data);
 //    echo "<table class='table table-condensed table-bordered'>";
     echo '<table class="sortable table table-condensed table-bordered">';
     echo '<thead>';
         foreach ($fields as $field) {
-            echo '<th>'.$field->name.'</th>';
+            echo '<th>'.$field.'</th>';
         }
         echo '</thead>';
-    while ($row = mysqli_fetch_assoc($data)) {
+    while ($row = $sth->fetch()) {
         echo '<tr>';
         foreach ($row as $field) {
             echo '<td>'.$field.'</td>';

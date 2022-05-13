@@ -5,5 +5,3 @@
 
     // render portfolio
     render("awards_group.php", ["title" => "Awards for Members of Group"]);
-
-?>
