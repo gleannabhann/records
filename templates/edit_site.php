@@ -291,7 +291,7 @@ if (($site['lat_site'] == null or $site['long_site'] == null) && ($street_site!=
     $result = geocode($address);
 
     if (DEBUG) {
-      log_debug("geocode result", $result);
+      debug_log("geocode result", $result);
     }
 
     //store the results in the appropriate variables
