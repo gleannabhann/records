@@ -18,7 +18,7 @@ error_reporting(E_ALL);
 // In this section we construct the url for the API
 $url="http://records.gleannabhann.net/api/list_marshals.php?id=";
 if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
-    // We got here through an api call 
+    // We got here through an api call
     $ic = $_GET["id"];
     $url=$url."$ic";
     if ((isset($_GET['group'])) && (is_numeric($_GET['group']))) {
@@ -28,7 +28,7 @@ if ((isset($_GET['id'])) && (is_numeric($_GET['id']))) {
 }else {
         $url= $url."1"; // default to using rapier as test case
 }
-    
+
 // Now we retrieve the data
 $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_HEADER, 0);
