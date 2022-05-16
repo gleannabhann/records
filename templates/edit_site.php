@@ -291,7 +291,7 @@ if (($site['lat_site'] == null or $site['long_site'] == null) && ($street_site!=
     $result = geocode($address);
 
     if (DEBUG) {
-      debug_log("geocode result", $result);
+      log_debug("geocode result", $result);
     }
 
     //store the results in the appropriate variables
@@ -489,7 +489,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       echo "</div></div>";
       if (DEBUG) {
         $arr = ['query' => $update, 'data' => $data];
-        debug_log($msg, $arr, $e);
+        log_debug($msg, $arr, $e);
       }
     }
 }
