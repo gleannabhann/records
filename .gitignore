@@ -1,1 +1,5 @@
 includes/constants.php
+.phplint-cache
+composer.json
+composer.lock
+vendor/
