@@ -1,3 +1,6 @@
+
+<div class="row">
+<div class="col-sm-12 col-md-8 col-md-offset-2">
 <form action="register.php" method="post">
     <fieldset>
         <div class="form-group">
@@ -19,4 +22,6 @@
 </form>
 <div>
     or <a href="login.php">log in</a>
+</div>
+</div>
 </div>

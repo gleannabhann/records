@@ -42,12 +42,13 @@
      *
      * @param string $message the message you wish to pass
      *
-     * @return void - calls the render() function (passes $message along) and exits.
+     * @return void - calls the render() function (passes $message along),
+     * returns control to the calling document.
      */
     function apologize($message)
     {
         render("apology.php", ["message" => $message]);
-        exit;
+        return;
     }
 
     /**

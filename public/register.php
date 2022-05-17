@@ -6,17 +6,13 @@ require("../includes/config.php");
 // if form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["username"])) {
-        apologize("Please enter a username");
-        exit;
+        $apol_msg = "Please enter a username";
     } elseif (empty($_POST["password"])) {
-        apologize("Please enter a password");
-        exit;
+        $apol_msg = "Please enter a password";
     } elseif ($_POST["password"] != $_POST["confirmation"]) {
-        apologize("Your password and confirmation don't match!");
-        exit;
+        $apol_msg = "Your password and confirmation don't match!";
     } elseif (!isset($_POST["email"])) {
-        apologize("Please enter an email address");
-        exit;
+        $apol_msg = "Please enter an email address";
     } else {
 
     // if there's an existing account logged in, log it out
@@ -36,7 +32,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 $error = "Could not establish database connection.";
             }
-            die($error);
+            bs_alert($error, 'warning');
+            exit_with_footer();
         }
         // pull email var
         $email = $_POST['email'];
@@ -53,17 +50,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $message = $e->getMessage();
                 $code = $e->getCode();
                 $error = "Database Error! $message / $code";
-                echo $error;
+                bs_alert($error, 'warning');
                 exit_with_footer;
             } else {
-                echo "I couldn't fetch invitations.";
+                bs_alert("I couldn't fetch invitations.", 'warning');
                 exit_with_footer();
             }
         }
         // make sure there is an invitation in the system
         if ($sth->rowCount()==0) {
-            apologize("I couldn't find your invitation.");
-            exit_with_footer();
+            $msg = "I couldn't find your invitation.";
+            render("apology.php", ['message' => $msg, 'alert' => "warning"]);
+            exit();
         }
         $invitation = $sth->fetch(PDO::FETCH_ASSOC);
         extract($invitation);
@@ -72,13 +70,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $now = new DateTime();
         $valid = ($invite_expires > $now);
         if ($valid == 0) {
-            apologize("It looks like your invitation has expired.");
-            exit_with_footer();
+          $msg = "It looks like your invitation has expired.";
+          render("apology.php", ['message' => $msg, 'alert' => "warning"]);
+          exit();
         }
         // make sure the invitation keys match
 
         if ($invite_key != $_POST['key']) {
-            apologize("Your invitation key doesn't match what we have on file");
+          $msg = "Your invitation key doesn't match what we have on file";
+          render("apology.php", ['message' => $msg, 'alert' => "warning"]);
+          exit();
         }
 
         // check for username collisions in the WebUsers table
@@ -87,7 +88,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sth = $cxn->prepare($query);
         $sth->execute($data);
         if ($sth->rowCount() > 0) {
-            apologize("The username you chose is already in use. Please choose a different one.");
+          $msg = "The username you chose is already in use. Please choose a different one.";
+          render("apology.php", ['message' => $msg, 'alert' => 'warning']);
+          exit();
         }
 
         // the method of password verification changed when this app was upgraded
@@ -138,16 +141,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         // if the value of $errors has been changed, show user the error message
         if ($errors == true) {
-            apologize("Something went wrong with your registration.");
-            if (DEBUG) {
-                echo "\nPDOStatement::errorInfo():\n";
-            }
-            $arr= $sth->errorInfo();
-            print_r($arr);
-        } else {
-            if (DEBUG) {
-                echo "<h1>Got past query</h1>";
-            }
+          $msg = "Something went wrong with your registration.";
+          render("apology.php", ['message' => $msg, 'alert' => 'warning']);
+          exit;
+        }
             // update the invitation to show it has been used
             $query = "UPDATE Invites SET invite_used=1 WHERE invite_email=:email";
             $data = [':email' => $email];
@@ -155,9 +152,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $sth->execute($data);
             if ($sth->rowCount()==0) {
                 error_log("Couldn't update invitation to 'used' where 'invite_email' = $email");
-                if (DEBUG) {
-                    echo "Couldn't update invitation to 'used' where 'invite_email' = $email";
-                }
             }
             // get the newly minted user's new user id
             $query ="SELECT LAST_INSERT_ID() AS id";
@@ -228,8 +222,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // redirect to main
             redirect("/");
         }
-    }
 } else {
     // else render form
     render("register_form.php", ["title" => "Register"]);
+}
+if (isset($apol_msg)) {
+
+  render("apology.php", ["message" => $apol_msg, 'alert' => 'warning']);
 }

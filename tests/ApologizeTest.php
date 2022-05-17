@@ -5,10 +5,11 @@ final class ApologizeTest extends TestCase
 {
   public function testApologize(): void
   {
-    $message = "This is a test.";
-    /* TODO figure out how to deal with an entire html document being rendered
-     * by the function
-     */
-    return 1;
+    $message = "This is a test";
+    $end_message = '<p class="text-danger">'. htmlspecialchars($message).'</p>';
+    //ob_start();
+    apologize($message);
+    //$html = ob_get_flush();
+    //$this->assertStringContainsString($end_message, $html);
   }
 }

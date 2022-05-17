@@ -6,9 +6,13 @@ require("../includes/config.php");
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // validate submission
     if (empty($_POST["username"])) {
-        apologize("You must provide your username.");
+      $values = ['message' => "You must provide your username", 'alert' => 'warning'];
+      render("apology.php", $values);
+      exit();
     } elseif (empty($_POST["password"])) {
-        apologize("You must provide your password.");
+      $values = ['message' => "You must provide your password.", 'alert' => 'warning'];
+      render("apology.php", $values);
+      exit();
     }
 
     $username = $_POST["username"];
@@ -160,8 +164,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // redirect to main page
         redirect("/");
     }
-    // else apologize
-    apologize("Invalid username and/or password.");
+    // else pass an error to the apology template
+    $values = ['message' => "Invalid username and/or password.", 'alert' => 'danger'];
+    render("apology.php", $values);
+    exit();
 } else {
     // else render form
     render("login_form.php", ["title" => "Log In"]);
